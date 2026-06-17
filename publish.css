@@ -1,0 +1,24 @@
+/* publish.css — SPIKE ONLY.
+   Purpose: confirm the CSS path loads on the custom domain.
+   Real styling comes later from visual-direction-v1.md. Do not build on this. */
+
+/* Unmistakable load signal: a thin accent bar at the very top of every page.
+   If you see it, publish.css is being served. */
+body::before {
+  content: "";
+  display: block;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: #7C6CF0;
+  z-index: 9999;
+}
+
+/* On-brand variable overrides — links turn purple, body type goes to 18px.
+   Confirms Obsidian's theme variables respond to publish.css. */
+body {
+  --text-accent: #7C6CF0;
+  --interactive-accent: #7C6CF0;
+  --font-text-size: 18px;
+  --line-height: 1.65;
+}

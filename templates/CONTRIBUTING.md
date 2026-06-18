@@ -1,6 +1,6 @@
-# Contributing to test project
+# Contributing to __TITLE__
 
-Pick the lightest path that fits your change. All contributions are accepted under the project's licence (CC-BY-SA-4.0).
+Pick the lightest path that fits your change. All contributions are accepted under the project's licence (__LICENCE__).
 
 ## 1. Leave a margin comment
 
@@ -16,7 +16,7 @@ For substantial changes, fork this repository, edit the Markdown in `chapters/`,
 
 ## Review
 
-Brandon reviews and merges contributions to the canonical edition. Outside contributions go through pull request; maintainers may commit directly.
+__MAINTAINER__ reviews and merges contributions to the canonical edition. Outside contributions go through pull request; maintainers may commit directly.
 
 ## Style
 

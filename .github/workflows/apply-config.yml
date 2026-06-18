@@ -1,0 +1,36 @@
+name: Apply config
+
+# Runs when the config (or a template) changes in a pull request, regenerates the
+# managed files, and commits them back into the PR so the change lands complete.
+on:
+  pull_request:
+    paths:
+      - textbook.config.json
+      - templates/**
+      - configure.mjs
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}   # check out the PR's own branch so we can commit to it
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node configure.mjs
+      - name: Commit regenerated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "Nothing to update."
+          else
+            git commit -m "Apply config to generated files"
+            git push
+          fi

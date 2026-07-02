@@ -54,8 +54,6 @@
   --tb-measure:      720px;   /* reading column */
   --tb-rhythm:       1.5rem;  /* paragraph spacing / vertical unit */
   --tb-gutter:       2rem;    /* content inner padding */
-  --tb-sidebar-left: 300px;
-  --tb-rail-right:   280px;
 }
 
 /* --------------------------------------------------------------------------
@@ -174,8 +172,11 @@ body {
    5. SITE STRUCTURE — left nav, right rail, header
    All class names below are Publish structural classes. [VERIFY] each once.
    -------------------------------------------------------------------------- */
+/* NOTE: no fixed column widths here. Publish sizes/positions its three
+   columns itself; hard widths from the spec (300/280px were screenshot-
+   inferred) override that and made the right rail overlap the content
+   column. We only paint borders/colours and leave geometry to Publish. */
 .site-body-left-column {
-  width: var(--tb-sidebar-left);
   background-color: var(--tb-bg);
   border-right: 1px solid var(--tb-border);
 }
@@ -187,15 +188,13 @@ body {
   padding-left: 0.5rem;
 }
 
-/* active nav item: accent text on wash background */
-.site-body-left-column .tree-item-self.is-active,
-.site-body-left-column .tree-item-self.mod-active {   /* [VERIFY] which one Publish uses */
+/* active nav item: accent text on wash background (mod-active confirmed live) */
+.site-body-left-column .tree-item-self.mod-active {
   background-color: var(--tb-accent-wash);
   color: var(--tb-accent);
 }
 
 .site-body-right-column {
-  width: var(--tb-rail-right);
   border-left: 1px solid var(--tb-border);   /* thin content↔rail divider */
 }
 

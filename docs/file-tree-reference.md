@@ -10,7 +10,7 @@ build, Plausible per-site, Hypothes.is first-party → Publisher later, Tier 3 o
 - **Canonical repo:** `github.com/textbookproject2026-alt/textbook` (public)
 - **Default branch:** `main`
 - **Push identity:** SSH alias `github-textbook` → key `~/.ssh/id_ed25519_textbook`
-- **Staging domain:** `bptest2026.xyz` (production = Erasmus, late-stage DNS cutover)
+- **Staging domain:** `bptext2026.xyz` (production = Erasmus, late-stage DNS cutover)
 
 ## Legend
 

@@ -1,6 +1,6 @@
 # test project
 
-An open-access textbook maintained by Brandon. The canonical edition is published at https://bptest2026.xyz (staging) and moves to its production domain at launch.
+An open-access textbook maintained by Brandon. The canonical edition is published at https://bptext2026.xyz (staging) and moves to its production domain at launch.
 
 This repository is the single source of truth for the textbook's content. The published reading site is generated from these Markdown files; department editions are maintained as forks.
 

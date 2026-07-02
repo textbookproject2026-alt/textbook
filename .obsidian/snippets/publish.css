@@ -1,0 +1,321 @@
+/* ==========================================================================
+   publish.css — canonical textbook edition (Obsidian Publish)
+   Source of truth: visual-direction-v1.md
+   Strategy: override Obsidian's CSS custom properties first (survives Publish
+   DOM churn); explicit selectors only where no variable reaches. Selectors
+   marked [VERIFY] should be confirmed once in DevTools on the live site —
+   they are Publish's documented/stable classes but Publish renders client-
+   side, so they can't be confirmed from static fetch.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN TOKENS — every tweakable value lives here
+   -------------------------------------------------------------------------- */
+:root {
+  /* palette */
+  --tb-accent:        #7C6CF0;  /* links, active nav, interactive accent */
+  --tb-accent-hover:  #6A57E0;  /* darker for AA on white */
+  /* AA-strict variant, pending Brandon's OK: #7C6CF0 measures ~4.0:1 on white
+     and our 18px/600 links miss WCAG's large-text exemption (18.66px) by half
+     a pixel. To pass 4.5:1 on link TEXT while keeping #7C6CF0 for non-text
+     accents (wash, highlights), swap the two lines above for:
+     --tb-accent:        #6A57E0;    ~5.0:1
+     --tb-accent-hover:  #5B48D9;    one step darker                       */
+  --tb-accent-wash:   #EEEBFD;  /* active-nav bg, internal-link tint */
+  --tb-ink:           #2B2B2B;  /* headings + body */
+  --tb-muted:         #6E6E73;  /* captions, outline, secondary */
+  --tb-faint:         #9B9BA1;  /* placeholders, disabled */
+  --tb-border:        #E6E6E6;  /* rules, dividers */
+  --tb-bg:            #FFFFFF;
+  --tb-bg-soft:       #F7F7F5;  /* rails / code */
+  --tb-mark:          #FDF2B3;  /* ==mark== */
+  /* Hypothes.is highlight: accent-tinted per Day-7 brief. Low alpha keeps
+     black text on it readable; solid #7C6CF0 behind text fails contrast.
+     (Note: visual-direction table maps "Hypothes.is echo" to #FDF2B3 —
+     brief overrides; swap this one token if Brandon prefers yellow.) */
+  --tb-annotation:         rgba(124, 108, 240, 0.22);
+  --tb-annotation-focused: rgba(124, 108, 240, 0.40);
+
+  /* type */
+  --tb-font-text: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --tb-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* scale (body 18px base) */
+  --tb-size-body: 1.125rem;   /* 18px */
+  --tb-lh-body:   1.65;
+  --tb-size-lead: 1.25rem;    /* 20px */
+  --tb-lh-lead:   1.6;
+  --tb-size-h1:   2.25rem;    /* 36px */
+  --tb-size-h2:   1.75rem;    /* 28px */
+  --tb-size-h3:   1.375rem;   /* 22px */
+  --tb-size-h4:   1.125rem;   /* 18px */
+
+  /* layout */
+  --tb-measure:      720px;   /* reading column */
+  --tb-rhythm:       1.5rem;  /* paragraph spacing / vertical unit */
+  --tb-gutter:       2rem;    /* content inner padding */
+}
+
+/* --------------------------------------------------------------------------
+   2. OBSIDIAN VARIABLE MAPPING
+   Declared on .published-container: custom properties set on the wrapper
+   beat theme defaults inherited from body.theme-light for all descendants,
+   without a specificity fight.
+   -------------------------------------------------------------------------- */
+.published-container {
+  /* fonts */
+  --font-text:       var(--tb-font-text);
+  --font-interface:  var(--tb-font-text);
+  --font-monospace:  var(--tb-font-mono);
+  --font-text-size:  18px;
+  --font-monospace-size: 0.9em;
+
+  /* colour */
+  --text-normal:  var(--tb-ink);
+  --text-muted:   var(--tb-muted);
+  --text-faint:   var(--tb-faint);
+  --text-accent:        var(--tb-accent);
+  --text-accent-hover:  var(--tb-accent-hover);
+  --interactive-accent:       var(--tb-accent);
+  --interactive-accent-hover: var(--tb-accent-hover);
+  --background-primary:         var(--tb-bg);
+  --background-secondary:       var(--tb-bg-soft);
+  --background-modifier-border: var(--tb-border);
+  --text-highlight-bg: var(--tb-mark);
+  --text-selection:    var(--tb-accent-wash);
+  --code-background:   var(--tb-bg-soft);
+
+  /* links: bold, underlined, internal/external share the accent */
+  --link-color:       var(--tb-accent);
+  --link-color-hover: var(--tb-accent-hover);
+  --link-external-color:       var(--tb-accent);
+  --link-external-color-hover: var(--tb-accent-hover);
+  --link-decoration:       underline;
+  --link-external-decoration: underline;
+
+  /* measure + rhythm */
+  --file-line-width: var(--tb-measure);
+  --line-width:      var(--tb-measure);
+  --p-spacing:       var(--tb-rhythm);
+
+  /* headings (vars first; explicit rules in §3 as fallback where
+     Publish's title elements don't consume these) */
+  --h1-size: var(--tb-size-h1);  --h1-weight: 700;  --h1-line-height: 1.15;
+  --h2-size: var(--tb-size-h2);  --h2-weight: 700;  --h2-line-height: 1.2;
+  --h3-size: var(--tb-size-h3);  --h3-weight: 600;  --h3-line-height: 1.3;
+  --h4-size: var(--tb-size-h4);  --h4-weight: 600;  --h4-line-height: 1.4;
+}
+
+body {
+  background-color: var(--tb-bg);
+}
+
+/* --------------------------------------------------------------------------
+   3. TYPOGRAPHY — explicit fallbacks + details the vars can't express
+   -------------------------------------------------------------------------- */
+.markdown-rendered,
+.markdown-preview-view {          /* [VERIFY] reading-view container, per spike §5 */
+  font-size: var(--tb-size-body);
+  line-height: var(--tb-lh-body);
+  color: var(--tb-ink);
+}
+
+.markdown-rendered h1 { font-size: var(--tb-size-h1); font-weight: 700; line-height: 1.15; }
+.markdown-rendered h2 { font-size: var(--tb-size-h2); font-weight: 700; line-height: 1.2; }
+.markdown-rendered h3 { font-size: var(--tb-size-h3); font-weight: 600; line-height: 1.3; }
+
+/* h4 carries the demoted "keycap" signature: real heading element, tracked
+   small caps via CSS only — screen-reader safe (differ #2) */
+.markdown-rendered h4 {
+  font-size: var(--tb-size-h4);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* lead paragraph = first paragraph after the chapter h1. Publish wraps every
+   block in a div.el-* wrapper (confirmed on live DOM), so headings and
+   paragraphs are never siblings — hop via the wrappers. No content class
+   survives the pandoc/Word path, so position is the only reliable hook. */
+.markdown-preview-sizer > .el-h1 + .el-p > p {
+  font-size: var(--tb-size-lead);
+  line-height: var(--tb-lh-lead);
+}
+
+/* breathing room above headings, on the 8px grid */
+.markdown-rendered h2 { margin-top: calc(var(--tb-rhythm) * 2); }
+.markdown-rendered h3,
+.markdown-rendered h4 { margin-top: calc(var(--tb-rhythm) * 1.5); }
+
+/* --------------------------------------------------------------------------
+   4. LINKS — internal/external distinction (imitate #3)
+   -------------------------------------------------------------------------- */
+.markdown-rendered a {
+  font-weight: 600;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* internal links get the wash tint on hover, signalling "stays in the book" */
+.markdown-rendered a.internal-link:hover {
+  background-color: var(--tb-accent-wash);
+}
+
+/* Publish appends its own ↗ icon to a.external-link via a background/pseudo-
+   element; we only recolour, never re-add the glyph */
+.markdown-rendered a.external-link {
+  color: var(--tb-accent);
+}
+
+/* --------------------------------------------------------------------------
+   5. SITE STRUCTURE — left nav, right rail, header
+   All class names below are Publish structural classes. [VERIFY] each once.
+   -------------------------------------------------------------------------- */
+/* NOTE: no fixed column widths here. Publish sizes/positions its three
+   columns itself; hard widths from the spec (300/280px were screenshot-
+   inferred) override that and made the right rail overlap the content
+   column. We only paint borders/colours and leave geometry to Publish. */
+.site-body-left-column {
+  background-color: var(--tb-bg);
+  border-right: 1px solid var(--tb-border);
+}
+
+/* nested nav tree: vertical indent guides at each depth (imitate #4) */
+.site-body-left-column .tree-item-children {
+  border-left: 1px solid var(--tb-border);
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+/* active nav item: accent text on wash background (mod-active confirmed live) */
+.site-body-left-column .tree-item-self.mod-active {
+  background-color: var(--tb-accent-wash);
+  color: var(--tb-accent);
+}
+
+/* No divider on the rail: it's position:absolute in Publish's DOM, floating
+   over the center column, so a full-height border-left renders as a stray
+   line across the page. The spec's content↔rail rule doesn't fit this DOM. */
+
+/* The rail floats over the page (position:absolute in Publish's DOM), so it
+   must paint an opaque background — transparent here lets the graph's edges
+   and card chrome render over underlying content at wide viewports */
+.site-body-right-column {
+  background-color: var(--tb-bg);
+}
+
+.site-body-right-column .graph-view-outer {
+  background-color: var(--tb-bg);
+}
+
+/* page outline in the rail reads muted (imitate #5) */
+.site-body-right-column .outline-view-outer {
+  color: var(--tb-muted);
+}
+
+.site-body-center-column,
+.markdown-preview-sizer {
+  padding-left: var(--tb-gutter);
+  padding-right: var(--tb-gutter);
+}
+
+/* --------------------------------------------------------------------------
+   6. HYPOTHES.IS — highlight colour ONLY
+   .hypothesis-highlight spans live in the host page (not the iframe), so
+   this is safe to restyle. Nothing else of the client is touched on screen:
+   sidebar, launcher and adder must keep working (requirement 3).
+   -------------------------------------------------------------------------- */
+.hypothesis-highlight {
+  background-color: var(--tb-annotation);
+}
+.hypothesis-highlight.hypothesis-highlight-focused,
+.hypothesis-highlight:focus {
+  background-color: var(--tb-annotation-focused);
+}
+
+/* --------------------------------------------------------------------------
+   7. CODE
+   -------------------------------------------------------------------------- */
+.markdown-rendered pre {
+  background-color: var(--tb-bg-soft);
+  border: 1px solid var(--tb-border);
+  border-radius: 6px;
+}
+.markdown-rendered :not(pre) > code {
+  background-color: var(--tb-bg-soft);
+}
+
+/* --------------------------------------------------------------------------
+   8. MOBILE — single breakpoint (requirement 5)
+   Publish collapses its own columns below tablet width; we only rescale
+   type and tighten gutters rather than re-doing its layout logic.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .published-container {
+    --tb-size-h1: 1.875rem;   /* 30px — 36px wraps badly on phones */
+    --tb-size-h2: 1.5rem;     /* 24px */
+    --tb-size-h3: 1.25rem;    /* 20px */
+    --tb-gutter: 1.25rem;
+  }
+  .markdown-preview-sizer > .el-h1 + .el-p > p {
+    font-size: var(--tb-size-body);   /* drop the lead treatment on phones */
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. PRINT — clean chapters (requirement 4)
+   Hide all site chrome and the annotation layer; content at full width.
+   -------------------------------------------------------------------------- */
+@media print {
+  .site-header,
+  .site-footer,
+  .site-body-left-column,
+  .site-body-right-column,
+  hypothesis-sidebar,          /* the client's injected custom elements */
+  hypothesis-notebook,
+  hypothesis-adder {
+    display: none !important;
+  }
+
+  .published-container {
+    --file-line-width: 100%;
+  }
+
+  .site-body-center-column,
+  .markdown-preview-sizer {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .markdown-rendered {
+    font-size: 11pt;
+    line-height: 1.5;
+    color: #000;
+  }
+
+  /* annotations are screen-only; printed chapters stay clean */
+  .hypothesis-highlight {
+    background-color: transparent;
+  }
+
+  .markdown-rendered a {
+    color: #000;
+    text-decoration: underline;
+  }
+
+  .markdown-rendered pre,
+  .markdown-rendered blockquote,
+  .markdown-rendered table {
+    break-inside: avoid;
+  }
+  .markdown-rendered h1,
+  .markdown-rendered h2,
+  .markdown-rendered h3 {
+    break-after: avoid;
+  }
+
+  @page {
+    margin: 2cm;
+  }
+}

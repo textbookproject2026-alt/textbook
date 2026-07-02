@@ -194,9 +194,9 @@ body {
   color: var(--tb-accent);
 }
 
-.site-body-right-column {
-  border-left: 1px solid var(--tb-border);   /* thin content↔rail divider */
-}
+/* No divider: Publish's rail is position:absolute, floating over the center
+   column, so a full-height border-left renders as a stray line across the
+   page. The spec's content↔rail rule doesn't translate to this DOM. */
 
 /* page outline in the rail reads muted (imitate #5) */
 .site-body-right-column .outline-view-outer {

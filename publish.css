@@ -194,9 +194,20 @@ body {
   color: var(--tb-accent);
 }
 
-/* No divider: Publish's rail is position:absolute, floating over the center
-   column, so a full-height border-left renders as a stray line across the
-   page. The spec's content↔rail rule doesn't translate to this DOM. */
+/* No divider on the rail: it's position:absolute in Publish's DOM, floating
+   over the center column, so a full-height border-left renders as a stray
+   line across the page. The spec's content↔rail rule doesn't fit this DOM. */
+
+/* The rail floats over the page (position:absolute in Publish's DOM), so it
+   must paint an opaque background — transparent here lets the graph's edges
+   and card chrome render over underlying content at wide viewports */
+.site-body-right-column {
+  background-color: var(--tb-bg);
+}
+
+.site-body-right-column .graph-view-outer {
+  background-color: var(--tb-bg);
+}
 
 /* page outline in the rail reads muted (imitate #5) */
 .site-body-right-column .outline-view-outer {

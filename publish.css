@@ -15,6 +15,12 @@
   /* palette */
   --tb-accent:        #7C6CF0;  /* links, active nav, interactive accent */
   --tb-accent-hover:  #6A57E0;  /* darker for AA on white */
+  /* AA-strict variant, pending Brandon's OK: #7C6CF0 measures ~4.0:1 on white
+     and our 18px/600 links miss WCAG's large-text exemption (18.66px) by half
+     a pixel. To pass 4.5:1 on link TEXT while keeping #7C6CF0 for non-text
+     accents (wash, highlights), swap the two lines above for:
+     --tb-accent:        #6A57E0;    ~5.0:1
+     --tb-accent-hover:  #5B48D9;    one step darker                       */
   --tb-accent-wash:   #EEEBFD;  /* active-nav bg, internal-link tint */
   --tb-ink:           #2B2B2B;  /* headings + body */
   --tb-muted:         #6E6E73;  /* captions, outline, secondary */
@@ -130,9 +136,11 @@ body {
   text-transform: uppercase;
 }
 
-/* lead paragraph = first paragraph after the chapter h1; no dedicated class
-   survives the pandoc/Word path, so position is the only reliable hook */
-.markdown-rendered h1 + p {
+/* lead paragraph = first paragraph after the chapter h1. Publish wraps every
+   block in a div.el-* wrapper (confirmed on live DOM), so headings and
+   paragraphs are never siblings — hop via the wrappers. No content class
+   survives the pandoc/Word path, so position is the only reliable hook. */
+.markdown-preview-sizer > .el-h1 + .el-p > p {
   font-size: var(--tb-size-lead);
   line-height: var(--tb-lh-lead);
 }
@@ -240,7 +248,7 @@ body {
     --tb-size-h3: 1.25rem;    /* 20px */
     --tb-gutter: 1.25rem;
   }
-  .markdown-rendered h1 + p {
+  .markdown-preview-sizer > .el-h1 + .el-p > p {
     font-size: var(--tb-size-body);   /* drop the lead treatment on phones */
   }
 }

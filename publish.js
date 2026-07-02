@@ -34,11 +34,25 @@
   };
 
   let lastTracked = null;
+
+  // Publish serves the home note at both '/' and '/index' — collapse them so
+  // Plausible doesn't split homepage stats across two entries. Hash stripped
+  // too: heading anchors would otherwise register as distinct pages.
+  const normalizedUrl = () => {
+    const u = new URL(location.href);
+    if (u.pathname === '/index') u.pathname = '/';
+    u.hash = '';
+    return u.href;
+  };
+
   const trackPageview = () => {
-    if (location.href === lastTracked) return;   // ignore duplicate route events
-    lastTracked = location.href;
-    if (typeof window.plausible === 'function') window.plausible('pageview');
-    console.log('[spike] pageview ' + location.pathname);
+    const url = normalizedUrl();
+    if (url === lastTracked) return;             // dedup on the *normalized* URL
+    lastTracked = url;
+    // 'u' overrides the URL Plausible reads from location.href; supported by
+    // script.manual.js and honoured by the pre-load queue stub.
+    if (typeof window.plausible === 'function') window.plausible('pageview', { u: url });
+    console.log('[spike] pageview ' + new URL(url).pathname);
   };
 
   // Patch the History API so client-side nav fires a pageview. pushState/

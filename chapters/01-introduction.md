@@ -16,7 +16,6 @@ console.log(test);
 > This is a test blockquote.
 > It should have a left border in the accent color.
 
-
 | Header 1 | Header 2 | Header 3 |
 |----------|----------|----------|
 | Row 1    | Data 1   | Data 2   |

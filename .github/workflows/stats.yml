@@ -5,4 +5,5 @@ jobs:
   stats:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "TODO: contributor/annotation stats (Week 5)"
+      - name: Placeholder
+        run: echo "TODO - contributor/annotation stats (Week 5)"

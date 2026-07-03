@@ -1,19 +1,43 @@
-name: link-check
+name: Check links
+
+# Lychee checks links on push, on pull requests, and weekly.
+# The weekly run catches links that rot over time without any code change.
+# Runs the lychee binary directly instead of lychee-action: the action's
+# entrypoint evals its command line and crashes on filenames containing
+# quotes/apostrophes — which pandoc-converted chapter titles will contain.
 on:
   push:
-    branches: [main]
+    paths:
+      - "**/*.md"
+      - ".lycheeignore"
+      - ".github/workflows/link-check.yml"
   pull_request:
+    paths:
+      - "**/*.md"
+      - ".lycheeignore"
+      - ".github/workflows/link-check.yml"
   schedule:
-    - cron: "0 6 * * 1"
+    - cron: "0 6 * * 1" # 06:00 UTC every Monday
+
+permissions:
+  contents: read
+
 jobs:
   lychee:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: lycheeverse/lychee-action@v2
-        with:
-          args: "--no-progress --exclude-path templates --exclude-path docs --exclude-path node_modules **/*.md"
-          fail: true
-          failIfEmpty: false
+      - uses: actions/checkout@v4
+
+      - name: Install lychee
+        run: |
+          curl -sSfL -o /tmp/lychee.tar.gz \
+            https://github.com/lycheeverse/lychee/releases/download/lychee-v0.23.0/lychee-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf /tmp/lychee.tar.gz -C /tmp lychee
+          sudo mv /tmp/lychee /usr/local/bin/lychee
+
+      # Mail links are excluded by default in this lychee version
+      # (--exclude-mail was removed; do not re-add it).
+      - name: Run lychee
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: lychee --no-progress --accept 200,206,429 --hidden "**/*.md"

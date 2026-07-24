@@ -40,7 +40,7 @@ Found a typo, a broken reference, or a paragraph that doesn't explain what it sh
 
 ### Make it your department's own
 
-Any department can publish its own edition of this textbook: the same chapters, with the department's own annotation space, so a cohort's discussion stays with that course. Editions remain connected to this canonical version and receive its updates. If that would suit your course, contact __MAINTAINER__.
+Any department can publish its own edition of this textbook: the same chapters, with the department's own annotation space, so a cohort's discussion stays with that course. Editions remain connected to this canonical version and receive its updates. The full setup guide is here: [[for-course-coordinators|Setting up a department edition]]. If that would suit your course, contact __MAINTAINER__.
 
 ---
 

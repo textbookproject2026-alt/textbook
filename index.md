@@ -1,4 +1,4 @@
-# test project
+# Education Tool Project 2026
 
 Welcome. This is an open-access textbook on ontology and social research methods — how the assumptions we make about what the social world *is* shape every choice about how to study it. It is written for students meeting these ideas for the first time, and for the course coordinators who teach them. It is free to read, share, and adapt.
 
@@ -40,7 +40,7 @@ Found a typo, a broken reference, or a paragraph that doesn't explain what it sh
 
 ### Make it your department's own
 
-Any department can publish its own edition of this textbook: the same chapters, with the department's own annotation space, so a cohort's discussion stays with that course. Editions remain connected to this canonical version and receive its updates. If that would suit your course, contact Brandon.
+Any department can publish its own edition of this textbook: the same chapters, with the department's own annotation space, so a cohort's discussion stays with that course. Editions remain connected to this canonical version and receive its updates. The full setup guide is here: [[for-course-coordinators|Setting up a department edition]]. If that would suit your course, contact Brandon.
 
 ---
 

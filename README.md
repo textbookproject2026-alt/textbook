@@ -1,4 +1,4 @@
-# test project
+# Education Tool Project 2026
 
 An open-access textbook maintained by Brandon. The canonical edition is published at https://bptext2026.xyz (staging) and moves to its production domain at launch.
 

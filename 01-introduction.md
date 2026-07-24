@@ -2,7 +2,7 @@ This is the header
 
 I'm testing if my pages are working. This one is the index, but it's just a test
 
-This is a test
+This is a test 2.0
 
 Let's go to www.gobi10k.nl
 

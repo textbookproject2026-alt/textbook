@@ -275,6 +275,35 @@ body {
   padding-right: var(--tb-gutter);
 }
 
+/* Hover page-preview popover — Publish renders this unstyled without explicit rules */
+.popover.hover-popover {
+  background-color: var(--background-primary, #ffffff);
+  border: 1px solid var(--background-modifier-border, #e4e4ec);
+  border-radius: 10px;
+  box-shadow: 0 8px 28px rgba(20, 16, 45, 0.14);
+  padding: 0.4rem 0.8rem;
+  max-width: 480px;
+  max-height: 420px;
+  overflow: auto;
+}
+.popover.hover-popover .markdown-preview-view,
+.popover.hover-popover .markdown-embed-content {
+  background-color: var(--background-primary, #ffffff);
+  color: var(--text-normal, #1d1b2e);
+}
+
+/* Callouts — Publish drops the tinted background the app applies */
+.callout {
+  background-color: rgba(var(--callout-color), 0.08);
+  border: 1px solid rgba(var(--callout-color), 0.25);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin: 1.1rem 0;
+}
+.callout-title {
+  color: rgb(var(--callout-color));
+}
+
 /* --------------------------------------------------------------------------
    6. HYPOTHES.IS — highlight colour ONLY
    .hypothesis-highlight spans live in the host page (not the iframe), so

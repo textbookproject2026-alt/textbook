@@ -1,4 +1,4 @@
-# Contributing to test project
+# Contributing to Education Tool Project 2026
 
 Pick the lightest path that fits your change. All contributions are accepted under the project's licence (CC-BY-SA-4.0).
 

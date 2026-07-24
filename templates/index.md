@@ -21,12 +21,12 @@ The textbook is published chapter by chapter as each one is finalised, so what y
 
 Short, standalone pages for the ideas the chapters build on. They are linked from wherever they appear in the text — follow them mid-chapter when you need them, or browse them here.
 
-- [[critical-realism|Critical Realism]] — the framework this book builds on: one reality, stratified into layers, only some of it observable.
-- [[three-domains|The Three Domains]] — the Empirical, the Actual, and the Real: what we observe, what happens, and what makes things happen.
-- [[monism|Monism]] — one reality rather than two: how stratification avoids the old splits between mind and matter, phenomena and noumena.
-- [[unobservables|Unobservables]] — the mechanisms and structures that shape events without ever being directly seen.
-- [[retroduction|Retroduction]] — reasoning backwards from an observed pattern to the mechanisms that must exist to produce it.
-- [[emergence|Emergence]] — how wholes come to have powers that their parts do not.
+- [[Critical Realism]] — the framework this book builds on: one reality, stratified into layers, only some of it observable.
+- [[The Three Domains]] — the Empirical, the Actual, and the Real: what we observe, what happens, and what makes things happen.
+- [[Monism]] — one reality rather than two: how stratification avoids the old splits between mind and matter, phenomena and noumena.
+- [[Unobservables]] — the mechanisms and structures that shape events without ever being directly seen.
+- [[Retroduction]] — reasoning backwards from an observed pattern to the mechanisms that must exist to produce it.
+- [[Emergence]] — how wholes come to have powers that their parts do not.
 
 ## How to read this textbook
 
@@ -44,4 +44,4 @@ Any department can publish its own edition of this textbook: the same chapters, 
 
 ---
 
-*Published at __SITE_URL__ and maintained by __MAINTAINER__. Unless otherwise noted, all content is licensed under __LICENSE__ — free to share and adapt, with attribution, under the same licence.*
+*Published at __SITE_URL__ and maintained by __MAINTAINER__. Unless otherwise noted, all content is licensed under __LICENCE__ — free to share and adapt, with attribution, under the same licence.*

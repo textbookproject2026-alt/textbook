@@ -81,6 +81,12 @@ if (typeof document !== 'undefined') {
     const log = (...args) => { if (DEBUG) console.log('[tb]', ...args); };
     log('publish.js init');
 
+    // Assigned by the annotation-badge IIFE below; called by the tag helper on
+    // an open->closed sidebar transition (the reader may have just annotated,
+    // so this page's cached count is the one entry most likely to be wrong).
+    // Declared here because the tag helper is defined before the badge.
+    let invalidateAnnoCache = null;
+
     // --- Hypothes.is (first-party flow) ---------------------------------
     // Sidebar collapsed by default; highlights always visible. No group lock:
     // on the standard tier, a `services` block switches the client into
@@ -137,15 +143,25 @@ if (typeof document !== 'undefined') {
         let dismissed = false;
 
         let arrivalObserver = null; // waits for <hypothesis-sidebar> to exist
+        let arrivalTimer = null;    // give-up timer for that wait
+        let probeTimer = null;      // bounded probe for a host that exists but isn't upgraded
+        let probeAttempts = 0;
         let stateObserver = null;   // watches open/closed inside its shadow root
+        let attachedHost = null;    // the host stateObserver is currently bound to
         let sidebarOpen = false;
         let flashTimer = null;
+        // Declared before teardown so the safety path can't hit a TDZ
+        // ReferenceError inside the very handler meant to make failures safe.
+        let onResize = null;
 
         const teardown = () => {
           if (arrivalObserver) { arrivalObserver.disconnect(); arrivalObserver = null; }
           if (stateObserver) { stateObserver.disconnect(); stateObserver = null; }
+          attachedHost = null;
           clearTimeout(flashTimer);
-          window.removeEventListener('resize', onResize);
+          clearTimeout(arrivalTimer);
+          clearTimeout(probeTimer);
+          if (onResize) window.removeEventListener('resize', onResize);
           const p = document.getElementById(PANEL_ID);
           if (p) p.remove();
         };
@@ -321,7 +337,7 @@ if (typeof document !== 'undefined') {
           panel.style.setProperty('--tb-tag-right', (usable ? fromRight + 16 : 444) + 'px');
         };
 
-        const onResize = safely(() => {
+        onResize = safely(() => {
           const host = document.querySelector('hypothesis-sidebar');
           if (sidebarOpen && host) positionPanel(host);
         });
@@ -342,6 +358,14 @@ if (typeof document !== 'undefined') {
         // stable than utility classes); the sidebar-collapsed class is the
         // fallback. Neither exists until embed.js finishes booting → closed.
         const isOpen = (shadow) => {
+          // Nothing enforces that the toggle is the only aria-expanded button in
+          // there; if a client update adds another, the first match could pin
+          // our state. Surface that in testing rather than narrowing the
+          // selector (a narrower one would break silently on a class rename).
+          if (DEBUG && shadow.querySelectorAll('button[aria-expanded]').length !== 1) {
+            log('WARN expected exactly one button[aria-expanded] in sidebar shadow root, got',
+              shadow.querySelectorAll('button[aria-expanded]').length);
+          }
           const btn = shadow.querySelector('button[aria-expanded]');
           if (btn) return btn.getAttribute('aria-expanded') === 'true';
           const container = shadow.querySelector('.sidebar-container');
@@ -356,14 +380,34 @@ if (typeof document !== 'undefined') {
           sidebarOpen = open;
           log('hypothesis sidebar', open ? 'open' : 'closed');
           if (open) { showPanel(host); window.addEventListener('resize', onResize); }
-          else { hidePanel(); window.removeEventListener('resize', onResize); }
+          else {
+            hidePanel();
+            window.removeEventListener('resize', onResize);
+            // Just-closed sidebar is the likeliest moment for this page's count
+            // to have changed (the reader annotated); drop the cached entry.
+            if (invalidateAnnoCache) invalidateAnnoCache();
+          }
         });
 
+        // The sidebar is a React app: subtree+childList+attributes fires on every
+        // hover, focus and annotation render, and each update() does a document
+        // query plus two shadow queries. Coalesce to one read per frame.
+        let updateQueued = false;
+        const scheduleUpdate = () => {
+          if (updateQueued) return;
+          updateQueued = true;
+          requestAnimationFrame(() => { updateQueued = false; update(); });
+        };
+
         const attach = (host) => {
-          if (stateObserver) return true; // already attached (double-attach guard)
+          if (stateObserver && host === attachedHost) return true; // already attached
           const shadow = host.shadowRoot;  // OPEN shadow root (verified live)
           if (!shadow) return false;       // element not upgraded yet — keep waiting
-          stateObserver = new MutationObserver(update);
+          // Host replaced (client teardown/reload path): stop observing the
+          // detached shadow root, otherwise state freezes at its last value.
+          if (stateObserver) { stateObserver.disconnect(); stateObserver = null; }
+          attachedHost = host;
+          stateObserver = new MutationObserver(scheduleUpdate);
           // childList too: .sidebar-container and the toggle button arrive
           // async as the client boots, and their arrival must trigger a read.
           stateObserver.observe(shadow, {
@@ -378,22 +422,56 @@ if (typeof document !== 'undefined') {
 
         // embed.js boots async: <hypothesis-sidebar> is usually absent when
         // this runs. Watch the document for its arrival, then move observation
-        // into its shadow root. If the host exists but has no shadowRoot yet,
-        // the arrival observer stays connected — shadow attachment itself
-        // emits no mutation, but the client's continued boot activity does,
-        // re-triggering the check. Event-driven throughout; no polling.
+        // into its shadow root.
+        //
+        // If the host exists but has no shadowRoot yet, we do NOT rely on the
+        // arrival observer: shadow attachment emits no mutation, and mutations
+        // *inside* a shadow root are invisible to a light-DOM observer, so on a
+        // page with no public annotations (no highlight spans) there may be no
+        // further light-DOM write at all. Bounded probe instead — 25 tries at
+        // 200 ms, then we stop for good.
+        const PROBE_LIMIT = 25;
+
+        const stopWaiting = () => {
+          if (arrivalObserver) { arrivalObserver.disconnect(); arrivalObserver = null; }
+          clearTimeout(arrivalTimer); arrivalTimer = null;
+          clearTimeout(probeTimer); probeTimer = null;
+        };
+
+        const startShadowProbe = () => {
+          if (probeTimer || stateObserver || probeAttempts >= PROBE_LIMIT) return;
+          probeTimer = setTimeout(safely(() => {
+            probeTimer = null;
+            probeAttempts++;
+            if (stateObserver) return;
+            if (tryAttach()) stopWaiting();
+            else if (probeAttempts >= PROBE_LIMIT) log('sidebar host never upgraded — probe exhausted');
+          }), 200);
+        };
+
         const tryAttach = () => {
           const host = document.querySelector('hypothesis-sidebar');
-          return !!host && attach(host);
+          if (!host) return false;
+          if (attach(host)) return true;
+          startShadowProbe(); // host present, not upgraded yet
+          return false;
         };
         if (!tryAttach()) {
           arrivalObserver = new MutationObserver(safely(() => {
-            if (tryAttach() && arrivalObserver) {
-              arrivalObserver.disconnect();
-              arrivalObserver = null;
-            }
+            if (tryAttach()) stopWaiting();
           }));
           arrivalObserver.observe(document.documentElement, { childList: true, subtree: true });
+          // If embed.js is blocked (adblock, CSP, offline) the host never
+          // appears and this observer would otherwise re-run on every Publish
+          // pane re-render for the whole session. Give up after 15s.
+          arrivalTimer = setTimeout(safely(() => {
+            arrivalTimer = null;
+            if (!stateObserver && arrivalObserver) {
+              arrivalObserver.disconnect();
+              arrivalObserver = null;
+              log('hypothesis-sidebar never appeared — released arrival observer');
+            }
+          }), 15000);
         }
         log('tag helper armed');
       } catch (e) {
@@ -427,25 +505,56 @@ if (typeof document !== 'undefined') {
         const API = 'https://api.hypothes.is/api/search';
         const BADGE_CLASS = 'tb-anno-badge';
         const STYLE_ID = 'tb-anno-badge-style';
-        const CACHE_PREFIX = 'tb-anno-count:'; // sessionStorage, keyed by page path
+        const CACHE_PREFIX = 'tb-anno-count:'; // sessionStorage, keyed by repo path
         const CACHE_TTL = 5 * 60 * 1000;       // 5 minutes
         const FETCH_TIMEOUT = 6000;            // ms; adblock stalls hit this too
 
-        let controller = null; // one in-flight request max, newest wins
+        let controller = null; // in-flight request; aborted only on a real path change
+        let inflight = null;   // { path, promise } — re-injections of the same page share it
+
+        // Keyed by the CANONICAL repo path, so "/" and "/index" (and trailing-
+        // slash variants) share one entry instead of splitting the home note's
+        // count across two. The "v1:" is the query schema version: bump it when
+        // the uri=/group= shape changes (Publisher seam) so counts cached under
+        // the old public-layer query aren't served after deploy.
+        const cacheKey = (path) => CACHE_PREFIX + 'v1:' + path;
 
         // sessionStorage can throw (privacy modes, quota) — treat as cache-miss.
         const cacheGet = (path) => {
           try {
-            const raw = sessionStorage.getItem(CACHE_PREFIX + path);
+            const raw = sessionStorage.getItem(cacheKey(path));
             if (!raw) return null;
             const { t, n } = JSON.parse(raw);
-            return Date.now() - t < CACHE_TTL && Number.isFinite(n) ? n : null;
+            // age >= 0 rejects entries from the future: a backwards clock
+            // adjustment would otherwise pin a stale count indefinitely.
+            const age = Date.now() - t;
+            return age >= 0 && age < CACHE_TTL && Number.isFinite(n) ? n : null;
           } catch (e) { return null; }
         };
         const cachePut = (path, n) => {
           try {
-            sessionStorage.setItem(CACHE_PREFIX + path, JSON.stringify({ t: Date.now(), n }));
+            sessionStorage.setItem(cacheKey(path), JSON.stringify({ t: Date.now(), n }));
           } catch (e) { /* cache is an optimisation; losing it is fine */ }
+        };
+        // Finding 11: called by the tag helper when the sidebar closes.
+        invalidateAnnoCache = () => {
+          try { sessionStorage.removeItem(cacheKey(urlToRepoPath(location.pathname))); }
+          catch (e) { /* nothing to do; the TTL still bounds staleness */ }
+        };
+
+        // Canonical page URL for uri=. Derived from the canonical repo path so
+        // the duplicate URLs collapse to one query — but re-expanded to the URL
+        // form Publish actually serves (".md" dropped, spaces back to "+", home
+        // note back to "/"), because that is what the embedded client anchors
+        // against. Querying the literal repo path would match nothing.
+        const canonicalUri = (repoPath) => {
+          const bare = repoPath.replace(/\.md$/, '');
+          if (bare === 'index') return location.origin + '/';
+          const encoded = bare
+            .split('/')
+            .map((seg) => encodeURIComponent(seg).replace(/%20/g, '+'))
+            .join('/');
+          return location.origin + '/' + encoded;
         };
 
         const injectStyle = () => {
@@ -456,7 +565,7 @@ if (typeof document !== 'undefined') {
           // badge reads as part of the existing control row. It lives inside
           // .tb-page-controls, so mobile layout follows the row's own rules.
           style.textContent = `
-            button.${BADGE_CLASS} {
+            button.${BADGE_CLASS}, span.${BADGE_CLASS} {
               font-family: var(--tb-font-text, sans-serif);
               font-size: var(--tb-size-controls, 0.85rem);
               line-height: 1.4;
@@ -472,6 +581,8 @@ if (typeof document !== 'undefined') {
               color: var(--tb-accent, #7C6CF0);
               background: var(--tb-accent-wash, #EEEBFD);
             }
+            /* No client to open: same chip, no affordance. */
+            span.${BADGE_CLASS} { cursor: default; }
           `;
           document.head.appendChild(style);
         };
@@ -484,6 +595,13 @@ if (typeof document !== 'undefined') {
         const openSidebar = () => {
           try {
             const host = document.querySelector('hypothesis-sidebar');
+            // Same single-toggle assumption as the tag helper's isOpen();
+            // assert rather than narrow, so a client update surfaces in testing.
+            if (DEBUG && host && host.shadowRoot &&
+                host.shadowRoot.querySelectorAll('button[aria-expanded]').length !== 1) {
+              log('WARN expected exactly one button[aria-expanded] in sidebar shadow root, got',
+                host.shadowRoot.querySelectorAll('button[aria-expanded]').length);
+            }
             const btn = host && host.shadowRoot &&
               host.shadowRoot.querySelector('button[aria-expanded]');
             if (btn && btn.getAttribute('aria-expanded') !== 'true') btn.click();
@@ -495,20 +613,24 @@ if (typeof document !== 'undefined') {
           injectStyle();
           const old = wrap.querySelector('.' + BADGE_CLASS);
           if (old) old.remove();
-          const b = document.createElement('button');
-          b.type = 'button';
+          // api.hypothes.is and hypothes.is/embed.js are not always blocked
+          // together: without a host element there is no toggle to click, so
+          // render the count as a plain span rather than a button whose click
+          // does nothing visible.
+          const interactive = !!document.querySelector('hypothesis-sidebar');
+          const b = document.createElement(interactive ? 'button' : 'span');
+          if (interactive) b.type = 'button';
           b.className = BADGE_CLASS;
           // N=0 is an invitation, not emptiness.
-          b.textContent = count === 0 ? 'Annotate this page'
+          b.textContent = count === 0 ? (interactive ? 'Annotate this page' : 'No annotations yet')
             : count === 1 ? '1 annotation'
             : count + ' annotations';
-          b.addEventListener('click', openSidebar);
+          if (interactive) b.addEventListener('click', openSidebar);
           wrap.append(b);
           log('anno badge:', count, 'for', wrap.dataset.path);
         };
 
         const fetchCount = async (uri) => {
-          if (controller) controller.abort(); // newest navigation wins
           const c = (controller = new AbortController());
           const timer = setTimeout(() => c.abort(), FETCH_TIMEOUT);
           try {
@@ -525,16 +647,33 @@ if (typeof document !== 'undefined') {
           }
         };
 
+        // Re-injections of the SAME page (Publish wipes the pane, or the target
+        // chain flips to a more specific element) must not cancel the request
+        // already running for it — a search round trip routinely outlives the
+        // re-render window, so cancel-and-restart could loop without ever
+        // resolving. Share the in-flight promise instead; abort only when the
+        // canonical path actually changed, i.e. a real navigation.
+        const countFor = (path, uri) => {
+          if (inflight && inflight.path === path) return inflight.promise;
+          if (controller) controller.abort(); // different page now — newest wins
+          const promise = fetchCount(uri).finally(() => {
+            if (inflight && inflight.path === path) inflight = null;
+          });
+          inflight = { path, promise };
+          return promise;
+        };
+
         // Called by injectControls with the freshly injected controls row.
         // Fire-and-forget: nothing awaits it, nothing downstream depends on it.
         return (wrap) => {
           (async () => {
             try {
-              const path = location.pathname; // capture: staleness guard key
+              // Canonical repo path: cache key, dedupe key and staleness guard.
+              const path = urlToRepoPath(location.pathname);
               const cached = cacheGet(path);
               if (cached !== null) { place(wrap, cached); return; } // no API hit
-              const n = await fetchCount(location.origin + path);
-              if (location.pathname !== path) return; // raced a rapid nav — drop
+              const n = await countFor(path, canonicalUri(path));
+              if (urlToRepoPath(location.pathname) !== path) return; // raced a rapid nav — drop
               cachePut(path, n);
               place(wrap, n);
             } catch (e) {
@@ -638,7 +777,15 @@ if (typeof document !== 'undefined') {
           return;
         }
 
+        // Reap document-wide, not just inside the chosen target: the chain can
+        // resolve differently across retries (pane renders progressively, so
+        // .markdown-preview-view can win before .page-header exists), leaving a
+        // live row inside a previously-chosen ancestor that a target-scoped
+        // lookup can't see — a duplicate row and a duplicate badge fetch.
         const existing = target.querySelector(`.${CONTROLS_CLASS}`);
+        for (const el of document.querySelectorAll(`.${CONTROLS_CLASS}`)) {
+          if (el !== existing) el.remove();
+        }
         if (!existing || existing.dataset.path !== repoPath) {
           if (existing) existing.remove(); // stale controls from a reused element
           const wrap = buildControls(repoPath);
@@ -657,12 +804,16 @@ if (typeof document !== 'undefined') {
     }
     // --- SPA navigation handler (spike-inherited) -------------------------
     // Publish navigates via the History API. Patch pushState/replaceState and
-    // listen for popstate; dedupe on pathname so redundant history calls for
-    // the same page can't double-count a pageview or thrash the injections.
+    // listen for popstate; dedupe on the CANONICAL repo path so redundant
+    // history calls for the same page can't double-count a pageview or thrash
+    // the injections. Canonical, not raw pathname: the home note is served at
+    // both "/" and "/index" and trailing slashes occur, so a normalising
+    // replaceState during Publish's boot is one page, not two.
     let lastPath = null;
     function onNavigate(source) {
-      if (location.pathname === lastPath) return;
-      lastPath = location.pathname;
+      const canonical = urlToRepoPath(location.pathname);
+      if (canonical === lastPath) return;
+      lastPath = canonical;
       log('navigate (' + source + '):', lastPath);
       firePageview(); // exactly one per real navigation
       injectControls(); // re-run per page: previous DOM is gone after nav

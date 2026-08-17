@@ -37,7 +37,17 @@ jobs:
 
       # Mail links are excluded by default in this lychee version
       # (--exclude-mail was removed; do not re-add it).
+      #
+      # --exclude-path docs: the operator guides link to auth-walled
+      # Cloudflare and Hypothes.is pages that 403 to any checker. The URLs
+      # are correct; only a logged-in human can prove it. Excluded since
+      # Day 6. templates/ holds unrendered placeholders, node_modules/
+      # isn't ours. These were dropped by accident when this job moved off
+      # lychee-action; restored.
       - name: Run lychee
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: lychee --no-progress --accept 200,206,429 --hidden "**/*.md"
+        run: >
+          lychee --no-progress
+          --exclude-path templates --exclude-path docs --exclude-path node_modules
+          --accept 200,206,429 --hidden "**/*.md"

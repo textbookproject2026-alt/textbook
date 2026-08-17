@@ -52,9 +52,16 @@ Readers are asked to tag their comment with one of two words, using the small he
 
 1. Open the chapter in Obsidian and make the fix.
 2. Publish.
-3. Reply to the comment: "fixed — thanks". One line is plenty.
+3. Reload the page and glance at the comment's highlight — see below for why.
+4. Reply to the comment: "fixed — thanks". One line is plenty.
 
-One thing to expect and not worry about: **editing the sentence a comment is attached to will often orphan that comment.** Hypothes.is anchors a comment to the exact wording it was left on, so once the wording changes, the comment can no longer find its place and moves to an "orphans" area of the sidebar. That is normal and correct — the comment did its job. Don't try to preserve the anchor by leaving the typo in.
+**What happens to a comment when you edit the text it's attached to.** Hypothes.is remembers the exact wording a comment was left on, plus a little of the text either side, and searches for that when the page loads. Editing the wording therefore has three possible outcomes:
+
+- **It re-anchors correctly.** The usual result for small edits — a fixed typo, a reworded clause nearby. Enough of the surrounding text still matches, and the highlight lands where it should.
+- **It orphans.** If the passage is substantially gone, the comment can't find its place and moves to an "orphans" area of the sidebar. That's fine — the comment did its job. Don't preserve the anchor by leaving the typo in.
+- **It re-anchors to a different occurrence of the same wording.** The one to watch for. If you change the exact phrase the comment was left on, and that phrase appears again later on the page, the search can settle on the *next* occurrence. No orphan, no warning — the comment is simply now highlighting the wrong text. Seen live: changing "the chapter" to "this chapter" moved the highlight to the following "the chapter" further down.
+
+That third case is why step 3 exists. It costs a few seconds and doesn't need fixing from your side — the highlight is cosmetic and the reply is what the reader sees. If it has jumped, just say so in the reply: *"fixed — thanks. Heads up, your highlight has shifted to another spot on the page."*
 
 **`discussion`** — the reader is raising a question, a disagreement, or a point of interpretation. Nothing needs fixing. Reply if you have something worth saying; leave it alone if you don't. An unanswered discussion comment is not a failure, and a thoughtful reply next week beats a hurried one today.
 

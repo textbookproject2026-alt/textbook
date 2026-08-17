@@ -565,7 +565,7 @@ if (typeof document !== 'undefined') {
           // badge reads as part of the existing control row. It lives inside
           // .tb-page-controls, so mobile layout follows the row's own rules.
           style.textContent = `
-            button.${BADGE_CLASS}, span.${BADGE_CLASS} {
+            button.${BADGE_CLASS} {
               font-family: var(--tb-font-text, sans-serif);
               font-size: var(--tb-size-controls, 0.85rem);
               line-height: 1.4;
@@ -581,8 +581,6 @@ if (typeof document !== 'undefined') {
               color: var(--tb-accent, #7C6CF0);
               background: var(--tb-accent-wash, #EEEBFD);
             }
-            /* No client to open: same chip, no affordance. */
-            span.${BADGE_CLASS} { cursor: default; }
           `;
           document.head.appendChild(style);
         };
@@ -592,9 +590,22 @@ if (typeof document !== 'undefined') {
         // helper reads state from — host element only, never the iframe).
         // Only click when collapsed: the badge is an "open" affordance, not
         // a blind toggle.
-        const openSidebar = () => {
+        //
+        // The client can be absent at click time (embed.js blocked, or still
+        // booting — api.hypothes.is answers first on a warm cache). Report that
+        // on the badge itself instead of doing nothing visible. The handler
+        // stays attached and the label is restored on any later click that
+        // finds a host, so a slow boot recovers without a navigation.
+        const BLOCKED_TEXT = 'annotation tools blocked';
+        const openSidebar = (badge, label) => {
           try {
             const host = document.querySelector('hypothesis-sidebar');
+            if (!host) {
+              if (badge) badge.textContent = BLOCKED_TEXT;
+              log('anno badge: no sidebar host at click time');
+              return;
+            }
+            if (badge && badge.textContent === BLOCKED_TEXT) badge.textContent = label;
             // Same single-toggle assumption as the tag helper's isOpen();
             // assert rather than narrow, so a client update surfaces in testing.
             if (DEBUG && host && host.shadowRoot &&
@@ -613,19 +624,19 @@ if (typeof document !== 'undefined') {
           injectStyle();
           const old = wrap.querySelector('.' + BADGE_CLASS);
           if (old) old.remove();
-          // api.hypothes.is and hypothes.is/embed.js are not always blocked
-          // together: without a host element there is no toggle to click, so
-          // render the count as a plain span rather than a button whose click
-          // does nothing visible.
-          const interactive = !!document.querySelector('hypothesis-sidebar');
-          const b = document.createElement(interactive ? 'button' : 'span');
-          if (interactive) b.type = 'button';
+          const b = document.createElement('button');
+          b.type = 'button';
           b.className = BADGE_CLASS;
           // N=0 is an invitation, not emptiness.
-          b.textContent = count === 0 ? (interactive ? 'Annotate this page' : 'No annotations yet')
+          // Always a button: the host is routinely absent at place time (a
+          // cached count renders before embed.js finishes booting), so gating
+          // the affordance on it here would strip a working client's badge.
+          // Whether the client is reachable is decided at click time instead.
+          const label = count === 0 ? 'Annotate this page'
             : count === 1 ? '1 annotation'
             : count + ' annotations';
-          if (interactive) b.addEventListener('click', openSidebar);
+          b.textContent = label;
+          b.addEventListener('click', () => openSidebar(b, label));
           wrap.append(b);
           log('anno badge:', count, 'for', wrap.dataset.path);
         };

@@ -1,18 +1,18 @@
 {
   "meta": {
     "schemaVersion": 1,
-    "generatedAt": "2026-08-17T12:36:05.053Z",
+    "generatedAt": "2026-08-17T12:58:48.376Z",
     "runDate": "2026-08-17",
     "generatedBy": "scripts/backup-annotations.mjs",
     "api": "https://api.hypothes.is/api",
     "site": "https://bptext2026.xyz",
     "account": "acct:AlecGordon@hypothes.is",
     "complete": true,
-    "totalAnnotations": 4,
+    "totalAnnotations": 7,
     "scopes": {
       "public": {
         "label": "public layer for https://bptext2026.xyz",
-        "count": 4,
+        "count": 7,
         "ok": true,
         "method": "wildcard_uri",
         "pages": 2,
@@ -340,6 +340,194 @@
           "html": "https://hypothes.is/a/V9Q3cIdhEfG5F1_0PnHpvA",
           "incontext": "https://hyp.is/V9Q3cIdhEfG5F1_0PnHpvA/bptext2026.xyz/chapters/chapter-03",
           "json": "https://hypothes.is/api/annotations/V9Q3cIdhEfG5F1_0PnHpvA"
+        },
+        "actions": [],
+        "mentions": [],
+        "user_info": {
+          "display_name": null
+        },
+        "flagged": false,
+        "hidden": false
+      },
+      {
+        "id": "rg6HbJo6EfGWpr8gqKT9GQ",
+        "created": "2026-08-17T12:53:44.392811+00:00",
+        "updated": "2026-08-17T12:53:44.392811+00:00",
+        "user": "acct:AlecGordon@hypothes.is",
+        "uri": "https://bptext2026.xyz/chapters/chapter-03",
+        "text": "This is definitely a tag",
+        "tags": [
+          "admin"
+        ],
+        "group": "__world__",
+        "moderation_status": "APPROVED",
+        "permissions": {
+          "read": [
+            "group:__world__"
+          ],
+          "admin": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "update": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "delete": [
+            "acct:AlecGordon@hypothes.is"
+          ]
+        },
+        "target": [
+          {
+            "source": "https://bptext2026.xyz/chapters/chapter-03"
+          }
+        ],
+        "document": {
+          "title": [
+            "chapter-03 -"
+          ]
+        },
+        "links": {
+          "html": "https://hypothes.is/a/rg6HbJo6EfGWpr8gqKT9GQ",
+          "incontext": "https://hyp.is/RNnDpodhEfGHihsMBcDzKA/bptext2026.xyz/chapters/chapter-03",
+          "json": "https://hypothes.is/api/annotations/rg6HbJo6EfGWpr8gqKT9GQ"
+        },
+        "actions": [],
+        "mentions": [],
+        "user_info": {
+          "display_name": null
+        },
+        "references": [
+          "RNnDpodhEfGHihsMBcDzKA"
+        ],
+        "flagged": false,
+        "hidden": false
+      },
+      {
+        "id": "7GQ2TJo6EfGMNTeUCoWo2w",
+        "created": "2026-08-17T12:55:28.954438+00:00",
+        "updated": "2026-08-17T12:55:28.954438+00:00",
+        "user": "acct:AlecGordon@hypothes.is",
+        "uri": "https://bptext2026.xyz/chapters/chapter-03",
+        "text": "",
+        "tags": [],
+        "group": "__world__",
+        "moderation_status": null,
+        "permissions": {
+          "read": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "admin": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "update": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "delete": [
+            "acct:AlecGordon@hypothes.is"
+          ]
+        },
+        "target": [
+          {
+            "source": "https://bptext2026.xyz/chapters/chapter-03",
+            "selector": [
+              {
+                "type": "RangeSelector",
+                "endOffset": 585,
+                "startOffset": 577,
+                "endContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[6]/p[1]",
+                "startContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[6]/p[1]"
+              },
+              {
+                "end": 1276,
+                "type": "TextPositionSelector",
+                "start": 1268
+              },
+              {
+                "type": "TextQuoteSelector",
+                "exact": "measured",
+                "prefix": "stricting claims to what can be ",
+                "suffix": ".The chapter proceeds in four st"
+              }
+            ]
+          }
+        ],
+        "document": {
+          "title": [
+            "chapter-03 -"
+          ]
+        },
+        "links": {
+          "html": "https://hypothes.is/a/7GQ2TJo6EfGMNTeUCoWo2w",
+          "incontext": "https://hyp.is/7GQ2TJo6EfGMNTeUCoWo2w/bptext2026.xyz/chapters/chapter-03",
+          "json": "https://hypothes.is/api/annotations/7GQ2TJo6EfGMNTeUCoWo2w"
+        },
+        "actions": [],
+        "mentions": [],
+        "user_info": {
+          "display_name": null
+        },
+        "flagged": false,
+        "hidden": false
+      },
+      {
+        "id": "-_qKmJo6EfGrcrfec8b3Fg",
+        "created": "2026-08-17T12:55:55.108723+00:00",
+        "updated": "2026-08-17T12:55:55.108723+00:00",
+        "user": "acct:AlecGordon@hypothes.is",
+        "uri": "https://bptext2026.xyz/chapters/chapter-03",
+        "text": "This chapter instead of the chapter",
+        "tags": [
+          "copy-edit"
+        ],
+        "group": "__world__",
+        "moderation_status": "APPROVED",
+        "permissions": {
+          "read": [
+            "group:__world__"
+          ],
+          "admin": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "update": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "delete": [
+            "acct:AlecGordon@hypothes.is"
+          ]
+        },
+        "target": [
+          {
+            "source": "https://bptext2026.xyz/chapters/chapter-03",
+            "selector": [
+              {
+                "type": "RangeSelector",
+                "endOffset": 11,
+                "startOffset": 0,
+                "endContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[7]/p[1]",
+                "startContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[7]/p[1]"
+              },
+              {
+                "end": 1288,
+                "type": "TextPositionSelector",
+                "start": 1277
+              },
+              {
+                "type": "TextQuoteSelector",
+                "exact": "The chapter",
+                "prefix": " claims to what can be measured.",
+                "suffix": " proceeds in four stages. Sectio"
+              }
+            ]
+          }
+        ],
+        "document": {
+          "title": [
+            "chapter-03 -"
+          ]
+        },
+        "links": {
+          "html": "https://hypothes.is/a/-_qKmJo6EfGrcrfec8b3Fg",
+          "incontext": "https://hyp.is/-_qKmJo6EfGrcrfec8b3Fg/bptext2026.xyz/chapters/chapter-03",
+          "json": "https://hypothes.is/api/annotations/-_qKmJo6EfGrcrfec8b3Fg"
         },
         "actions": [],
         "mentions": [],

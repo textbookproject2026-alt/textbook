@@ -48,11 +48,11 @@ jobs:
 
       # The default branch: gives us scripts/backup-annotations.mjs and the .md
       # files the per-URI fallback derives page URLs from.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: "20"
+          node-version: "22"
 
       - name: Check out the backups branch (create it on first run)
         env:

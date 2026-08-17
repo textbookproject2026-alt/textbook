@@ -1,0 +1,166 @@
+name: Backup annotations
+
+# Weekly lossless snapshot of the textbook's Hypothes.is annotations
+# (public layer + each private group) into backups/annotations-YYYY-MM-DD.json.
+#
+# WHY THE COMMIT GOES TO A `backups` BRANCH AND NOT main
+# ------------------------------------------------------
+# main is branch-protected and requires a pull request. github-actions[bot]
+# cannot bypass that rule, so a scheduled `git push origin main` would be
+# rejected — and a scheduled job that fails at 03:00 on a Sunday is a job
+# nobody notices for months. Committing to a dedicated, unprotected `backups`
+# branch keeps the automation working without weakening main's protection, and
+# keeps a few hundred KB of annotation JSON out of the textbook's own history.
+#
+# The branch is created on first run if it does not exist yet (as an orphan
+# branch: it holds backups only, no textbook content).
+
+on:
+  schedule:
+    - cron: "0 3 * * 0" # 03:00 UTC every Sunday
+  workflow_dispatch:
+
+permissions:
+  contents: write # push the backup commit to the `backups` branch
+
+# Never let a manual run and a scheduled run race each other onto the branch.
+concurrency:
+  group: backup-annotations
+  cancel-in-progress: false
+
+env:
+  BACKUP_BRANCH: backups
+  KEEP: "12" # retain 12 weekly files (~3 months)
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check the API token secret is present
+        env:
+          HYPOTHESIS_API_TOKEN: ${{ secrets.HYPOTHESIS_API_TOKEN }}
+        run: |
+          if [ -z "$HYPOTHESIS_API_TOKEN" ]; then
+            echo "::error::Repository secret HYPOTHESIS_API_TOKEN is not set. Add it under Settings -> Secrets and variables -> Actions. Get a token from https://hypothes.is/account/developer while signed in as the account that owns the annotation groups."
+            exit 1
+          fi
+
+      # The default branch: gives us scripts/backup-annotations.mjs and the .md
+      # files the per-URI fallback derives page URLs from.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check out the backups branch (create it on first run)
+        env:
+          REMOTE: https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        run: |
+          set -euo pipefail
+          DIR="${{ runner.temp }}/backups-branch"
+
+          # git ls-remote --exit-code: 0 = ref found, 2 = no such ref, anything
+          # else = we could not talk to the remote at all. Distinguishing those
+          # matters — treating an auth/network failure as "branch is missing"
+          # would start a fresh orphan history over the top of real backups.
+          set +e
+          git ls-remote --exit-code --heads "$REMOTE" "$BACKUP_BRANCH" >/dev/null 2>&1
+          rc=$?
+          set -e
+
+          case "$rc" in
+            0)
+              echo "Branch '$BACKUP_BRANCH' exists — cloning it."
+              git clone --quiet --depth 1 --branch "$BACKUP_BRANCH" --single-branch "$REMOTE" "$DIR"
+              ;;
+            2)
+              echo "Branch '$BACKUP_BRANCH' not found — creating it (first run)."
+              mkdir -p "$DIR"
+              git -C "$DIR" init --quiet -b "$BACKUP_BRANCH"
+              git -C "$DIR" remote add origin "$REMOTE"
+              cat > "$DIR/README.md" <<'EOF'
+          # Annotation backups
+
+          This branch holds nothing but weekly Hypothes.is annotation snapshots,
+          written by `.github/workflows/backup-annotations.yml` on `main`.
+
+          Backups live here rather than on `main` because `main` requires pull
+          requests and `github-actions[bot]` cannot bypass that rule.
+
+          See `docs/annotation-restore.md` on `main` for what these files contain
+          and what restoring from them actually involves.
+          EOF
+              ;;
+            *)
+              echo "::error::Could not reach the remote to check for the '$BACKUP_BRANCH' branch (git ls-remote exit code $rc)."
+              exit 1
+              ;;
+          esac
+
+          git -C "$DIR" config user.name "github-actions[bot]"
+          git -C "$DIR" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch annotations
+        id: fetch
+        env:
+          HYPOTHESIS_API_TOKEN: ${{ secrets.HYPOTHESIS_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          DIR="${{ runner.temp }}/backups-branch"
+
+          # Exit codes from the script:
+          #   0 = every scope collected
+          #   2 = at least one scope failed, but the file WAS written so the
+          #       scopes that succeeded are not lost — commit it, then fail
+          #   * = fatal, nothing written
+          set +e
+          node "$GITHUB_WORKSPACE/scripts/backup-annotations.mjs" \
+            --out-dir "$DIR/backups" \
+            --keep "$KEEP"
+          rc=$?
+          set -e
+
+          echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$rc" -ne 0 ] && [ "$rc" -ne 2 ]; then
+            echo "::error::Annotation backup failed (exit $rc); nothing was written."
+            exit "$rc"
+          fi
+
+      - name: Commit and push to the backups branch
+        run: |
+          set -euo pipefail
+          DIR="${{ runner.temp }}/backups-branch"
+          cd "$DIR"
+
+          git add -A
+
+          if git diff --cached --quiet; then
+            echo "No change since the last backup — nothing to commit."
+            exit 0
+          fi
+
+          # Counts in the commit message so `git log` on this branch reads as a
+          # history of how the annotation corpus grew, without opening any file.
+          SUMMARY="$(node -e '
+            const fs = require("fs");
+            const f = fs.readdirSync("backups").filter(n => /^annotations-\d{4}-\d{2}-\d{2}\.json$/.test(n)).sort().pop();
+            const m = JSON.parse(fs.readFileSync("backups/" + f, "utf8")).meta;
+            console.log(Object.entries(m.scopes).map(([k, v]) => `${k}=${v.count}`).join(" "));
+          ')"
+
+          DATE="$(date -u +%Y-%m-%d)"
+          git commit -q -m "chore(backups): annotations ${DATE}" -m "${SUMMARY}"
+          git push --quiet origin "HEAD:${BACKUP_BRANCH}"
+          echo "Pushed to ${BACKUP_BRANCH}: ${SUMMARY}"
+          echo "### Annotation backup ${DATE}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "${SUMMARY}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail the run if any scope was incomplete
+        if: steps.fetch.outputs.rc == '2'
+        run: |
+          echo "::error::At least one annotation scope failed to collect. The partial backup was committed (meta.complete = false in the file) — check the 'Fetch annotations' step log for which scope and why."
+          exit 1

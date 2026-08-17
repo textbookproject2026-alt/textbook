@@ -1,0 +1,356 @@
+{
+  "meta": {
+    "schemaVersion": 1,
+    "generatedAt": "2026-08-17T12:36:05.053Z",
+    "runDate": "2026-08-17",
+    "generatedBy": "scripts/backup-annotations.mjs",
+    "api": "https://api.hypothes.is/api",
+    "site": "https://bptext2026.xyz",
+    "account": "acct:AlecGordon@hypothes.is",
+    "complete": true,
+    "totalAnnotations": 4,
+    "scopes": {
+      "public": {
+        "label": "public layer for https://bptext2026.xyz",
+        "count": 4,
+        "ok": true,
+        "method": "wildcard_uri",
+        "pages": 2,
+        "params": [
+          {
+            "wildcard_uri": "https://bptext2026.xyz/*",
+            "group": "__world__",
+            "sort": "updated",
+            "order": "asc",
+            "limit": 200
+          },
+          {
+            "uri": "https://bptext2026.xyz",
+            "group": "__world__",
+            "sort": "updated",
+            "order": "asc",
+            "limit": 200
+          }
+        ],
+        "warnings": []
+      },
+      "group:ZGY29zLM": {
+        "label": "group ZGY29zLM (test-group)",
+        "count": 0,
+        "ok": true,
+        "method": "group",
+        "groupLabel": "test-group",
+        "pages": 1,
+        "params": {
+          "group": "ZGY29zLM",
+          "sort": "updated",
+          "order": "asc",
+          "limit": 200
+        },
+        "warnings": [
+          "0 annotations. Expected if genuinely empty; check group membership if not."
+        ]
+      },
+      "group:L9KgjVPa": {
+        "label": "group L9KgjVPa (Biology edition)",
+        "count": 0,
+        "ok": true,
+        "method": "group",
+        "groupLabel": "Biology edition",
+        "pages": 1,
+        "params": {
+          "group": "L9KgjVPa",
+          "sort": "updated",
+          "order": "asc",
+          "limit": 200
+        },
+        "warnings": [
+          "0 annotations. Expected if genuinely empty; check group membership if not."
+        ]
+      }
+    },
+    "warnings": [],
+    "github": {
+      "repository": "textbookproject2026-alt/textbook",
+      "runId": "32030649484",
+      "runNumber": "1",
+      "workflow": "Backup annotations"
+    }
+  },
+  "scopes": {
+    "public": [
+      {
+        "id": "vLRBvGpgEfG753dNPJc5lg",
+        "created": "2026-06-17T15:25:14.023485+00:00",
+        "updated": "2026-06-17T15:25:14.023485+00:00",
+        "user": "acct:AlecGordon@hypothes.is",
+        "uri": "https://bptext2026.xyz/main",
+        "text": "this is weird",
+        "tags": [],
+        "group": "__world__",
+        "moderation_status": "APPROVED",
+        "permissions": {
+          "read": [
+            "group:__world__"
+          ],
+          "admin": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "update": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "delete": [
+            "acct:AlecGordon@hypothes.is"
+          ]
+        },
+        "target": [
+          {
+            "source": "https://bptext2026.xyz/main",
+            "selector": [
+              {
+                "type": "RangeSelector",
+                "endOffset": 18,
+                "startOffset": 0,
+                "endContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/p[1]",
+                "startContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[3]/p[1]"
+              },
+              {
+                "end": 187,
+                "type": "TextPositionSelector",
+                "start": 169
+              },
+              {
+                "type": "TextQuoteSelector",
+                "exact": "This is the header",
+                "prefix": "e-'+t)}})();mainpage-apage-bmain",
+                "suffix": "I'm testing if my pages are work"
+              }
+            ]
+          }
+        ],
+        "document": {
+          "title": [
+            "main -"
+          ]
+        },
+        "links": {
+          "html": "https://hypothes.is/a/vLRBvGpgEfG753dNPJc5lg",
+          "incontext": "https://hyp.is/vLRBvGpgEfG753dNPJc5lg/bptext2026.xyz/main",
+          "json": "https://hypothes.is/api/annotations/vLRBvGpgEfG753dNPJc5lg"
+        },
+        "actions": [],
+        "mentions": [],
+        "user_info": {
+          "display_name": null
+        },
+        "flagged": false,
+        "hidden": false
+      },
+      {
+        "id": "xMovBmpgEfG8SjsbV_aG5g",
+        "created": "2026-06-17T15:25:27.594914+00:00",
+        "updated": "2026-06-17T15:25:27.594914+00:00",
+        "user": "acct:AlecGordon@hypothes.is",
+        "uri": "https://bptext2026.xyz/main",
+        "text": "",
+        "tags": [],
+        "group": "__world__",
+        "moderation_status": null,
+        "permissions": {
+          "read": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "admin": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "update": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "delete": [
+            "acct:AlecGordon@hypothes.is"
+          ]
+        },
+        "target": [
+          {
+            "source": "https://bptext2026.xyz/main",
+            "selector": [
+              {
+                "type": "RangeSelector",
+                "endOffset": 35,
+                "startOffset": 24,
+                "endContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[4]/p[1]",
+                "startContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[4]/p[1]"
+              },
+              {
+                "end": 222,
+                "type": "TextPositionSelector",
+                "start": 211
+              },
+              {
+                "type": "TextQuoteSelector",
+                "exact": "are working",
+                "prefix": "e headerI'm testing if my pages ",
+                "suffix": ". This one is the index, but it'"
+              }
+            ]
+          }
+        ],
+        "document": {
+          "title": [
+            "main -"
+          ]
+        },
+        "links": {
+          "html": "https://hypothes.is/a/xMovBmpgEfG8SjsbV_aG5g",
+          "incontext": "https://hyp.is/xMovBmpgEfG8SjsbV_aG5g/bptext2026.xyz/main",
+          "json": "https://hypothes.is/api/annotations/xMovBmpgEfG8SjsbV_aG5g"
+        },
+        "actions": [],
+        "mentions": [],
+        "user_info": {
+          "display_name": null
+        },
+        "flagged": false,
+        "hidden": false
+      },
+      {
+        "id": "RNnDpodhEfGHihsMBcDzKA",
+        "created": "2026-07-24T13:12:06.140613+00:00",
+        "updated": "2026-07-24T13:12:06.140613+00:00",
+        "user": "acct:AlecGordon@hypothes.is",
+        "uri": "https://bptext2026.xyz/chapters/chapter-03",
+        "text": "testing tags",
+        "tags": [],
+        "group": "__world__",
+        "moderation_status": "APPROVED",
+        "permissions": {
+          "read": [
+            "group:__world__"
+          ],
+          "admin": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "update": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "delete": [
+            "acct:AlecGordon@hypothes.is"
+          ]
+        },
+        "target": [
+          {
+            "source": "https://bptext2026.xyz/chapters/chapter-03",
+            "selector": [
+              {
+                "type": "RangeSelector",
+                "endOffset": 12,
+                "startOffset": 0,
+                "endContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[6]/p[1]",
+                "startContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[6]/p[1]"
+              },
+              {
+                "end": 640,
+                "type": "TextPositionSelector",
+                "start": 628
+              },
+              {
+                "type": "TextQuoteSelector",
+                "exact": "Chapters 1 a",
+                "prefix": "dations to Ontological Practice ",
+                "suffix": "nd 2 established the stakes of o"
+              }
+            ]
+          }
+        ],
+        "document": {
+          "title": [
+            "chapter-03 -"
+          ]
+        },
+        "links": {
+          "html": "https://hypothes.is/a/RNnDpodhEfGHihsMBcDzKA",
+          "incontext": "https://hyp.is/RNnDpodhEfGHihsMBcDzKA/bptext2026.xyz/chapters/chapter-03",
+          "json": "https://hypothes.is/api/annotations/RNnDpodhEfGHihsMBcDzKA"
+        },
+        "actions": [],
+        "mentions": [],
+        "user_info": {
+          "display_name": null
+        },
+        "flagged": false,
+        "hidden": false
+      },
+      {
+        "id": "V9Q3cIdhEfG5F1_0PnHpvA",
+        "created": "2026-07-24T13:12:38.006882+00:00",
+        "updated": "2026-07-24T13:12:38.006882+00:00",
+        "user": "acct:AlecGordon@hypothes.is",
+        "uri": "https://bptext2026.xyz/chapters/chapter-03",
+        "text": "testtt",
+        "tags": [
+          "discussion"
+        ],
+        "group": "__world__",
+        "moderation_status": "APPROVED",
+        "permissions": {
+          "read": [
+            "group:__world__"
+          ],
+          "admin": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "update": [
+            "acct:AlecGordon@hypothes.is"
+          ],
+          "delete": [
+            "acct:AlecGordon@hypothes.is"
+          ]
+        },
+        "target": [
+          {
+            "source": "https://bptext2026.xyz/chapters/chapter-03",
+            "selector": [
+              {
+                "type": "RangeSelector",
+                "endOffset": 42,
+                "startOffset": 20,
+                "endContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[6]/p[1]",
+                "startContainer": "/div[1]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[6]/p[1]"
+              },
+              {
+                "end": 670,
+                "type": "TextPositionSelector",
+                "start": 648
+              },
+              {
+                "type": "TextQuoteSelector",
+                "exact": "ablished the stakes of",
+                "prefix": "al Practice Chapters 1 and 2 est",
+                "suffix": " ontological commitment in socia"
+              }
+            ]
+          }
+        ],
+        "document": {
+          "title": [
+            "chapter-03 -"
+          ]
+        },
+        "links": {
+          "html": "https://hypothes.is/a/V9Q3cIdhEfG5F1_0PnHpvA",
+          "incontext": "https://hyp.is/V9Q3cIdhEfG5F1_0PnHpvA/bptext2026.xyz/chapters/chapter-03",
+          "json": "https://hypothes.is/api/annotations/V9Q3cIdhEfG5F1_0PnHpvA"
+        },
+        "actions": [],
+        "mentions": [],
+        "user_info": {
+          "display_name": null
+        },
+        "flagged": false,
+        "hidden": false
+      }
+    ],
+    "group:ZGY29zLM": [],
+    "group:L9KgjVPa": []
+  }
+}

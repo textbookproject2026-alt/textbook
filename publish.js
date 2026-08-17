@@ -402,6 +402,154 @@ if (typeof document !== 'undefined') {
       }
     })();
 
+    // --- Annotation count badge -------------------------------------------
+    // Per-page count of PUBLIC-layer annotations from the unauthenticated
+    // Hypothes.is search API. Public layer only is CORRECT for launch mode:
+    // private test-group annotations won't appear in the count — that is the
+    // expected behaviour, not a bug. No token in this file, ever.
+    //
+    // Endpoint (verified against the live API, 2026-07): GET
+    //   https://api.hypothes.is/api/search?limit=0&uri=<page URL>
+    // accepts limit=0 and returns { total: N, rows: [] } — total is the full
+    // match count regardless of limit, so we never transfer annotation bodies.
+    // URI note: we query origin + pathname exactly as served (Publish note
+    // URLs carry no query/hash); Hypothes.is normalises URIs server-side, so
+    // this matches what the embedded client anchors against.
+    //
+    // Publisher seam (R1): when Publisher access lands, the group-scoped
+    // count goes here — add `group=<GROUP_ID>` (+ auth) to this same query.
+    //
+    // Failure-safe like the tag helper: armed inside try/catch, every async
+    // path caught, worst case is "badge absent" — annotation, Plausible, and
+    // the page controls are untouched.
+    const injectAnnoBadge = (() => {
+      try {
+        const API = 'https://api.hypothes.is/api/search';
+        const BADGE_CLASS = 'tb-anno-badge';
+        const STYLE_ID = 'tb-anno-badge-style';
+        const CACHE_PREFIX = 'tb-anno-count:'; // sessionStorage, keyed by page path
+        const CACHE_TTL = 5 * 60 * 1000;       // 5 minutes
+        const FETCH_TIMEOUT = 6000;            // ms; adblock stalls hit this too
+
+        let controller = null; // one in-flight request max, newest wins
+
+        // sessionStorage can throw (privacy modes, quota) — treat as cache-miss.
+        const cacheGet = (path) => {
+          try {
+            const raw = sessionStorage.getItem(CACHE_PREFIX + path);
+            if (!raw) return null;
+            const { t, n } = JSON.parse(raw);
+            return Date.now() - t < CACHE_TTL && Number.isFinite(n) ? n : null;
+          } catch (e) { return null; }
+        };
+        const cachePut = (path, n) => {
+          try {
+            sessionStorage.setItem(CACHE_PREFIX + path, JSON.stringify({ t: Date.now(), n }));
+          } catch (e) { /* cache is an optimisation; losing it is fine */ }
+        };
+
+        const injectStyle = () => {
+          if (document.getElementById(STYLE_ID)) return;
+          const style = document.createElement('style');
+          style.id = STYLE_ID;
+          // Same theme tokens (and fallbacks) as the tag-helper chips, so the
+          // badge reads as part of the existing control row. It lives inside
+          // .tb-page-controls, so mobile layout follows the row's own rules.
+          style.textContent = `
+            button.${BADGE_CLASS} {
+              font-family: var(--tb-font-text, sans-serif);
+              font-size: var(--tb-size-controls, 0.85rem);
+              line-height: 1.4;
+              padding: 0.15rem 0.7rem;
+              border: 1px solid var(--tb-border, #E6E6E6);
+              border-radius: 999px;
+              background: var(--tb-bg-soft, #F7F7F5);
+              color: var(--tb-muted, #6E6E73);
+              cursor: pointer;
+            }
+            button.${BADGE_CLASS}:hover {
+              border-color: var(--tb-accent, #7C6CF0);
+              color: var(--tb-accent, #7C6CF0);
+              background: var(--tb-accent-wash, #EEEBFD);
+            }
+          `;
+          document.head.appendChild(style);
+        };
+
+        // Open the sidebar via the client's own toggle button in the OPEN
+        // shadow root of <hypothesis-sidebar> (same access path the tag
+        // helper reads state from — host element only, never the iframe).
+        // Only click when collapsed: the badge is an "open" affordance, not
+        // a blind toggle.
+        const openSidebar = () => {
+          try {
+            const host = document.querySelector('hypothesis-sidebar');
+            const btn = host && host.shadowRoot &&
+              host.shadowRoot.querySelector('button[aria-expanded]');
+            if (btn && btn.getAttribute('aria-expanded') !== 'true') btn.click();
+          } catch (e) { log('anno badge: sidebar toggle unavailable', e); }
+        };
+
+        const place = (wrap, count) => {
+          if (!wrap.isConnected) return; // pane re-rendered while we fetched
+          injectStyle();
+          const old = wrap.querySelector('.' + BADGE_CLASS);
+          if (old) old.remove();
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = BADGE_CLASS;
+          // N=0 is an invitation, not emptiness.
+          b.textContent = count === 0 ? 'Annotate this page'
+            : count === 1 ? '1 annotation'
+            : count + ' annotations';
+          b.addEventListener('click', openSidebar);
+          wrap.append(b);
+          log('anno badge:', count, 'for', wrap.dataset.path);
+        };
+
+        const fetchCount = async (uri) => {
+          if (controller) controller.abort(); // newest navigation wins
+          const c = (controller = new AbortController());
+          const timer = setTimeout(() => c.abort(), FETCH_TIMEOUT);
+          try {
+            const res = await fetch(API + '?limit=0&uri=' + encodeURIComponent(uri), {
+              signal: c.signal,
+            });
+            if (!res.ok) throw new Error('search API HTTP ' + res.status);
+            const n = Number((await res.json()).total);
+            if (!Number.isFinite(n) || n < 0) throw new Error('no usable total');
+            return n;
+          } finally {
+            clearTimeout(timer);
+            if (controller === c) controller = null;
+          }
+        };
+
+        // Called by injectControls with the freshly injected controls row.
+        // Fire-and-forget: nothing awaits it, nothing downstream depends on it.
+        return (wrap) => {
+          (async () => {
+            try {
+              const path = location.pathname; // capture: staleness guard key
+              const cached = cacheGet(path);
+              if (cached !== null) { place(wrap, cached); return; } // no API hit
+              const n = await fetchCount(location.origin + path);
+              if (location.pathname !== path) return; // raced a rapid nav — drop
+              cachePut(path, n);
+              place(wrap, n);
+            } catch (e) {
+              // API error, timeout, CORS surprise, adblock, abort: no badge,
+              // nothing else affected.
+              log('anno badge quiet fail:', e);
+            }
+          })();
+        };
+      } catch (e) {
+        log('anno badge failed to arm:', e);
+        return () => {}; // feature absent; call sites stay valid
+      }
+    })();
+
     // --- Plausible (new per-site hashed script) --------------------------
     // Site identity lives in the hashed filename — no data-domain, and the
     // legacy script.js / script.manual.js variants are gone. Queue stub first
@@ -468,11 +616,15 @@ if (typeof document !== 'undefined') {
 
     let injectTimer = null;
     function injectControls() {
-      clearTimeout(injectTimer); // cancel a pending retry from a previous nav
+      clearTimeout(injectTimer); // cancel pending retry/verify from a previous nav
       const repoPath = urlToRepoPath(location.pathname);
-      let attempts = 0;
+      let attempts = 0; // finding the target
+      let verifies = 0; // confirming the injection survives Publish's re-render
 
       const tryInject = () => {
+        // A newer navigation owns the page now — abandon this cycle.
+        if (urlToRepoPath(location.pathname) !== repoPath) return;
+
         const target =
           document.querySelector('.page-header') ||
           document.querySelector('.markdown-preview-sizer') ||
@@ -487,15 +639,22 @@ if (typeof document !== 'undefined') {
         }
 
         const existing = target.querySelector(`.${CONTROLS_CLASS}`);
-        if (existing && existing.dataset.path === repoPath) return; // already current
-        if (existing) existing.remove(); // stale controls from a reused element
+        if (!existing || existing.dataset.path !== repoPath) {
+          if (existing) existing.remove(); // stale controls from a reused element
+          const wrap = buildControls(repoPath);
+          target.appendChild(wrap);
+          log('controls injected into', target.className, '->', repoPath);
+          injectAnnoBadge(wrap); // async, self-contained; never throws
+        }
 
-        target.appendChild(buildControls(repoPath));
-        log('controls injected into', target.className, '->', repoPath);
+        // Publish can re-render the pane AFTER a successful injection (initial
+        // load, popstate), destroying it. Keep watching briefly; re-inject if
+        // wiped. Cheap: within the badge's cache TTL a re-inject reads
+        // sessionStorage, so no extra API calls.
+        if (verifies++ < 16) injectTimer = setTimeout(tryInject, 250); // ~4s window
       };
       tryInject();
     }
-
     // --- SPA navigation handler (spike-inherited) -------------------------
     // Publish navigates via the History API. Patch pushState/replaceState and
     // listen for popstate; dedupe on pathname so redundant history calls for

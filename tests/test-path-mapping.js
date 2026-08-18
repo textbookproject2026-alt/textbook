@@ -1,9 +1,9 @@
 // test-path-mapping.js — D8.2. Locks urlToRepoPath() before anything builds on it.
-// Run from the vault/repo root (next to publish.js):  node test-path-mapping.js
+// Run from anywhere:  node tests/test-path-mapping.js
 // Exits 0 on all-pass, 1 on any failure.
 
 const assert = require('assert');
-const { urlToRepoPath } = require('./publish.js');
+const { urlToRepoPath } = require('../publish.js');
 
 // [input pathname, expected repo path, label]
 //

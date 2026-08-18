@@ -30,8 +30,16 @@ const BRANCH = 'main';
 //                            // tell a bot it was caught).
 //   }
 //   201 -> { "issueUrl": string }   // link shown to the reader on success
-//   4xx/5xx -> { "error": string }  // message is for logs, not the reader:
-//                                   // the UI shows its own friendly retry copy
+//   4xx/5xx -> { "error": string, "userMessage"?: string }
+//     "error"       diagnostic, LOG-ONLY. Never rendered — assume it may name
+//                   internals, and the reader can't act on it.
+//     "userMessage" OPTIONAL and user-facing: a safe, self-contained sentence
+//                   the reader should actually see, e.g. "You're sending
+//                   suggestions too quickly — try again in a minute." Omit it
+//                   and the modal falls back to its own friendly retry copy,
+//                   so only send it when it beats that. Plain text: the modal
+//                   renders it with textContent (never innerHTML) and caps it
+//                   at 200 chars, so no markup, links or long prose.
 // No credentials, no cookies: this is a plain cross-origin JSON POST.
 const SUGGEST_EDIT_ENDPOINT = '__SUGGEST_EDIT_ENDPOINT__';
 
@@ -779,6 +787,18 @@ if (typeof document !== 'undefined') {
         // mobile keyboard and the browser's own hint.
         const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+        // Optional user-facing string from an error response (see the contract
+        // at the top of this file). Treated as untrusted TEXT: type-checked,
+        // trimmed, capped, and rendered via textContent — never innerHTML —
+        // so a compromised or sloppy backend can inject copy at worst, not
+        // markup. Anything that isn't a non-empty string means "no message",
+        // and the pane's own copy stands in.
+        const USER_MESSAGE_MAX = 200;
+        const safeUserMessage = (data) => {
+          const m = data && typeof data.userMessage === 'string' ? data.userMessage.trim() : '';
+          return m ? m.slice(0, USER_MESSAGE_MAX) : null;
+        };
+
         const injectStyle = () => {
           if (document.getElementById(STYLE_ID)) return; // id-guard, like the badge/helper
           const style = document.createElement('style');
@@ -1299,7 +1319,13 @@ if (typeof document !== 'undefined') {
                 // never depends on it.
                 let data = null;
                 try { data = await res.json(); } catch (err) { data = null; }
-                if (!res.ok) throw new Error((data && data.error) || 'HTTP ' + res.status);
+                if (!res.ok) {
+                  // `error` is log material only; `userMessage`, if present,
+                  // rides along on the rejection for the pane to show.
+                  const failure = new Error((data && data.error) || 'HTTP ' + res.status);
+                  failure.userMessage = safeUserMessage(data);
+                  throw failure;
+                }
                 return data;
               })
               .then((data) => {
@@ -1311,10 +1337,13 @@ if (typeof document !== 'undefined') {
               })
               .catch((err) => {
                 log('suggest modal send failed:', err);
+                // Network failures and the 10s abort have no userMessage, so
+                // they always land on the fixed copy.
                 showPane(
                   'That did not go through',
-                  'Something went wrong sending your suggestion — nothing was lost. ' +
-                    'Try again in a moment, or use "Edit on GitHub" above.',
+                  (err && err.userMessage) ||
+                    'Something went wrong sending your suggestion — nothing was lost. ' +
+                      'Try again in a moment, or use "Edit on GitHub" above.',
                   null,
                   true,
                 );

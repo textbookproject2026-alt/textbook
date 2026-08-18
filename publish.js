@@ -1125,21 +1125,38 @@ if (typeof document !== 'undefined') {
             f.control.addEventListener('input', () => clearInvalid(f));
           }
 
-          // Honeypot. Named "website" because that is what naive form-fillers
-          // look for. Hidden by clipping (see .tb-sg-hp) so a bot reading the
-          // computed style still believes it is a live field.
+          // Honeypot. The input NAME is the bait — "website" is what naive
+          // form-fillers look for — and clipping (see .tb-sg-hp) keeps it
+          // visually gone while a bot reading the computed style still
+          // believes it is a live field.
+          //
+          // Hiding it from assistive tech is a correctness requirement, not
+          // polish: a screen-reader user who reaches this field and fills it
+          // in honestly would have their suggestion silently discarded as
+          // spam. Four independent guards, because one of them failing is
+          // invisible from the outside:
+          //   - aria-hidden on the WRAPPER  -> hides the whole subtree
+          //   - aria-hidden on the INPUT    -> survives any restructuring of
+          //                                    the wrapper (the input is the
+          //                                    element a live probe checks)
+          //   - tabindex=-1                 -> unreachable by keyboard, which
+          //                                    is what makes aria-hidden on a
+          //                                    form control legitimate here
+          //   - label "Leave this field empty" -> plain-text last resort if
+          //                                    every ARIA guard is ignored
           const hpWrap = document.createElement('div');
           hpWrap.className = 'tb-sg-hp';
           hpWrap.setAttribute('aria-hidden', 'true');
           const hpLabel = document.createElement('label');
           hpLabel.setAttribute('for', 'tb-sg-website');
-          hpLabel.textContent = 'Website';
+          hpLabel.textContent = 'Leave this field empty';
           const hp = document.createElement('input');
           hp.type = 'text';
           hp.name = 'website';
           hp.id = 'tb-sg-website';
           hp.tabIndex = -1;
           hp.autocomplete = 'off';
+          hp.setAttribute('aria-hidden', 'true');
           hpWrap.append(hpLabel, hp);
 
           const actions = document.createElement('div');
@@ -1485,13 +1502,19 @@ if (typeof document !== 'undefined') {
     // replaceState during Publish's boot is one page, not two.
     let lastPath = null;
     function onNavigate(source) {
+      // BEFORE the dedupe: a route change ALWAYS closes an open modal, even one
+      // the dedupe is about to drop. All three routes (pushState, replaceState,
+      // popstate) funnel through here, so this covers every one of them — but
+      // when it sat below the early return, a same-canonical-path popstate (a
+      // hash jump within a note, or Publish normalising the URL on Back) left
+      // the modal up with a stale path and the body scroll lock still held.
+      // Closing is idempotent and cheap when nothing is open.
+      if (openSuggestModal) openSuggestModal.closeIfOpen();
+
       const canonical = urlToRepoPath(location.pathname);
       if (canonical === lastPath) return;
       lastPath = canonical;
       log('navigate (' + source + '):', lastPath);
-      // A modal left open across a nav would show a stale path and hold the
-      // scroll lock; its trigger button is destroyed by the re-render anyway.
-      if (openSuggestModal) openSuggestModal.closeIfOpen();
       firePageview(); // exactly one per real navigation
       injectControls(); // re-run per page: previous DOM is gone after nav
     }

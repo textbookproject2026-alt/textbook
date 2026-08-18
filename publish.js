@@ -41,7 +41,7 @@ const BRANCH = 'main';
 //                   renders it with textContent (never innerHTML) and caps it
 //                   at 200 chars, so no markup, links or long prose.
 // No credentials, no cookies: this is a plain cross-origin JSON POST.
-const SUGGEST_EDIT_ENDPOINT = '__SUGGEST_EDIT_ENDPOINT__';
+const SUGGEST_EDIT_ENDPOINT = 'https://suggest-edit-function.vercel.app/api/suggest-edit';
 
 // ---------------------------------------------------------------------------
 // Path mapping: live Publish URL -> repo .md path (vault root == repo root).

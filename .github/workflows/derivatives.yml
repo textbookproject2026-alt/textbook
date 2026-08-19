@@ -1,0 +1,136 @@
+name: Update derivatives map
+
+# Weekly rebuild of community/derivatives.md — the list of department editions
+# — from the forks of the edition template (scripts/gen-derivatives.mjs),
+# proposed as a pull request.
+#
+# WHY A PULL REQUEST AND NOT A PUSH
+# ---------------------------------
+# main is branch-protected and requires a pull request; github-actions[bot]
+# cannot bypass that rule, so `git push origin main` from here would simply be
+# rejected. The derivatives page has to be ON main to appear in the book, so
+# the job pushes a machine-owned branch (chore/derivatives-update) and opens a
+# pull request against main for a human to merge — exactly as
+# contributors.yml does.
+#
+# The branch is disposable: every run rebuilds it from main and force-pushes.
+# If a pull request is already open for it, the force-push updates that pull
+# request in place rather than opening a second one. If the regenerated page is
+# byte-identical to what is already on main, the job stops before touching git
+# at all — a quiet week produces no branch, no pull request, and no noise.
+#
+# WHAT IT READS
+# -------------
+# The forks of textbookproject2026-alt/textbook-edition-template, over the
+# public API. Nothing about this repository's own forks is relevant: a fork of
+# the textbook is a copy of the manuscript, not a department edition. The
+# built-in GITHUB_TOKEN is passed to the script only to lift the 60-per-hour
+# unauthenticated rate limit — the data read is public either way.
+
+on:
+  schedule:
+    - cron: "0 11 * * 0" # 11:00 UTC every Sunday — clear of the 03:00 backup and the 07:00 contributors run
+  workflow_dispatch:
+
+permissions:
+  contents: write # push the chore/derivatives-update branch
+  pull-requests: write # open or update the pull request
+
+# A manual run and the scheduled run must never race for the same branch.
+concurrency:
+  group: derivatives
+  cancel-in-progress: false
+
+env:
+  PR_BRANCH: chore/derivatives-update
+  PAGE: community/derivatives.md
+
+jobs:
+  derivatives:
+    runs-on: ubuntu-latest
+
+    steps:
+      # No fetch-depth: 0 here — unlike the contributors page, nothing on this
+      # page comes from the commit history, so a shallow clone is enough.
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Regenerate the derivatives map
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/gen-derivatives.mjs
+
+      - name: Has the page actually changed?
+        id: page
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- "$PAGE")" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "The derivatives map is already current — nothing to propose."
+            echo "Derivatives map already current; no pull request opened." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git --no-pager diff --stat -- "$PAGE"
+          fi
+
+      - name: Open or update the pull request
+        if: steps.page.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          OPEN_PR="$(gh pr list --head "$PR_BRANCH" --state open --json number --jq '.[0].number // empty')"
+
+          # The page differs from main, but it may already match the branch — a
+          # pull request opened last Sunday and not merged yet. Re-pushing an
+          # identical page would only re-notify its reviewers every week.
+          if [ -n "$OPEN_PR" ] && git fetch --quiet origin "$PR_BRANCH" 2>/dev/null; then
+            if git show "FETCH_HEAD:$PAGE" 2>/dev/null | diff -q - "$PAGE" >/dev/null 2>&1; then
+              echo "PR #${OPEN_PR} already proposes this exact page — leaving it alone."
+              echo "Derivatives PR #${OPEN_PR} already up to date." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+          fi
+
+          # Rebuilt from main every run, so --force is the intent and not a
+          # rescue: nothing but this job ever commits to this branch.
+          git checkout -q -B "$PR_BRANCH"
+          git add -- "$PAGE"
+          git commit -q -m "chore(community): refresh derivatives map"
+          git push --quiet --force origin "HEAD:refs/heads/$PR_BRANCH"
+
+          if [ -n "$OPEN_PR" ]; then
+            echo "Updated existing PR #${OPEN_PR}."
+            echo "Updated derivatives PR #${OPEN_PR}." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          cat > "${RUNNER_TEMP}/pr-body.md" <<'BODY'
+          Rebuilds `community/derivatives.md` from the forks of the edition
+          template, as `.github/workflows/derivatives.yml` does every Sunday.
+
+          The page is generated by `scripts/gen-derivatives.mjs`: one entry per
+          department edition, with its owner, what it is, when it last changed,
+          and links to the repository and — where the repository says so — the
+          live site. Archived forks and the project's own copies are left out.
+
+          A new entry here means someone has published an edition; a changed
+          date means an existing one has moved. Nothing is urgent — merge it
+          whenever, or close it and the next run will propose the page again.
+          BODY
+
+          URL="$(gh pr create \
+            --base main \
+            --head "$PR_BRANCH" \
+            --title "chore(community): refresh derivatives map" \
+            --body-file "${RUNNER_TEMP}/pr-body.md")"
+
+          echo "Opened ${URL}"
+          echo "Opened derivatives PR: ${URL}" >> "$GITHUB_STEP_SUMMARY"

@@ -47,3 +47,5 @@ Any department can publish its own edition of this textbook: the same chapters, 
 *Published at __SITE_URL__ and maintained by __MAINTAINER__. Unless otherwise noted, all content is licensed under __LICENCE__ — free to share and adapt, with attribution, under the same licence.*
 
 *Everyone who has written or corrected a page is credited on the [[contributors|contributors page]], which also explains how to join them.*
+
+*How the book is doing — who is reading it, what is being discussed in the margins, and what is being written or corrected — is kept on the [[dashboard|project health page]], which rebuilds itself weekly.*

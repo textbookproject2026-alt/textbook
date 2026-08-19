@@ -2,7 +2,7 @@
 
 *Education Tool Project 2026* is maintained in the open. The chapters are plain text files in a public repository, every change to them is a commit signed by whoever made it, and this page is put together from that history — so anyone whose work has landed in the book turns up here without having to ask.
 
-So far that history has one name in it. textbookproject2026-alt has made 51 commits between 17 June 2026 and 19 August 2026, which is every word of the book as it currently stands. The book is early, and the list is short for the same reason — there is room on it.
+So far that history has one name in it. textbookproject2026-alt has made 52 commits between 17 June 2026 and 19 August 2026, which is every word of the book as it currently stands. The book is early, and the list is short for the same reason — there is room on it.
 
 Maintenance and review stay with Brandon: outside contributions arrive as pull requests and are read before they are merged. Being on this list means your work is in the book, not that you are responsible for the rest of it.
 
@@ -10,7 +10,7 @@ Maintenance and review stay with Brandon: outside contributions arrive as pull r
 
 | Contributor | Changes | First | Most recent | Pages worked on most |
 | --- | ---: | --- | --- | --- |
-| textbookproject2026-alt | 51 | 17 Jun 2026 | 19 Aug 2026 | [[chapter-03\|Chapter 3]], [[The Three Domains]], [[Critical Realism]] |
+| textbookproject2026-alt | 52 | 17 Jun 2026 | 19 Aug 2026 | [[chapter-03\|Chapter 3]], [[The Three Domains]], [[Critical Realism]] |
 
 "Changes" counts commits, which is a rough measure and an honest one: a commit can be a rewritten section or a corrected apostrophe, and both are worth having. The pages column looks only at chapters/ — the book itself — so work on the build, the workflows or the documentation is real but invisible here.
 

@@ -118,6 +118,32 @@ if (typeof document !== 'undefined') {
     // Declared here because the tag helper is defined before the badge.
     let invalidateAnnoCache = null;
 
+    // --- Plausible custom events ------------------------------------------
+    // Single choke point for every custom event in this file. Same contract as
+    // the features around it: analytics may never break a user path, so a
+    // plausible() that is missing (script blocked, offline, still loading),
+    // slow or throwing is a silent no-op. No caller branches on the result.
+    //
+    // Call signature verified against the live docs for the per-site hashed
+    // script (2026-08): plausible('event name', { props: { key: 'value' } }) --
+    // the options object is unchanged from the legacy script. The queue stub
+    // installed with the script below buffers calls made before pa-*.js lands;
+    // a call made before even the stub exists is dropped, which is the right
+    // trade against any retry machinery.
+    //
+    // PRIVACY: props carry fixed, enumerable values only -- never a page path,
+    // reader text, email or anything else that could identify a reader.
+    // Plausible already records the page for every event.
+    const track = (name, props) => {
+      try {
+        if (typeof window.plausible !== 'function') return;
+        window.plausible(name, props ? { props } : undefined);
+        log('event:', name, props || '');
+      } catch (e) {
+        log('event dropped:', name, e);
+      }
+    };
+
     // --- Hypothes.is (first-party flow) ---------------------------------
     // Sidebar collapsed by default; highlights always visible. No group lock:
     // on the standard tier, a `services` block switches the client into
@@ -340,7 +366,10 @@ if (typeof document !== 'undefined') {
             chip.type = 'button';
             chip.className = 'tb-tag-chip';
             chip.textContent = tag;
-            chip.addEventListener('click', safely(() => copyTag(tag)));
+            chip.addEventListener('click', safely(() => {
+              track('annotation_tag_copied', { tag });
+              copyTag(tag);
+            }));
             chips.append(chip);
           }
 
@@ -410,7 +439,11 @@ if (typeof document !== 'undefined') {
           if (open === sidebarOpen) return;
           sidebarOpen = open;
           log('hypothesis sidebar', open ? 'open' : 'closed');
-          if (open) { showPanel(host); window.addEventListener('resize', onResize); }
+          if (open) {
+            track('annotation_sidebar_opened'); // once per closed->open transition
+            showPanel(host);
+            window.addEventListener('resize', onResize);
+          }
           else {
             hidePanel();
             window.removeEventListener('resize', onResize);
@@ -667,7 +700,10 @@ if (typeof document !== 'undefined') {
             : count === 1 ? '1 annotation'
             : count + ' annotations';
           b.textContent = label;
-          b.addEventListener('click', () => openSidebar(b, label));
+          b.addEventListener('click', () => {
+            track('annotation_badge_clicked'); // no count prop: page-identifying
+            openSidebar(b, label);
+          });
           wrap.append(b);
           log('anno badge:', count, 'for', wrap.dataset.path);
         };
@@ -1346,6 +1382,7 @@ if (typeof document !== 'undefined') {
                 return data;
               })
               .then((data) => {
+                track('suggest_edit_submitted', { outcome: 'success' });
                 showPane(
                   'Thank you — suggestion sent',
                   'A maintainer will pick this up. You can follow it here:',
@@ -1353,6 +1390,7 @@ if (typeof document !== 'undefined') {
                 );
               })
               .catch((err) => {
+                track('suggest_edit_submitted', { outcome: 'error' });
                 log('suggest modal send failed:', err);
                 // Network failures and the 10s abort have no userMessage, so
                 // they always land on the fixed copy.
@@ -1377,6 +1415,7 @@ if (typeof document !== 'undefined') {
           document.body.appendChild(overlay);
           nameInput.focus(); // focus moves into the modal on open
           log('suggest modal opened for', repoPath, endpointReady ? '(live endpoint)' : '(placeholder endpoint)');
+          track('suggest_edit_opened'); // no path prop -- Plausible records the page
         };
 
         // Wrapped so a throw anywhere in open() can't escape into the click
@@ -1427,8 +1466,10 @@ if (typeof document !== 'undefined') {
         a.rel = 'noopener';
         return a;
       };
+      const editLink = link(`https://github.com/${REPO}/edit/${BRANCH}/${gh}`, 'Edit on GitHub', 'tb-edit-link');
+      editLink.addEventListener('click', () => track('edit_on_github_clicked'));
       wrap.append(
-        link(`https://github.com/${REPO}/edit/${BRANCH}/${gh}`, 'Edit on GitHub', 'tb-edit-link'),
+        editLink,
         link(`https://github.com/${REPO}/commits/${BRANCH}/${gh}`, 'View revision history', 'tb-history-link'),
       );
 

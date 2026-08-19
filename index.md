@@ -45,3 +45,5 @@ Any department can publish its own edition of this textbook: the same chapters, 
 ---
 
 *Published at https://bptext2026.xyz and maintained by Brandon. Unless otherwise noted, all content is licensed under CC-BY-SA-4.0 — free to share and adapt, with attribution, under the same licence.*
+
+*Everyone who has written or corrected a page is credited on the [[contributors|contributors page]], which also explains how to join them.*

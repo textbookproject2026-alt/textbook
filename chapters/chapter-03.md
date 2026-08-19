@@ -6,6 +6,8 @@
 
 ## I Introduction: From Philosophical Foundations to Ontological Practice
 
+WOOP WOOP 
+
 Chapters 1 and 2 established the stakes of ontological commitment in social research and the conceptual architecture that adequate ontological analysis requires. The present chapter addresses the specific features of the ontological position that frames the rest of this book: the claim that social reality is stratified, that it contains entities and mechanisms not directly observable, and that the relationship between the observable and the unobservable is a central problem for social research rather than a difficulty to be dissolved by restricting claims to what can be measured.
 
 This chapter proceeds in four stages. Section 3.2 develops the account of stratified reality on which the book depends, moving from the rejection of both dualism and flat empiricism toward a monist position that preserves the reality of the unobservable through stratification. Section 3.3 addresses the problem of unobservables directly, establishing why unobservable mechanisms and structures matter for social explanation and how stratified ontology handles them without collapsing into either metaphysical speculation or epistemological restriction. Section 3.4 examines the literature review as a research practice and the ontological function it serves, distinguishing the approaches available on different ontological positions. Section 3.5 introduces the four social ontological debates that organise Part II of the book, establishing the analytical framework through which positions are examined. Section 3.6 concludes by making the ontological commitments of this book explicit, preparing the ground for the practical analytical work that follows.

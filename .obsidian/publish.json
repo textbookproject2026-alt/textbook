@@ -2,5 +2,8 @@
   "siteId": "1443b409a84e491249da35fdd4b91de6",
   "host": "publish-01.obsidian.md",
   "included": [],
-  "excluded": []
+  "excluded": [
+    "admin/",
+    "OAUTH-SETUP.md"
+  ]
 }

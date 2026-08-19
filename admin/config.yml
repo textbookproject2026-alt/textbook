@@ -1,0 +1,93 @@
+# Sveltia CMS configuration — Education Tool Project 2026 textbook
+#
+# This file is TOOLING, not content. It lives on `main` so it is versioned
+# alongside the book, but it must never be part of the Obsidian Publish set.
+# See docs/for-trusted-contributors.md ("Why admin/ is not on the website").
+#
+# Operator setup that cannot be scripted (GitHub OAuth App, Cloudflare):
+# see OAUTH-SETUP.md in the repository root.
+
+backend:
+  name: github
+  repo: textbookproject2026-alt/textbook
+
+  # =====================================================================
+  # LOAD-BEARING LINE. Read this before touching it.
+  #
+  # `branch` is the only thing standing between a contributor's browser
+  # and the published textbook. Every write Sveltia performs is scoped to
+  # this branch: the commits it makes, the review branches it cuts
+  # (cms/<collection>/<slug>), the pull requests it opens, and the merge
+  # it performs when someone clicks Publish. All of it lands on `drafts`.
+  #
+  # Set this to `main` and any trusted contributor typing into a text box
+  # becomes able to change the live book with no review step at all.
+  #
+  # `main` is updated by exactly one route: a human opening a
+  # drafts -> main pull request, and Brandon merging it.
+  #
+  # Keep this as `drafts`.
+  # =====================================================================
+  branch: drafts
+
+  # OAuth relay. Contributors sign in as THEMSELVES with their own GitHub
+  # account; this Worker only exchanges the OAuth code for a token and
+  # hands it back to the browser. No bot account, no Netlify Identity
+  # (which Netlify no longer offers to new sites).
+  #
+  # REPLACE the placeholder below with the real Worker URL from step 2 of
+  # OAUTH-SETUP.md. Until it is replaced, the Sign In button will fail.
+  base_url: https://sveltia-cms-auth.REPLACE-WITH-YOUR-SUBDOMAIN.workers.dev
+
+# Second safety net, independent of `branch` above.
+#
+# With editorial workflow on, saving does not commit straight to `drafts`.
+# Sveltia cuts a per-entry branch off `drafts` and opens a pull request
+# against `drafts`, which the contributor moves through Draft -> In review
+# -> Ready. So work is reviewable twice: once as the entry PR into drafts,
+# and again when drafts is proposed into main.
+publish_mode: editorial_workflow
+
+# Images and figures. `media_folder` is the path in the repo; `public_folder`
+# is how the path is written into the markdown that Obsidian Publish renders.
+media_folder: assets
+public_folder: /assets
+
+collections:
+  - name: chapters
+    label: Chapters and concept pages
+    label_singular: Page
+    folder: chapters
+    create: true
+
+    # The chapter files have NO frontmatter — chapter-03.md opens directly
+    # on `# Chapter 3: ...`, and so do the concept pages. `format: raw` is
+    # the setting that respects that: the whole file is the body, and
+    # Sveltia will not prepend a `---` block on save.
+    #
+    # `raw` defaults to a .txt extension, so .md must be stated explicitly.
+    format: raw
+    extension: md
+
+    # With only a body field there is no title field to derive a filename
+    # from, and Sveltia's fallback is a random UUID fragment. `{{fields._slug}}`
+    # replaces that with a visible slug box in the editor, so a new chapter
+    # can be named to match the existing convention: chapter-04, chapter-05.
+    # (Concept pages keep their prose filenames, e.g. "Critical Realism".)
+    slug: '{{fields._slug}}'
+
+    # Sort/browse by filename — there is no frontmatter date or title to use.
+    sortable_fields: ['slug']
+
+    fields:
+      - name: body
+        label: Page text
+        # `modes: [raw]` deliberately disables the WYSIWYG editor. The
+        # chapters are Obsidian markdown: [[wikilinks]] and > [!abstract]
+        # callouts. A rich-text round-trip does not understand either and
+        # would quietly rewrite them into plain text or escaped brackets,
+        # breaking every concept link in the book. Plain markdown editing
+        # is the only mode that is safe here.
+        widget: markdown
+        modes: [raw]
+        required: true

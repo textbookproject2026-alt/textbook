@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Tooling, not content. Never index this page. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Textbook CMS</title>
+  </head>
+  <body>
+    <!--
+      Sveltia CMS mounts itself into <body>. No markup of our own is needed.
+
+      The version is PINNED on purpose. Sveltia is pre-1.0 and ships several
+      releases a week; an unpinned "@sveltia/cms" would silently upgrade the
+      editor under our contributors between one visit and the next. Bump this
+      deliberately, and re-test editing chapter-03.md afterwards.
+    -->
+    <script src="https://unpkg.com/@sveltia/cms@0.193.1/dist/sveltia-cms.js"></script>
+  </body>
+</html>

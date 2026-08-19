@@ -16,7 +16,7 @@ It shows how many people have visited the book, which pages they spent time on, 
 
 Every page of the book can be annotated: a reader selects a passage, writes a note, and the note stays attached to that exact sentence for everyone who comes after. Those notes are held by Hypothes.is rather than in the book's own files, which is why they are counted here rather than being visible in the repository.
 
-There are **6 annotations** in total. All of them are in the public layer at bptext2026.xyz, where anyone can read them without an account. The course groups — test-group and Biology edition — are empty, and that is the intended state rather than a fault. Giving each cohort a margin of its own depends on a decision about the annotation provider's paid tier that has not been taken yet, so until it is, every conversation happens in the open — which is how the book was always meant to launch.
+There are **8 annotations** in total. All of them are in the public layer at bptext2026.xyz, where anyone can read them without an account. The course groups — test-group and Biology edition — are empty, and that is the intended state rather than a fault. Giving each cohort a margin of its own depends on a decision about the annotation provider's paid tier that has not been taken yet, so until it is, every conversation happens in the open — which is how the book was always meant to launch.
 
 They are spread across 3 pages of the book, and all come from a single account. One of them is a reply to somebody else's note, which is the part that matters: a margin that only accumulates notes is a comment box, and a margin that accumulates replies is a seminar.
 

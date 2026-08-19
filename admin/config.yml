@@ -37,7 +37,7 @@ backend:
   #
   # REPLACE the placeholder below with the real Worker URL from step 2 of
   # OAUTH-SETUP.md. Until it is replaced, the Sign In button will fail.
-  base_url: https://sveltia-cms-auth.REPLACE-WITH-YOUR-SUBDOMAIN.workers.dev
+  base_url: https://sveltia-cms-auth.brandonproject2026.workers.dev
 
 # Second safety net, independent of `branch` above.
 #

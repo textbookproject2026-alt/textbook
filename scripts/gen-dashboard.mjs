@@ -498,7 +498,7 @@ function renderDiscussion(a, config) {
 
   if (a.total === 0) {
     out.push(
-      `There are no annotations yet in the public layer at ${site}, which is where the book's discussion currently lives. That is the ordinary reading for a book that has not yet been set as coursework: a margin fills during a teaching term, not before one, and the first cohort pointed at the book is what will change this number. The ${plural(a.groups.length, 'private course group')} ${a.groups.length === 1 ? 'is' : 'are'} empty too, and expected to be — per-cohort margins wait on a decision about the annotation provider's paid tier.`,
+      `There are no annotations yet in the public layer at ${site}, which is where the book's discussion currently lives. That is the ordinary reading for a book that has not yet been set as coursework: a margin fills during a teaching term, not before one, and the first cohort pointed at the book is what will change this number. The ${plural(a.groups.length, 'private course group')} ${a.groups.length === 1 ? 'is' : 'are'} empty too, and expected to be — they are leftovers from testing, not the plan. Per-cohort margins would have needed the annotation provider's paid tier, which the project decided not to buy, so the public layer is where discussion stays.`,
     );
     return out;
   }
@@ -517,7 +517,7 @@ function renderDiscussion(a, config) {
 
   const groupClause = groupsWithAny.length > 0
     ? `${joinList(groupsWithAny.map((g) => `${plural(g.count, 'annotation')} in ${g.label}`))} ${groupsWithAny.length === 1 && groupsWithAny[0].count === 1 ? 'sits' : 'sit'} in the course groups, which are private to their cohorts and readable only by their members.`
-    : `${groupsNamed}, and that is the intended state rather than a fault. Giving each cohort a margin of its own depends on a decision about the annotation provider's paid tier that has not been taken yet, so until it is, every conversation happens in the open — which is how the book was always meant to launch.`;
+    : `${groupsNamed}, and that is the intended state rather than a fault. Giving each cohort a margin of its own would have needed the annotation provider's paid tier, and the decision has been taken not to buy it, so every conversation happens in the open — which is the launch model, not a stopgap.`;
 
   out.push(
     `There ${a.total === 1 ? 'is' : 'are'} **${plural(a.total, 'annotation')}** in total. ${publicClause} ${groupClause}`,

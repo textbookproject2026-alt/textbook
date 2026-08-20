@@ -2,7 +2,7 @@
 
 **A guide for course coordinators**
 
-This guide walks you through creating your own department edition of the textbook: a copy of the chapters you choose, on your own web address, with its own annotation space for your students. You do everything through websites and one free desktop app. **You never need to type commands into a terminal.** If a tutorial elsewhere tells you to, stop and check with the maintainer first.
+This guide walks you through creating your own department edition of the textbook: a copy of the chapters you choose, on your own web address, sharing the textbook's public annotation layer with every other edition. You do everything through websites and one free desktop app. **You never need to type commands into a terminal.** If a tutorial elsewhere tells you to, stop and check with the maintainer first.
 
 Budget an afternoon (2–3 hours) the first time. Yearly updates after that take under an hour.
 
@@ -228,9 +228,11 @@ The easiest way to edit it is directly on github.com (no download/upload dance, 
 
 ---
 
-## Step 8 — Create your annotation group on Hypothes.is (~10 min)
+## Step 8 — Annotation: the public layer, and an optional group of your own (~10 min)
 
-Every page of your site carries an annotation sidebar: readers can highlight any sentence and attach a comment or question. To keep your cohort's discussion among themselves, they annotate inside a **private group** that you create.
+Every page of your site carries an annotation sidebar: readers can highlight any sentence and attach a comment or question. Those comments go to Hypothes.is's **public layer**, which every edition shares with the canonical textbook — your edition does not get a discussion space of its own, and the platform does not create or configure one for you. This is the final arrangement, not a temporary one: per-cohort isolation was considered and not adopted.
+
+If you would rather your cohort talked among themselves, you can set up a **private Hypothes.is group** yourself. It is entirely manual and entirely optional — nothing in the site enforces it, and students choose the group in the sidebar each time they annotate.
 
 1. Log in at https://hypothes.is.
 2. From your account menu, choose **Create new private group**.
@@ -244,7 +246,7 @@ Every page of your site carries an annotation sidebar: readers can highlight any
 
    [SCREENSHOT: annotation sidebar open on the site with the group selector dropdown expanded]
 
-Finally, **email the maintainer your group's name and link**. A planned upgrade to the annotation service will let your site pre-select your group automatically so students can't post to "Public" by accident; the maintainer switches that on centrally once it's available.
+There is no way to pre-select the group for them. Doing that would need Hypothes.is's Publisher tier, which the project has decided not to buy, so a student who forgets the dropdown posts to "Public" — say so plainly when you brief them. If you do run a group, it is worth **emailing the maintainer its name and link** so the weekly annotation backup can cover it.
 
 ---
 

@@ -28,9 +28,12 @@ nothing is trimmed, renamed, or reformatted. That means the highlighted text,
 the surrounding context used to re-locate the highlight on the page, the comment
 body, tags, author, timestamps, replies, and permissions are all preserved.
 
-When more groups exist (a production group, and one per edition), they are added
-to a single list at the top of `scripts/backup-annotations.mjs` and start being
-backed up on the next run. Nothing else needs to change.
+There will not be a group per edition — per-cohort isolation was considered and
+not adopted, so reader discussion stays in the public layer. The two groups above
+are leftovers from testing and keep being backed up. If a group is ever added by
+hand (a coordinator may run one for their own cohort), it goes into a single list
+at the top of `scripts/backup-annotations.mjs` and starts being backed up on the
+next run. Nothing else needs to change.
 
 ### What is *not* backed up
 

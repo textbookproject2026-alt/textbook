@@ -8,7 +8,7 @@ Pick a fixed slot (Monday morning works well) and treat it as the only time you 
 
 ## What you can and can't do right now
 
-All reader comments currently live on Hypothes.is's **public layer**. That means anyone on the internet can read them, and it also means something important: **you have no power to hide, delete, or unhide anyone else's comment.** Hide/unhide only exists for moderators inside a private Hypothes.is group, and the textbook isn't using groups for reader comments yet.
+All reader comments currently live on Hypothes.is's **public layer**. That means anyone on the internet can read them, and it also means something important: **you have no power to hide, delete, or unhide anyone else's comment.** Hide/unhide only exists for moderators inside a private Hypothes.is group, and the textbook does not use groups for reader comments — a settled decision, not a pending one (see the last section).
 
 So honest moderation, today, is four moves and no more:
 
@@ -87,16 +87,8 @@ Open the site-wide search, work down from the newest comment, and stop when the 
 
 ---
 
-## When the Publisher tier lands
+## Why there are no per-cohort groups
 
-**This section describes future state — none of it is available yet.**
+Per-cohort comment isolation was considered and **not adopted**. It would have needed Hypothes.is's Publisher tier, and the project has decided not to buy it. That decision is settled rather than deferred, so the four moves above are the whole of moderation, permanently: no hide/unhide, no membership control, no per-edition groups arriving later. All reader discussion happens in the public layer, and that is the launch model.
 
-The plan is to move from the public layer to a **private Hypothes.is group per edition**. That changes moderation substantially:
-
-- **Real moderation tools.** Inside a group you own or moderate, you can **hide and unhide** any comment. Hidden comments stay visible to their author and to moderators, and disappear for everyone else. This is the power that today's public layer simply doesn't give us.
-- **Membership control.** Groups have members and roles, so you decide who can post, and can remove someone who won't behave.
-- **Cleaner separation.** Each department edition gets its own group, so one cohort's discussion doesn't spill into another's.
-
-One group already exists — the **Biology edition** group — created under Alec's account. **At handover, Brandon is made moderator/owner of all annotation groups**; that transfer is a handover checklist step, not something to do now.
-
-Until that happens, the routine above is the real one. This page gets revised when the tier lands.
+One private group exists from earlier testing — the **Biology edition** group — created under Alec's account, and the weekly annotation backup still covers it. **At handover, Brandon is made moderator/owner of all annotation groups**; that transfer is a handover checklist step, not something to do now.

@@ -3,7 +3,8 @@
 Planned file structure for the canonical textbook and its two satellite repos,
 annotated with who creates each file and when. Adapted from Appendix A of the
 technical plan to the locked decisions (Scenario B, CC-BY-SA-4.0, test-domain
-build, Plausible per-site, Hypothes.is first-party → Publisher later, Tier 3 out).
+build, Plausible per-site, Hypothes.is first-party permanently — the Publisher
+tier was not bought and per-cohort isolation is out of scope — Tier 3 out).
 
 ## Coordinates
 
@@ -73,10 +74,11 @@ textbook/
 ```
 
 Notes on the locked decisions, where they bite:
-- `publish.js` (D8) embeds Hypothes.is via a `__GROUP_ID__` placeholder with a
-  commented seam for the Publisher-tier swap later; Plausible uses the per-site
-  `script.manual.js` variant with the staging domain baked in, re-registered to
-  the Erasmus site at cutover.
+- `publish.js` (D8) embeds Hypothes.is first-party. It carries a commented
+  `__GROUP_ID__` seam for the Publisher-tier swap, kept as documented dead code
+  and unused by decision — it is not going to be enabled. Plausible uses the
+  per-site `script.manual.js` variant with the staging domain baked in,
+  re-registered to the Erasmus site at cutover.
 - No Tier-3 artifacts appear. The Tier 2 web editor lives in the satellite
   repos, not here.
 - `backup-annotations.yml` only does real work once the production Hypothes.is

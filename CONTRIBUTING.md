@@ -4,7 +4,7 @@ Pick the lightest path that fits your change. All contributions are accepted und
 
 ## 1. Leave a margin comment
 
-Open any page on the published site and use the annotation sidebar to highlight text and leave a note — good for questions, observations, and discussion. Each department edition has its own annotation group.
+Open any page on the published site and use the annotation sidebar to highlight text and leave a note — good for questions, observations, and discussion. Comments go to Hypothes.is's public layer, which the canonical textbook and every department edition share; there is no per-edition or per-cohort discussion space.
 
 ## 2. Suggest an edit
 

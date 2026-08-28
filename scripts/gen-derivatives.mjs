@@ -257,7 +257,7 @@ async function collectEditions(config) {
 function renderIntro(editions, config) {
   const { title } = config;
   const lines = [
-    `A department edition is a copy of *${title}* that a course runs as its own site. The text is the same — the chapters come from this book and stay in step with it — but the edition has its own web address and its own annotation space, so a cohort's margin discussion belongs to that cohort rather than to every reader everywhere. Coordinators can also cut chapters they are not teaching and add examples that suit their students.`,
+    `A department edition is a copy of *${title}* that a course runs as its own site. The text is the same — the chapters come from this book and stay in step with it — but the edition has its own web address and its own front page. Margin discussion is not separated per edition: every edition shares the public annotation layer with this book, and per-cohort isolation was considered and not adopted. Coordinators can also cut chapters they are not teaching and add examples that suit their students.`,
     '',
     'This page lists the editions that exist. It is rebuilt weekly from the forks of the edition template, so an edition appears here on its own once it is published — there is nothing to submit.',
     '',

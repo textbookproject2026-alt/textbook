@@ -40,10 +40,12 @@ Found a typo, a broken reference, or a paragraph that doesn't explain what it sh
 
 ### Make it your department's own
 
-Any department can publish its own edition of this textbook: the same chapters, with the department's own annotation space, so a cohort's discussion stays with that course. Editions remain connected to this canonical version and receive its updates. The full setup guide is here: [[for-course-coordinators|Setting up a department edition]], and the editions already running are listed on the [[derivatives|department editions page]]. If that would suit your course, contact __MAINTAINER__.
+Any department can publish its own edition of this textbook: the same chapters, on the department's own web address, with its own front page and its own choice of chapters. Reader discussion is not separated per edition — every edition shares the same public annotation layer as this one. Editions remain connected to this canonical version and receive its updates. The full setup guide is here: [[for-course-coordinators|Setting up a department edition]], and the editions already running are listed on the [[derivatives|department editions page]]. If that would suit your course, contact __MAINTAINER__.
 
 ---
 
 *Published at __SITE_URL__ and maintained by __MAINTAINER__. Unless otherwise noted, all content is licensed under __LICENCE__ — free to share and adapt, with attribution, under the same licence.*
 
 *Everyone who has written or corrected a page is credited on the [[contributors|contributors page]], which also explains how to join them.*
+
+*How the book is doing — who is reading it, what is being discussed in the margins, and what is being written or corrected — is kept on the [[dashboard|project health page]], which rebuilds itself weekly.*

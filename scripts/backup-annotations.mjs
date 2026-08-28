@@ -48,8 +48,11 @@ import { fileURLToPath } from 'node:url';
 
 // Private groups to back up, in output order.
 //
-// SEAM: production + future per-edition groups get appended here when the
-// Publisher tier lands — nothing else in this file needs to change.
+// SEAM: there will be no per-edition groups — the Publisher tier was not bought
+// and per-cohort isolation is out of scope, not pending. The two below are
+// leftovers from testing and keep being backed up. A group added by hand (a
+// coordinator may run one for their own cohort) gets appended here and nothing
+// else in this file needs to change.
 const ANNOTATION_GROUPS = [
   { id: 'ZGY29zLM', label: 'test-group' },
   { id: 'L9KgjVPa', label: 'Biology edition' },

@@ -148,15 +148,18 @@ if (typeof document !== 'undefined') {
     // Sidebar collapsed by default; highlights always visible. No group lock:
     // on the standard tier, a `services` block switches the client into
     // third-party auth mode and 404s for a private group. First-party it is,
-    // until Publisher access lands (R1, Week-4 decision).
+    // permanently — the Publisher tier will not be bought (R1 closed), so
+    // per-cohort isolation is out of scope rather than pending.
     window.hypothesisConfig = function () {
       return {
         openSidebar: false,
         showHighlights: 'always',
-        // --- Publisher-tier group lock — ENABLE WHEN PUBLISHER ACCESS LANDS.
-        // Requires the Publisher-Groups partnership (R1): an authority
-        // assigned by Hypothes.is and a grantToken minted server-side.
-        // On the standard tier this exact block 404s — do not enable early.
+        // --- Publisher-tier group lock — UNUSED BY DECISION. Kept as a
+        // record of the shape the swap would have taken; it is not going to
+        // be enabled. It needs the Publisher-Groups partnership (R1, closed
+        // as not-adopted): an authority assigned by Hypothes.is and a
+        // grantToken minted server-side. On the standard tier this exact
+        // block 404s. Do not uncomment.
         // services: [{
         //   apiUrl: 'https://hypothes.is/api/',
         //   authority: '__AUTHORITY__',
@@ -558,8 +561,10 @@ if (typeof document !== 'undefined') {
     // URLs carry no query/hash); Hypothes.is normalises URIs server-side, so
     // this matches what the embedded client anchors against.
     //
-    // Publisher seam (R1): when Publisher access lands, the group-scoped
-    // count goes here — add `group=<GROUP_ID>` (+ auth) to this same query.
+    // Publisher seam (R1) — UNUSED BY DECISION. A group-scoped count would
+    // have gone here (`group=<GROUP_ID>` + auth on this same query). The
+    // Publisher tier is not being bought, so this badge counts the public
+    // layer and only the public layer.
     //
     // Failure-safe like the tag helper: armed inside try/catch, every async
     // path caught, worst case is "badge absent" — annotation, Plausible, and
@@ -579,8 +584,9 @@ if (typeof document !== 'undefined') {
         // Keyed by the CANONICAL repo path, so "/" and "/index" (and trailing-
         // slash variants) share one entry instead of splitting the home note's
         // count across two. The "v1:" is the query schema version: bump it when
-        // the uri=/group= shape changes (Publisher seam) so counts cached under
-        // the old public-layer query aren't served after deploy.
+        // the uri= shape changes so counts cached under an older query aren't
+        // served after deploy. (The uri=/group= variant of that seam is unused
+        // by decision — see above.)
         const cacheKey = (path) => CACHE_PREFIX + 'v1:' + path;
 
         // sessionStorage can throw (privacy modes, quota) — treat as cache-miss.

@@ -4,6 +4,8 @@ Readers can highlight any sentence on the textbook site and attach a comment. Th
 
 Pick a fixed slot (Monday morning works well) and treat it as the only time you look. Comments are a slow-moving conversation, not a support queue.
 
+Two other things arrive from readers and contributors: **suggested edits** sent from the form on each page, and **draft edits** written by trusted contributors in the browser editor. Both are covered at the end of this page. Neither is part of the fifteen minutes — they turn up in batches, not continuously — and for both, the machinery is the maintainer's job and the judgement is yours.
+
 ---
 
 ## What you can and can't do right now
@@ -38,7 +40,9 @@ To see just one kind of comment, add a tag to the end of the same link:
 
 [SCREENSHOT: the hypothes.is search page showing the site-wide result list, with the "N Matching Annotations" count visible at the top]
 
-**2. One page at a time.** Every page of the textbook shows a small badge in the row under the title, next to "Edit on GitHub" — it reads **"3 annotations"**, or **"Annotate this page"** when there are none. Click it to open the sidebar on that page and read the comments in context. Use this when you're already reading a chapter, or when the site-wide search points you at a page and you want to see the highlight in place.
+**2. One page at a time.** Every page of the textbook shows a small badge in the row under the title, after "Edit on GitHub · View revision history · Suggest an edit" — it reads **"3 annotations"**, or **"Annotate this page"** when there are none. Click it to open the sidebar on that page and read the comments in context. Use this when you're already reading a chapter, or when the site-wide search points you at a page and you want to see the highlight in place.
+
+Three things about the count, so it never misleads you. It counts the **public layer only** — the two leftover private test groups are not in it. It is read when the page loads, so after you reply the number does not tick up until you reload. And if it cannot reach Hypothes.is at all, the badge simply doesn't appear: a missing badge means the count failed, never that the count is zero.
 
 [SCREENSHOT: the row under a chapter title showing "Edit on GitHub · View revision history · Suggest an edit" and the annotation count badge]
 
@@ -46,7 +50,7 @@ To see just one kind of comment, add a tag to the end of the same link:
 
 ## What to do with each comment
 
-Readers are asked to tag their comment with one of two words, using the small helper panel that appears beside the sidebar while they write. There are only two, and they mean different things:
+Readers are asked to tag their comment with one of two words. A small helper panel floats to the left of the sidebar while it is open, showing both tags as chips; clicking one copies it, and the reader pastes it into the Tags field under their comment. That is as far as it can go — the Hypothes.is composer sits in a frame the site cannot write into, so nothing can tag a comment on the reader's behalf. **Expect most comments to arrive with no tag at all.** There are two tags, and they mean different things:
 
 **`copy-edit`** — the reader is reporting a typo, a broken link, a wrong number, a clumsy sentence. Treat it as a small correction:
 
@@ -77,13 +81,40 @@ Open the site-wide search, work down from the newest comment, and stop when the 
 
 ## Handling suggested edits sent from the website
 
-*(added when this feature goes live)*
+Every page carries a **Suggest an edit** button in the row under the title. A reader clicks it, gets a small form — their name, their email, the page (filled in for them), what they'd change, and optionally why — and sends it. No account, no login, no GitHub. It is the lightest way into the book and the one most readers will ever use.
+
+[SCREENSHOT: the "Suggest an edit" form open over a chapter page, showing the name, email, page, suggested change and why fields]
+
+**Where it goes, and what isn't yours.** Each submission is filed automatically as an issue on the project's GitHub repository, labelled `suggested-edit` and `needs-triage`. You do not need a GitHub account and you never open the issue yourself. Labelling it, replying to the reader, and closing it when it's dealt with are the maintainer's job — `needs-triage` is simply the maintainer's marker for "nobody has looked at this yet", and it comes off once someone has. The words are here only so they aren't a mystery if you see them.
+
+**What reaches you** is the substance: the page, what the reader says is wrong, and what they think it should say. One decision per suggestion, and there are only three:
+
+- **Fix it.** Open the chapter in Obsidian, make the change, publish. Exactly the same move as a `copy-edit` comment above, including the reload-and-glance step if the passage carries an annotation.
+- **Don't change it.** The reader misread, or the wording is a deliberate choice. Say so in a line — "this is intentional, because…" — and the maintainer replies to them. A declined suggestion answered is a good outcome; it is the silence that costs something.
+- **Too big for now.** A real gap that needs a rewrite rather than a fix. Say that, and it gets parked. It doesn't belong in a weekly slot.
+
+**Watching the queue without GitHub.** The project health page — `community/dashboard.md`, rebuilt weekly — carries a *Suggested edits* section: how many have been filed and how many are still waiting. That is your view of the queue, and it is the number to care about. An open suggestion isn't lost, but it is unanswered, and an unanswered suggestion teaches a reader that the button does nothing.
 
 ---
 
 ## Reviewing draft edits from the web editor
 
-*(added when this feature goes live)*
+A handful of trusted contributors can edit chapters in a web page instead of Obsidian. Their guide is `docs/for-trusted-contributors.md`, and the one thing to know about it is the safety property: **nothing anyone does in that editor reaches the live site.** Every save goes into a holding area. There is no publish button in it, for them or for you.
+
+**Where you look.** The editor is at `https://textbook-cms.pages.dev`. You sign in with your own GitHub login — Alec sets that up once, and it is the only place in your routine where such an account is used; you never visit GitHub itself. Inside, entries sit in three columns: **Draft**, **In review**, **Ready**.
+
+**In review** is your column. It means a contributor has finished and would like your eyes on it.
+
+[SCREENSHOT: the browser editor's workflow view, with the Draft, In review and Ready columns and one entry sitting in In review]
+
+**What you do per entry.** Open it and read the proposed text against the chapter it changes. Then one of two things:
+
+- **Ask for a change.** Leave the contributor a note; they go back into the editor, revise, and save again. It stays in *In review*.
+- **Accept it.** Move the entry to **Ready**. That is your yes. It publishes nothing and changes nothing on the site — it marks the work as approved inside the holding area.
+
+**What happens after Ready is not yours.** The maintainer takes the approved entries out of the holding area and into the textbook itself, in batches. Pull requests, branches and merges all live at that step, and none of it needs anything from you. The accepted text then shows up in your Obsidian vault like any other change, and it reaches readers when you next publish — so the final gate is still the Publish dialog on your own machine.
+
+Two things worth knowing. Every edit is recorded under its author's own name, so you can always see who wrote what and ask them about it. And a draft left sitting in *In review* harms nothing — the contributor's work is saved, nobody else is blocked, and it will still be there whenever you get to it. This is not a weekly obligation; look when you're told something is waiting, or once a fortnight.
 
 ---
 

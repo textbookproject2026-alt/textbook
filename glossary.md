@@ -32,3 +32,7 @@ The Real domain encompasses the underlying structures, mechanisms, and causal po
 
 Fourth, social reality is reflexive: social research affects what is being studied, theoretical frameworks shape how actors understand situations, and knowledge about arrangements influences how they operate. (First used in chapter-03.md.)
 
+## transitive dimension
+
+Critical realism also distinguishes the intransitive dimension (what exists independently of us) from the transitive dimension (our changing, fallible knowledge of it) — the move that lets it avoid collapsing into either positivism or relativism. (First used in Critical Realism.md.)
+

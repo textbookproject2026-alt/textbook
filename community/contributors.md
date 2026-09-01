@@ -10,7 +10,7 @@ Maintenance and review stay with Brandon: outside contributions arrive as pull r
 
 | Contributor | Changes | First | Most recent | Pages worked on most |
 | --- | ---: | --- | --- | --- |
-| textbookproject2026-alt | 59 | 17 Jun 2026 | 28 Aug 2026 | [[chapter-03\|Chapter 3]], [[Chapter 1 - Introduction]], [[Critical Realism]] |
+| textbookproject2026-alt | 59 | 17 Jun 2026 | 28 Aug 2026 | [[chapters/chapter-03\|Chapter 3]], [[chapters/chapter-01]], [[Critical Realism]] |
 
 "Changes" counts commits, which is a rough measure and an honest one: a commit can be a rewritten section or a corrected apostrophe, and both are worth having. The pages column looks only at chapters/ — the book itself — so work on the build, the workflows or the documentation is real but invisible here.
 

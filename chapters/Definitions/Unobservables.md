@@ -4,6 +4,6 @@ Unobservables are entities and processes that cannot be directly observed but ar
 
 The *problem* of unobservables arises because empiricist standards of explanation systematically exclude them — yet excluding them would eliminate precisely the phenomena that social research needs to understand. Critical realism's stratified ontology resolves this: unobservable mechanisms exist in the Real domain and are investigated through their effects (via [[Retroduction]]) rather than through direct observation. The chapter's image of blindfolded observers and the elephant captures the difficulty — each accurate partial observation still misses the structure that connects them.
 
-Discussed in [[chapter-03]] §III.
+Discussed in [[chapters/chapter-03]] §III.
 
 **Further reading:** [Critical realism (Wikipedia)](https://en.wikipedia.org/wiki/Critical_realism_%28philosophy_of_the_social_sciences%29)

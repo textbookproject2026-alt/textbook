@@ -25,7 +25,7 @@ The first time:
    `docs`.
 4. Obsidian asks whether you trust the folder. Say yes; it is your own book.
 
-[SCREENSHOT: Obsidian's vault picker window with "Open folder as vault" highlighted]
+![[Vault.png]]
 
 After that, Obsidian reopens this vault on its own every time you launch it. The
 icon at the very bottom of the narrow left-hand strip switches between vaults if
@@ -54,8 +54,7 @@ that runs itself.
 | `community/` | Three pages the weekly jobs write: contributors, department editions, project health. Don't edit them by hand; they get overwritten. |
 | `publish.css`, `publish.js` | How the site looks and the extra things it does. Don't edit — but they matter at publish time, see below. |
 | `backups/`, `scripts/`, `.github/`, `admin/` | Machinery. Ignore entirely. |
-
-[SCREENSHOT: the Obsidian file explorer expanded to show chapters/, chapters/Definitions/, assets/, docs/, templates/ and index.md]
+![[File_index.png]]
 
 **Chapter file names are load-bearing.** The word `chapter`, a dash, two digits,
 `.md` — `chapter-04.md`, `chapter-12.md`. The website builds its addresses from
@@ -195,7 +194,7 @@ typing, saving, images landing in folders — is storage.
    delete anything — it just leaves that file out of this publish.
 4. Click **Publish** and wait. The site updates within a minute or two.
 
-[SCREENSHOT: the Obsidian Publish dialog listing changed files with their tick boxes and the Publish button]
+![[Publish-dialog.png|503]]
 
 A new chapter typically shows up as four kinds of entry: the chapter file, its
 images under `assets/chapter-05/`, `index.md`, and any concept page you linked
@@ -227,7 +226,7 @@ Open **https://bptext2026.xyz** and give it two minutes:
 
 If the page looks stale, force a fresh copy with **⌘ + Shift + R**.
 
-[SCREENSHOT: a published chapter page showing the controls row and annotation badge under the title]
+![[Dummy-site.png]]
 
 ---
 

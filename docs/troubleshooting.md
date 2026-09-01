@@ -253,24 +253,73 @@ case it means.
 
 ## The author's console won't sign in, or shows nothing waiting
 
-**Try the two checks yourself; Alec fixes anything past them.**
+**Work through the checks yourself; Alec fixes anything past them.**
+
+The console is the **Waiting for you** tab in the Authoring Assistant, beside
+**Chapters**. Signing in is GitHub's device flow and there is no relay of Alec's
+involved: you press **Sign in**, the app shows a code and opens a web page, you
+type the code there and approve, and the sign-in is kept in this Mac's Keychain.
+Once it has worked the tab reads **Signed in as** and your name.
 
 **Check:**
 
-- **Did the sign-in code expire?** The console hands you a short code to enter on
-  GitHub, and it is only valid for a few minutes. If you opened it, went to make
-  coffee, and came back, it is dead. Start the sign-in again and enter the code
-  straight away.
-- **Which account are you signed in as?** If you're signed in to the browser as a
-  different GitHub account, the console signs you in successfully and then shows
-  an empty queue — no error, just nothing waiting. That looks identical to
-  "there's nothing to do", which is why it wastes so much time.
-- **Is there genuinely nothing waiting?** An empty queue is usually the truth.
-  Cross-check against something you know is outstanding before assuming a fault.
+- **Does the tab show a card headed "One-off setup" instead of a Sign in
+  button?** Then no sign-in identifier has been saved on this Mac, and there is
+  nothing to sign in with. Press **Open Settings**, and under **Signing in to see
+  what is waiting** paste the identifier Alec gives you into **Sign-in
+  identifier**, then press **Save identifier**. It should answer _Saved. You can
+  now sign in from "Waiting for you"._ Alec supplies that identifier, and it is
+  done once per Mac.
+- **Did the code run out?** The code box says _Waiting for you to approve… this
+  code lasts about 15 minutes._ Past that you get _That code ran out before it
+  was used. Please start again._ Press **Sign in** again and take the code
+  straight to the page.
+- **Did the web page never open?** The app opens it in a new tab, which a popup
+  blocker will stop without saying so. The address is printed under the code —
+  _If the page did not open, go to https://github.com/login/device yourself._
+- **Did an error box appear?** Errors come up in a box headed **Something needs
+  your attention**, with one button, **All right**. Three of the messages are
+  configuration and belong to Alec: _This copy has not been set up for signing in
+  yet. Ask Alec to add the sign-in identifier in Settings._, _Signing in could
+  not be started. Check the sign-in identifier in Settings, and that Device Flow
+  is switched on for it._, and _The sign-in identifier in Settings is not
+  recognised. Ask Alec to check it._ Two are yours: _Sign-in was refused on the
+  web page. Nothing was changed._ means Cancel was pressed on the web page, and
+  _This Mac is not online, so signing in cannot start._ means what it says.
+- **Did it sign in and then ask again?** _Signing in worked, but the token could
+  not be stored in this Mac's Keychain…_ means a Keychain prompt was refused, or
+  the Keychain is locked; sign in again and allow the prompt when it appears.
+  _Your sign-in is no longer accepted. Please sign in again._ is the ordinary
+  case of a sign-in withdrawn or aged out — press **Sign in** again.
+- **Is the list empty with a green note?** _Nothing is waiting. Everything sent
+  in has been dealt with._, above headings reading **Suggestions from readers
+  (none)** and **Draft changes (none)**, is the truth and not a fault. Press
+  **Check again** before assuming otherwise.
+- **Is the list empty with no note at all?** That note is deliberately withheld
+  when something failed, so an empty screen without it means a fetch broke rather
+  than that nothing is there. Look above the lists for the banner: its lines
+  begin **Suggestions:**, **Draft changes:** or **Weekly jobs:**, or, offline,
+  _This Mac is not online, so this list may be incomplete. Nothing can be
+  accepted or declined until it is back._
+- **Is the thing you are waiting for even in this queue?** It holds two kinds of
+  item and no others: reader suggestions, described on the screen as _Sent from
+  the “Suggest an edit” button on the website._, and draft changes _Written by
+  trusted contributors in the browser editor._ Comments left in the margins of
+  the book are not in it — those are under **Elsewhere**, behind **Open the
+  discussion list**.
 
-**Fix:** sign out, sign back in with the right account, and take the code
-straight to GitHub. If it still won't sign in, or the account is right and the
-queue is still empty when you know it shouldn't be, that's Alec's.
+Signing in as a different GitHub account does not empty the queue. Everyone sees
+the same list, because it is the whole repository's open suggestions and draft
+changes rather than anything belonging to your account. The wrong account shows
+up as the wrong name after **Signed in as**, and it bites later, at the moment
+you accept or decline: _Your sign-in does not have permission to do that. Signing
+in again may fix it; if not, ask Alec._
+
+**Fix:** yours are the expired code, the blocked page, the refused Keychain
+prompt and being offline — press **Sign in** again and finish it in one go.
+The identifier messages, the permission message, and a list still empty when you
+know it should not be, are Alec's. Tell him which message you saw, word for word,
+and the name shown after **Signed in as**.
 
 ---
 

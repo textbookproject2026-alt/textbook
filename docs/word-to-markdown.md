@@ -189,20 +189,13 @@ Once the checklist passes:
 
 1. **Check the top of the file.** The chapter should begin with its title as a Heading 1 (`# Chapter 5: Photosynthesis`) and nothing above it. Chapters in this textbook carry no front-matter block — `chapter-03.md` starts straight in with its title, and yours should too. If pandoc left a stray blank line or a duplicate title at the very top, delete it.
 2. **Add the chapter to the front page.** Open `index.md` (the textbook's table of contents) and add a line for the new chapter, written the same way as the existing entries.
-3. **Sync your work to GitHub.** In Obsidian's left sidebar, click the **Git** icon (the source-control panel). Type a short description of what you did into the message box — `Add chapter 5` is plenty — and click **commit-and-sync**. This saves a snapshot of your changes and sends it to GitHub. It is your backup and your history; it does **not** put anything on the website.
+3. **Nothing to sync or commit.** There is no source-control step in this workflow and you don't need one — saving the file in Obsidian is all the storing it needs. Getting the chapter in front of readers is the publish step, and that routine now lives in one place: **Publishing** in `docs/editing-the-textbook.md`. Read it there if anything below is unclear; the next step is the short version.
 
 4. **Publish to the website.** Click the **Publish** icon in the left sidebar. Obsidian shows a list of files that are new or changed since the last publish — your new chapter, its images in `assets/chapter-NN`, and `index.md`. Read the list before confirming: anything ticked will go live, anything unticked won't. Click **Publish** and wait; the site updates within a minute or two.
 
-   **The two steps are separate, and only the second one reaches readers.** commit-and-sync sends files to GitHub; the Publish dialog sends them to the live site. A chapter that's been synced but not published is safely stored and invisible to the world.
+   **Saving and publishing are separate, and only publishing reaches readers.** Saving in Obsidian stores the chapter; the Publish dialog is what sends it to the live site. A chapter that's been saved but not published is safely stored and invisible to the world.
 
-   This matters most for the site's two design files, **`publish.css`** and **`publish.js`**, which sit at the top level of the textbook folder. They reach the live site *only* through the Publish dialog — pushing them to GitHub does nothing for the website. If you (or anyone) change how the site looks and the change doesn't show up, this is nearly always why: the file was synced but never ticked in the Publish list.
-
-<!-- TO RECONCILE (Weeks 8–9 handover): steps 3–4 above duplicate the sync-and-publish
-     routine that docs/editing-the-textbook.md will own once written. When that doc
-     exists, decide whether to keep this inline copy or replace it with a pointer —
-     but do not leave both to drift. The publish.css / publish.js caveat must survive
-     in whichever version remains. The same applies to docs/troubleshooting.md and the
-     end of Part 5. -->
+   This matters most for the site's two design files, **`publish.css`** and **`publish.js`**, which sit at the top level of the textbook folder. They reach the live site *only* through the Publish dialog — saving them does nothing for the website. If you (or anyone) change how the site looks and the change doesn't show up, this is nearly always why: the file was saved but never ticked in the Publish list.
 
 5. **Check the live site.** Open the website, find the new chapter from the front page, and give it one last skim — especially the images and tables.
 

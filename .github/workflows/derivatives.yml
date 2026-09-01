@@ -26,6 +26,37 @@ name: Update derivatives map
 # the textbook is a copy of the manuscript, not a department edition. The
 # built-in GITHUB_TOKEN is passed to the script only to lift the 60-per-hour
 # unauthenticated rate limit — the data read is public either way.
+#
+# AUTO-MERGE
+# ----------
+# The pull request this job opens merges itself: the final step arms GitHub's
+# auto-merge, so the squash lands as soon as main's protection is satisfied.
+# Nobody has to shepherd a weekly chore pull request, and unmerged ones stop
+# piling up on the repository.
+#
+# That is safe for THIS pull request, and would not be for a content one,
+# because of what the final step checks before it arms anything. It re-reads
+# the pull request from the API and requires all three of: the author is
+# github-actions[bot], exactly one file changed, and that file is
+# community/derivatives.md — the page this workflow generates. Anything failing
+# any of the three is left open for a human. The branch name is deliberately
+# not part of the test: anyone with write access can push a branch called
+# chore/derivatives-update, so trusting the name would trust the pusher.
+#
+# The page is machine-owned as well as machine-authored. scripts/gen-derivatives.mjs
+# rebuilds it from scratch on every run, so there is no human edit on it to
+# lose and no judgement in it to review — merging it unread costs nothing, and
+# a wrong page is corrected by the next run rather than by a revert.
+#
+# None of that holds for a chapter. A content pull request carries prose
+# somebody wrote and somebody else has to read, and the guard above refuses it
+# by construction. Required review on main is what protects those, and it must
+# stay in place.
+#
+# Arming auto-merge needs "Allow auto-merge" switched on in the repository
+# settings, and needs main's protection to let github-actions[bot] satisfy it.
+# Until both are true the step logs a warning and leaves the pull request open;
+# it never fails the run.
 
 on:
   schedule:
@@ -77,6 +108,7 @@ jobs:
           fi
 
       - name: Open or update the pull request
+        id: pr
         if: steps.page.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -95,6 +127,7 @@ jobs:
             if git show "FETCH_HEAD:$PAGE" 2>/dev/null | diff -q - "$PAGE" >/dev/null 2>&1; then
               echo "PR #${OPEN_PR} already proposes this exact page — leaving it alone."
               echo "Derivatives PR #${OPEN_PR} already up to date." >> "$GITHUB_STEP_SUMMARY"
+              echo "number=${OPEN_PR}" >> "$GITHUB_OUTPUT"
               exit 0
             fi
           fi
@@ -109,6 +142,7 @@ jobs:
           if [ -n "$OPEN_PR" ]; then
             echo "Updated existing PR #${OPEN_PR}."
             echo "Updated derivatives PR #${OPEN_PR}." >> "$GITHUB_STEP_SUMMARY"
+            echo "number=${OPEN_PR}" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
@@ -134,3 +168,48 @@ jobs:
 
           echo "Opened ${URL}"
           echo "Opened derivatives PR: ${URL}" >> "$GITHUB_STEP_SUMMARY"
+          echo "number=${URL##*/}" >> "$GITHUB_OUTPUT"
+
+      # Everything this step trusts about the pull request is re-read from the
+      # API. Nothing is inferred from the branch it came from — see AUTO-MERGE
+      # in the header for why that distinction is the whole safety argument.
+      - name: Arm auto-merge on the pull request
+        if: steps.pr.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+        run: |
+          set -euo pipefail
+
+          WHO="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.user.login + "/" + .user.type')"
+          if [ "$WHO" != "github-actions[bot]/Bot" ]; then
+            echo "::warning::PR #${PR} is authored by ${WHO}, not github-actions[bot]/Bot — leaving it for a human."
+            exit 0
+          fi
+
+          # One newline-joined string, so this single comparison rejects both a
+          # pull request touching some other file and one touching more files
+          # than the page. --paginate so a large pull request cannot pass as a
+          # one-file change on the strength of its first page of results.
+          FILES="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR}/files" --jq '.[].filename')"
+          if [ "$FILES" != "$PAGE" ]; then
+            echo "::warning::PR #${PR} changes [${FILES}], not exactly ${PAGE} — leaving it for a human."
+            exit 0
+          fi
+
+          if gh pr merge "$PR" --auto --squash; then
+            echo "Auto-merge armed on PR #${PR}; it squashes itself once main is satisfied."
+            echo "Auto-merge armed on derivatives PR #${PR}." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # GitHub refuses to arm auto-merge on a pull request that is already
+          # mergeable — the one case where there is nothing left to wait for.
+          if [ "$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.mergeable_state')" = "clean" ] \
+            && gh pr merge "$PR" --squash; then
+            echo "Nothing left to wait for; merged PR #${PR}."
+            echo "Merged derivatives PR #${PR}." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          echo "::warning::Could not arm auto-merge on PR #${PR}. Check that \"Allow auto-merge\" is on under Settings -> General, and that main's protection lets github-actions[bot] merge. The pull request is open and untouched."

@@ -17,7 +17,7 @@ A *repository* (repo) is a project folder hosted on GitHub. This setup involves 
 | | The textbook | The site template |
 |---|---|---|
 | **Address** | `github.com/textbookproject2026-alt/textbook` | `github.com/textbookproject2026-alt/textbook-edition-template` |
-| **What it is** | The book itself — every chapter, figure, and reference, maintained by the textbook maintainer (currently Brandon) | The website machinery that turns markdown chapters into a readable site |
+| **What it is** | The book itself — every chapter, figure, and reference, maintained by the textbook maintainer | The website machinery that turns markdown chapters into a readable site |
 | **What you do with it** | **Copy from it.** You take the chapters you want. You never edit this repo directly. | **Fork it.** Your fork becomes *your* repo, *your* site. This is where all your work happens. |
 
 Think of the textbook repo as the manuscript and the template repo as the printing press. You take your own copy of the press, feed it the pages you want, and adjust the examples for your own course.
@@ -26,7 +26,7 @@ Here is how content flows through the system, including the yearly update cycle:
 
 ```mermaid
 flowchart TD
-    canon["Canonical textbook repo<br/>(maintained by Brandon)"] -- "yearly release" --> rel["Updated chapters"]
+    canon["Canonical textbook repo<br/>(maintained by the textbook maintainer)"] -- "yearly release" --> rel["Updated chapters"]
     rel -- "you copy the changed files (Step 3, repeated yearly)" --> fork["YOUR fork of the template<br/>content/ folder"]
     fork -- "commit + push (GitHub Desktop)" --> cf["Cloudflare Pages<br/>rebuilds automatically"]
     cf --> site["Your department site<br/>your-name.pages.dev"]

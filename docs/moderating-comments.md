@@ -101,7 +101,7 @@ Every page carries a **Suggest an edit** button in the row under the title. A re
 
 A handful of trusted contributors can edit chapters in a web page instead of Obsidian. Their guide is `docs/for-trusted-contributors.md`, and the one thing to know about it is the safety property: **nothing anyone does in that editor reaches the live site.** Every save goes into a holding area. There is no publish button in it, for them or for you.
 
-**Where you look.** The editor is at `https://textbook-cms.pages.dev`. You sign in with your own GitHub login — Alec sets that up once, and it is the only place in your routine where such an account is used; you never visit GitHub itself. Inside, entries sit in three columns: **Draft**, **In review**, **Ready**.
+**Where you look.** The editor is at `https://textbook-cms.pages.dev`. You sign in with your own GitHub login — the technical contact sets that up once, and it is the only place in your routine where such an account is used; you never visit GitHub itself. Inside, entries sit in three columns: **Draft**, **In review**, **Ready**.
 
 **In review** is your column. It means a contributor has finished and would like your eyes on it.
 
@@ -122,4 +122,4 @@ Two things worth knowing. Every edit is recorded under its author's own name, so
 
 Per-cohort comment isolation was considered and **not adopted**. It would have needed Hypothes.is's Publisher tier, and the project has decided not to buy it. That decision is settled rather than deferred, so the four moves above are the whole of moderation, permanently: no hide/unhide, no membership control, no per-edition groups arriving later. All reader discussion happens in the public layer, and that is the launch model.
 
-One private group exists from earlier testing — the **Biology edition** group — created under Alec's account, and the weekly annotation backup still covers it. **At handover, Brandon is made moderator/owner of all annotation groups**; that transfer is a handover checklist step, not something to do now.
+One private group exists from earlier testing — the **Biology edition** group — created under the technical contact's account, and the weekly annotation backup still covers it. **At handover, the textbook's maintainer is made moderator/owner of all annotation groups**; that transfer is a handover checklist step, not something to do now.

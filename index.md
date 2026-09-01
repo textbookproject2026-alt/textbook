@@ -13,9 +13,9 @@ The textbook is published chapter by chapter as each one is finalised, so what y
 
 - **[[chapters/chapter-03|Chapter 3 — Reality and the Problem of Unobservables]]**
   Stratified reality and the three domains, monism, and why the things social research most needs to explain are the ones it cannot directly observe.
-- **[[chapters/chapter-01|Chapter 1 — Introduction]]** 
+- **[[chapters/chapter-01|Chapter 1 — Introduction]]**
   Setting up the idea of the book.
-- 
+
 > [!info] In preparation
 > The remaining chapters — the philosophical groundwork of Part I and the four ontological debates of Part II — will appear here as they are published. New chapters are announced on this page.
 
@@ -49,3 +49,5 @@ Any department can publish its own edition of this textbook: the same chapters, 
 *Published at https://bptext2026.xyz and maintained by Brandon. Unless otherwise noted, all content is licensed under CC-BY-SA-4.0 — free to share and adapt, with attribution, under the same licence.*
 
 *Everyone who has written or corrected a page is credited on the [[contributors|contributors page]], which also explains how to join them.*
+
+*How the book is doing — who is reading it, what is being discussed in the margins, and what is being written or corrected — is kept on the [[dashboard|project health page]], which rebuilds itself weekly.*

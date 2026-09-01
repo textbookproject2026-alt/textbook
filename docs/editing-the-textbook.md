@@ -1,6 +1,7 @@
 # Editing the textbook
 
-This is the day-to-day guide for you, Brandon. Everything in it happens in two
+This is the day-to-day guide for the textbook's author. Everything in it happens
+in two
 places: **Obsidian**, on your own Mac, and **a web browser**, to look at the
 result. There is no terminal here, no GitHub, and nothing to install.
 
@@ -60,7 +61,8 @@ that runs itself.
 `.md` — `chapter-04.md`, `chapter-12.md`. The website builds its addresses from
 those names and chapters link to each other by them; concept pages keep their
 prose names, capitals and all. Renaming a file breaks every link pointing at it,
-so if a page needs a new name, ask Alec rather than renaming it yourself.
+so if a page needs a new name, ask the technical contact rather than renaming it
+yourself.
 
 ---
 
@@ -141,7 +143,8 @@ spills out as ordinary text.
 heading, a list or a callout needs a blank line above it or it gets swallowed
 into the paragraph before.
 
-If you meet a mark you don't recognise, leave it alone and mention it to Alec.
+If you meet a mark you don't recognise, leave it alone and mention it to the
+technical contact.
 
 ---
 
@@ -176,8 +179,8 @@ That regeneration happens away from your Mac, and the finished `index.md` then
 arrives in your vault on its own. In practice: edit `templates/index.md`, and
 when you open the Publish dialog check that the new chapter's line is in
 `index.md` too. If it isn't there yet, the rewrite hasn't run — publish the
-chapter itself and tell Alec the front page is waiting. That is the one routine
-step in this guide that isn't yours to run.
+chapter itself and tell the technical contact the front page is waiting. That is
+the one routine step in this guide that isn't yours to run.
 
 ---
 
@@ -239,9 +242,9 @@ If the page looks stale, force a fresh copy with **⌘ + Shift + R**.
 | A `[[link]]` shows as plain bracketed text | The name inside doesn't match a page exactly | Retype it using Obsidian's `[[` completion list |
 | A callout box ends halfway | A line inside it lost its `>` | Put the `>` back on every line of the box |
 | A section is missing from the outline | Its heading is bold text, not a `#` heading | Replace the bolding with the right number of hashes |
-| The front page didn't change | You edited `index.md` instead of `templates/index.md`, or the rewrite hasn't run yet | Move the edit to the template; tell Alec if the template is right and `index.md` still hasn't caught up |
+| The front page didn't change | You edited `index.md` instead of `templates/index.md`, or the rewrite hasn't run yet | Move the edit to the template; tell the technical contact if the template is right and `index.md` still hasn't caught up |
 | A file you didn't touch has changed | One of the automatic jobs, or a contributor's edit | Nothing — see the next section |
-| Anything else | Configuration | Alec. Say what you were doing and roughly when |
+| Anything else | Configuration | The technical contact. Say what you were doing and roughly when |
 
 Nothing on this list is damage: the site can always be republished from your
 vault, and every past version of every file is kept.

@@ -5,7 +5,8 @@ event so much as a decision: you decide the book is in the state you want
 students to meet in September, and it gets marked so that anyone can point at
 exactly that state forever afterwards.
 
-This guide is for you, Brandon. It covers what you check, what you decide, and
+This guide is for the book's maintainer. It covers what you check, what you
+decide, and
 what you send — and it is explicit about the parts that are not yours, so you
 are never waiting on something you didn't know you had to ask for.
 
@@ -15,7 +16,7 @@ are never waiting on something you didn't know you had to ask for.
 
 A release has two halves and they belong to two people.
 
-| Yours | Alec's |
+| Yours | The technical contact's |
 |---|---|
 | Deciding the book is ready | Creating the tag |
 | Reading the chapters and the front page | Anything involving git, branches or the repository |
@@ -44,7 +45,8 @@ was topical two years ago.
 the top: the title heading is right, and nothing is half-finished below it.
 Anything still in the browser editor's holding area is *not* in the book — if
 there is accepted work sitting in **Ready** that you want in this release, tell
-Alec now rather than after the tag exists. See `docs/moderating-comments.md`.
+the technical contact now rather than after the tag exists. See
+`docs/moderating-comments.md`.
 
 **3. The front page is accurate.** Every chapter in the book is listed, in the
 right order, with a description that still describes it. Remember this is
@@ -67,8 +69,8 @@ worth fixing before a year's worth of students meet it.
 `community/derivatives.md` and `community/dashboard.md` rebuild themselves every
 Sunday. Open all three and check they look like pages rather than something
 half-written, and that the contributor list includes the people who worked on the
-book this year. If one is visibly stale or broken, that is Alec's — the details
-are in `docs/scheduled-actions-health-check.md`.
+book this year. If one is visibly stale or broken, that is the technical
+contact's — the details are in `docs/scheduled-actions-health-check.md`.
 
 **7. Publish everything.** The last thing before you hand over is a publish, so
 that the live site and the text about to be tagged are the same thing. Read the
@@ -77,18 +79,19 @@ most.
 
 [SCREENSHOT: the Publish dialog before a release, with the full list of changed files visible]
 
-Then tell Alec you're ready. One line is enough — "chapter review done, published,
-ready to tag". He will tell you what the version ended up being called.
+Then tell the technical contact you're ready. One line is enough — "chapter
+review done, published, ready to tag". They will tell you what the version ended
+up being called.
 
 ---
 
 ## What tagging actually means
 
-Alec creates a **tag** — a permanent bookmark on the project's history, with a
-name like `v0.1`. It doesn't change the book, it doesn't change the website, and
-nobody has to do anything with it. What it does is make one particular state of
-the text permanently reachable at a fixed web address, no matter how much the
-book changes afterwards.
+The technical contact creates a **tag** — a permanent bookmark on the project's
+history, with a name like `v0.1`. It doesn't change the book, it doesn't change
+the website, and nobody has to do anything with it. What it does is make one
+particular state of the text permanently reachable at a fixed web address, no
+matter how much the book changes afterwards.
 
 That is the whole point, and it exists for one reason: **so that a citation or a
 syllabus can point at a version of the text that will still say the same thing in
@@ -110,11 +113,11 @@ further down.
 
 ## The announcement
 
-Two audiences, two messages. Send them after Alec confirms the tag exists —
-the coordinator one needs the tag's link in it.
+Two audiences, two messages. Send them after the technical contact confirms the
+tag exists — the coordinator one needs the tag's link in it.
 
-Fill in the bracketed parts. Alec gives you the tag name; everything else you
-already know.
+Fill in the bracketed parts. The technical contact gives you the tag name;
+everything else you already know.
 
 ### To course coordinators
 
@@ -259,15 +262,16 @@ When that happens:
 book at `bptext2026.xyz` is now reading the corrected text, and that is most
 readers. Do this before anything else; the rest can take a day.
 
-**2. Tell Alec, and say it's serious.** This is the sentence that matters,
-because it is what separates this from a normal fix. The released version still
-contains the error — tags never move — so anybody who followed a syllabus link
-to the tagged edition still sees it. Whether that needs a **point release** (a
-second tag, `v0.1.1`, carrying the fix) is Alec's call and Alec's work. So is
-backporting the fix into it. You do not need to know what either involves.
+**2. Tell the technical contact, and say it's serious.** This is the sentence
+that matters, because it is what separates this from a normal fix. The released
+version still contains the error — tags never move — so anybody who followed a
+syllabus link to the tagged edition still sees it. Whether that needs a **point
+release** (a second tag, `v0.1.1`, carrying the fix) is the technical contact's
+call and their work. So is backporting the fix into it. You do not need to know
+what either involves.
 
 **3. Email the coordinators.** They are the people who will otherwise keep
-teaching the error. Say what was wrong, what it now says, and — if Alec made a
+teaching the error. Say what was wrong, what it now says, and — if there was a
 point release — give them the new link to cite. Coordinators running their own
 department edition need this most: their site is a fork and does not update
 itself, so their students keep seeing the old text until the coordinator syncs.
@@ -277,7 +281,7 @@ annotated the paragraph you just corrected, a one-line reply saying it was wrong
 and is now fixed is worth more than a silent edit. It also warns you if the
 highlight has drifted — see `docs/troubleshooting.md`.
 
-One thing to ask Alec for *before* a large correction rather than after: a fresh
-annotation backup. Rewriting a passage can orphan every comment attached to it,
-and there is no undo. It takes him two minutes and only helps if it happens
-first.
+One thing to ask the technical contact for *before* a large correction rather
+than after: a fresh annotation backup. Rewriting a passage can orphan every
+comment attached to it, and there is no undo. It takes them two minutes and only
+helps if it happens first.

@@ -5,7 +5,7 @@
 You have been given access to edit the textbook. This guide shows you how, using
 nothing but a web browser. **You do not need Obsidian, you do not need Git, and
 you never need to type a command into a terminal.** If a tutorial elsewhere tells
-you to install something, stop and check with Alec first.
+you to install something, stop and check with the technical contact first.
 
 Reading this takes ten minutes. Your first edit will take about five.
 
@@ -27,9 +27,9 @@ about, is this:
 
 > **Nothing you do in the CMS goes live on the website.**
 
-Your edits go into a holding area called `drafts`. Brandon reviews what is in
-that holding area and decides what gets published. There is no button anywhere in
-the CMS that publishes to the live site. You cannot break the book.
+Your edits go into a holding area called `drafts`. The maintainer reviews what
+is in that holding area and decides what gets published. There is no button
+anywhere in the CMS that publishes to the live site. You cannot break the book.
 
 ---
 
@@ -48,9 +48,9 @@ CMS is a tool; it is not part of the book, and it is not published with it.
 ## Signing in
 
 You need a free GitHub account. GitHub is where the textbook files are stored.
-If you do not have one, make one at `https://github.com` first, and tell Alec the
-username you chose so he can grant you access. Until he does, you will be able to
-sign in but not to save.
+If you do not have one, make one at `https://github.com` first, and give the
+technical contact the username you chose so they can grant you access. Until
+they do, you will be able to sign in but not to save.
 
 Then:
 
@@ -65,14 +65,15 @@ Then:
 [SCREENSHOT: The GitHub authorisation dialog for "Textbook CMS", with the green Authorize button highlighted.]
 
 You are signing in **as yourself**. There is no shared account and no shared
-password. This matters: every change you make is recorded under your own name, so
-Brandon can see who wrote what and ask you about it. It also means you can never
-be blamed for someone else's edit.
+password. This matters: every change you make is recorded under your own name,
+so the maintainer can see who wrote what and ask you about it. It also means you
+can never be blamed for someone else's edit.
 
 You should only have to authorise once per browser.
 
 **If the popup opens and closes and you are still signed out**, it is a
-configuration problem, not something you did wrong. Send Alec a message.
+configuration problem, not something you did wrong. Message the technical
+contact.
 
 ---
 
@@ -134,8 +135,8 @@ more do nothing extra.
 
 If you are unsure whether a mark is doing something, leave it alone and mention
 it in your description when you save. Nothing you can type will damage anything
-permanently — everything is recoverable, and Brandon sees the change before it
-reaches a reader.
+permanently — everything is recoverable, and the maintainer sees the change
+before it reaches a reader.
 
 ### Adding an image
 
@@ -152,7 +153,7 @@ change" rather than "publish this".
 
 1. Click **Save**. Your edit is stored and given a status of **Draft**.
 2. When you are happy with it, change the status to **In review**. That is the
-   signal to Brandon that it is finished and you would like him to look at it.
+   signal to the maintainer that it is finished and ready to be looked at.
 
 [SCREENSHOT: The editor toolbar showing the workflow status control with Draft, In review, and Ready.]
 
@@ -162,7 +163,7 @@ nobody else is affected.
 
 There is a third status, **Ready**. Setting it does not put anything on the
 website — it marks the entry as approved within the holding area. Leave it to
-Brandon.
+the maintainer.
 
 ---
 
@@ -182,18 +183,19 @@ live book, and nothing in the CMS can make it point at the live book.
 Then:
 
 - **You will get an email from GitHub**, and a notification on the bell icon at
-  `https://github.com`, whenever Brandon comments on your change or accepts it.
+  `https://github.com`, whenever the maintainer comments on your change or
+  accepts it.
   If the email is unwelcome, turn it off in GitHub's notification settings — the
   bell will still work.
-- **Brandon reviews the holding area** and, when he is satisfied, publishes a
+- **The maintainer reviews the holding area** and, when satisfied, publishes a
   batch of accepted changes to the live site. This is a separate, deliberate
-  step that only he can take.
-- **He may leave a comment** asking a question or suggesting a rewording. You
+  step that only the maintainer can take.
+- **You may get a comment** asking a question or suggesting a rewording. You
   reply on GitHub, or just go back into the CMS, make the change, and save again.
 
 So the full path of a sentence you write is: your browser → the holding area →
-Brandon's review → the live book. Two people and one deliberate decision stand
-between your text box and a reader.
+the maintainer's review → the live book. Two people and one deliberate decision
+stand between your text box and a reader.
 
 [SCREENSHOT: A pull request on GitHub showing the contributor's name, the changed lines highlighted in green and red, and the target branch reading "drafts".]
 
@@ -207,15 +209,17 @@ will get an error when saving. Say in the group chat what you are picking up
 before you start.
 
 **Your work is never lost.** Every save is recorded permanently with your name
-and the time. Even a change Brandon rejects stays in the history and can be
-brought back.
+and the time. Even a change the maintainer rejects stays in the history and can
+be brought back.
 
-**You cannot edit the live site directly, and neither can Brandon by accident.**
+**You cannot edit the live site directly, and neither can the maintainer by
+accident.**
 This is by design and it is not a comment on your judgement — it is the same for
 everyone, including the people who set the system up.
 
 **If something looks wrong, it probably is not your fault.** Sign-in failures,
-missing chapters and save errors are almost always configuration. Ask Alec.
+missing chapters and save errors are almost always configuration. Ask the
+technical contact.
 
 ---
 
@@ -237,8 +241,8 @@ like the book's.
 
 ## Getting help
 
-- **Something is broken, or you cannot sign in** — Alec.
+- **Something is broken, or you cannot sign in** — the technical contact.
 - **A question about the content itself, or whether an edit is a good idea** —
-  Brandon.
+  the maintainer.
 - **You made a mess and want it undone** — either of them. It is genuinely easy
   to undo. Say what you were editing and roughly when.

@@ -311,7 +311,8 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 
 #### 1.7 — FIX-DOC — `scheduled-actions-health-check.md` omits four of the eight workflows
 
-- **Status:** TODO
+- **Status:** DONE (4 Sep 2026 — `docs/scheduled-actions-health-check.md`, new
+  section *The other four workflows*)
 - **Repos/files:** `Obsidian Vault/docs/scheduled-actions-health-check.md`;
   `.github/workflows/link-check.yml`, `lint.yml`, `apply-config.yml`, `stats.yml`
 - **What's wrong:** the doc opens "Four workflows run on a weekly schedule, all
@@ -325,7 +326,11 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
     `docs/changing-settings.md` depend on this working and tell the author to
     escalate when it hasn't run, and there is no diagnostic entry for it anywhere;
   - `stats.yml` — still present as a `workflow_dispatch`-only stub.
-- **Do together with 2.4** — same file.
+- **Done together with 2.4** — same file, one commit.
+- **Found while writing it:** `link-check.yml` runs lychee with
+  `--exclude-path docs`, so **a broken link inside `docs/` is never caught by CI**,
+  including links between the guides. Recorded in the health-check doc. Relevant to
+  every doc fix in this worklist: cross-references have to be checked by hand.
 
 ### Stale references
 
@@ -405,7 +410,8 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 
 #### 2.4 — FIX-DOC — `scheduled-actions-health-check.md` predates auto-merge
 
-- **Status:** TODO
+- **Status:** DONE (4 Sep 2026 — `docs/scheduled-actions-health-check.md`, new
+  section *Auto-merge, and when it silently doesn't*)
 - **Repos/files:** `Obsidian Vault/docs/scheduled-actions-health-check.md`;
   `.github/workflows/contributors.yml:191`, `derivatives.yml:200`,
   `dashboard.yml:228`
@@ -421,7 +427,7 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
   anyone looking for a fourth auto-merging pull request will not find one.
 - **What a new maintainer hits:** weekly chore pull requests pile up unmerged with
   a green run and no failure signal.
-- **Do together with 1.7** — same file.
+- **Done together with 1.7** — same file, one commit.
 
 #### 2.5 — FIX-DOC — `editing-the-textbook.md` vault-organisation table is incomplete
 
@@ -502,10 +508,10 @@ the code on 4 September 2026.
 | 1.4 | FIX-DOC | BLOCKED on 3.3 |
 | 1.5 | FIX-DOC | BLOCKED on 3.2 |
 | 1.6 | FIX-DOC | TODO (carries one PARKED and one FIX-CODE item) |
-| 1.7 | FIX-DOC | TODO |
+| 1.7 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
 | 2.1 | FIX-DOC | HELD — maintainer review |
 | 2.2 | FIX-DOC | HELD — maintainer review, may be deleted |
 | 2.3 | FIX-CODE | HELD — code + test together |
-| 2.4 | FIX-DOC | TODO |
+| 2.4 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
 | 2.5 | FIX-DOC | TODO |
 | 2.6 | PARKED | Recorded; left as placeholders |

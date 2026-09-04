@@ -50,11 +50,14 @@ that runs itself.
 | `assets/` | Every image in the book, in one subfolder per chapter: `assets/chapter-05/`. |
 | `glossary.md` | The list of terms with the chapter each was first used in. |
 | `docs/` | These handover guides, including this one. |
-| `templates/` | The source of the front page. See *Adding a new chapter*. |
+| `images/` | The screenshots used *by these guides* — not pictures for the book. Those go in `assets/`. |
+| `templates/` | The source of the front page, and of the two files GitHub shows to visitors (`README.md`, `CONTRIBUTING.md`). See *Adding a new chapter*. |
 | `index.md` | The front page as published. **Written automatically — do not edit it.** |
 | `community/` | Three pages the weekly jobs write: contributors, department editions, project health. Don't edit them by hand; they get overwritten. |
 | `publish.css`, `publish.js` | How the site looks and the extra things it does. Don't edit — but they matter at publish time, see below. |
-| `backups/`, `scripts/`, `.github/`, `admin/` | Machinery. Ignore entirely. |
+| `textbook.config.json` | The book's title, maintainer, web address and licence, in one small file. Changing a value here rewrites `index.md`, `README.md` and `CONTRIBUTING.md` on its own — `docs/changing-settings.md` has the four steps. |
+| `backups/`, `scripts/`, `.github/`, `admin/`, `configure.mjs`, `OAUTH-SETUP.md` | Machinery. Ignore entirely. |
+
 ![[File_index.png]]
 
 **Chapter file names are load-bearing.** The word `chapter`, a dash, two digits,

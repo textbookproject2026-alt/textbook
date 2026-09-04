@@ -203,7 +203,8 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 
 #### 3.6 — FIX-DOC — `quartz-edition-extras` has no README
 
-- **Status:** TODO
+- **Status:** DONE (4 Sep 2026 — `quartz-edition-extras/README.md`, branch
+  `docs/repo-readme`)
 - **Repos/files:** `quartz-edition-extras/` — new `README.md`
 - **What's absent:** the repo has no top-level README. It holds
   `plugins/edition-integrations` (Hypothes.is + Plausible injection) and
@@ -213,6 +214,10 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 - **What a new maintainer hits:** a live build-time dependency of every department
   site with no entry point. Delete, rename or privatise it and every edition's next
   build fails with nothing pointing at the cause.
+- **Also found:** each plugin's own `README.md` is the unmodified upstream
+  `quartz-community/plugin-template` boilerplate, and their `package.json` files
+  still carry the template's `author`, `homepage` and `repository` values. Nothing
+  depends on those, and the new repo README says so rather than editing them.
 
 ### Undocumented features
 
@@ -490,7 +495,7 @@ the code on 4 September 2026.
 | 3.3 | DECIDE | BLOCKED — decision |
 | 3.4 | DECIDE | BLOCKED — decision |
 | 3.5 | FIX-DOC | DONE — `docs/updating-department-editions.md` (spawned one FIX-CODE item) |
-| 3.6 | FIX-DOC | TODO |
+| 3.6 | FIX-DOC | DONE — `quartz-edition-extras/README.md` |
 | 1.1 | FIX-DOC | TODO |
 | 1.2 | FIX-DOC | TODO |
 | 1.3 | FIX-DOC | TODO |

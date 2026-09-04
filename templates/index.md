@@ -36,6 +36,8 @@ Short, standalone pages for the ideas the chapters build on. They are linked fro
 
 This site has [Hypothes.is](https://hypothes.is) built in. Highlight any passage and the sidebar opens along the right edge of the page, showing the conversation anchored to that exact text. Reading annotations is open to everyone; to comment or reply, log in with a free Hypothes.is account. Annotations stay attached to their passage even as the text around them is edited.
 
+New to it? **[[how-to-comment|How to comment in the margins]]** is a five-minute walkthrough written for students — including two things worth knowing before you post: every comment is public, and comments from previous years are still on the page.
+
 ### Suggest an edit
 
 Found a typo, a broken reference, or a paragraph that doesn't explain what it should? Every page carries an **Edit on GitHub** link that opens the page's source text, where you can propose a change with a free GitHub account. A maintainer reviews every suggestion before anything changes in the book — small fixes are as welcome as large ones.

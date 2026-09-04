@@ -80,19 +80,22 @@ contact.
 ## Finding a chapter
 
 After signing in you will see a list on the left called **Chapters and concept
-pages**. Click it and you get every page in the book:
+pages**. Click it and you get the chapter files — `chapter-01`, `chapter-03`, and
+the rest as they are written.
 
-- The chapters, named `chapter-03`, `chapter-04`, and so on.
-- The short concept pages, named for the idea they explain — `Critical Realism`,
-  `Emergence`, `Monism`, `Retroduction`, `The Three Domains`, `Unobservables`.
-  These are the little pop-up definitions readers see when they hover a term in a
-  chapter.
-
-Both kinds are edited exactly the same way.
-
-[SCREENSHOT: The CMS entry list, showing chapter-03 alongside the concept pages Critical Realism, Emergence, Monism, Retroduction, The Three Domains and Unobservables.]
+[SCREENSHOT: The CMS entry list, showing the chapter files.]
 
 Click the one you want.
+
+**About the concept pages.** These are the short definitions readers see pop up
+when they hover a term in a chapter: `Critical Realism`, `Emergence`, `Monism`,
+`Retroduction`, `The Three Domains`, `Unobservables`. They used to sit alongside
+the chapters, and they were listed here with them. They have since moved into a
+`Definitions` folder inside `chapters/`, and the list only shows files sitting
+directly in `chapters/` — so they do not appear in it at the moment.
+
+If you have been asked to edit one, tell the technical contact rather than
+hunting for it. It is a setting on their side, not anything you are doing wrong.
 
 ---
 
@@ -246,3 +249,16 @@ like the book's.
   the maintainer.
 - **You made a mess and want it undone** — either of them. It is genuinely easy
   to undo. Say what you were editing and roughly when.
+
+---
+
+## Related guides
+
+- **`docs/how-to-comment.md`** — the annotation sidebar as readers meet it.
+  Worth a skim even though it is written for students: the margin comments are
+  where a good number of the copy-edits you will be asked to make start out.
+- **`docs/for-course-coordinators.md`** — for anyone publishing a department
+  edition of the book at its own web address, from its own copy of the chapters.
+- **`docs/editing-the-textbook.md`** — the maintainer's route into the same
+  files, through Obsidian rather than the CMS. You do not need it; it is there if
+  you want to see what happens to your change after it is accepted.

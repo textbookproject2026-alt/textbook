@@ -97,10 +97,12 @@ Now you fill the empty `content` folder with the chapters you want, copied from 
 3. Unzip the download. Inside you'll find the book's folders, including `chapters` and `assets`.
 4. Using your normal file manager (Explorer / Finder), copy into your fork's `content` folder:
    - the **`chapters` folder** — copy the whole folder, then delete the chapter files you *don't* want from your copy. Keeping whole chapters intact is safer than picking paragraphs.
-   - the **`assets` folder**, complete. This holds every figure and image. Don't trim it — unused images cost nothing, but a missing one breaks a page.
-   - **any other content folders** the canonical repo has (for example folders holding concept definitions or reference pages). Chapters link into these; if they're missing, those links break.
 
-   Your fork should now look like: `content/chapters/…`, `content/assets/…` — the same folder names as the textbook, just nested inside `content`.
+     **Leave the `Definitions` folder inside `chapters` completely alone.** It holds the short concept pages (`Critical Realism`, `Emergence`, `Monism`, `Retroduction`, `The Three Domains`, `Unobservables`) that every chapter links to for its hover definitions. Keep all six even if you keep only one chapter — they are small, and a missing one turns a link in the text into dead bracketed words.
+   - the **`assets` folder**, complete. This holds every figure and image. Don't trim it — unused images cost nothing, but a missing one breaks a page.
+   - **any top-level pages you want to carry over**, such as `glossary.md`. Nothing in the chapters links to these, so they are genuinely optional — unlike `Definitions`, which is not.
+
+   Your fork should now look like: `content/chapters/…`, `content/chapters/Definitions/…`, `content/assets/…` — the same folder names as the textbook, just nested inside `content`.
 
    [SCREENSHOT: file manager showing chapters and assets folders inside the fork's content folder]
 
@@ -248,6 +250,8 @@ If you would rather your cohort talked among themselves, you can set up a **priv
 
 There is no way to pre-select the group for them. Doing that would need Hypothes.is's Publisher tier, which the project has decided not to buy, so a student who forgets the dropdown posts to "Public" — say so plainly when you brief them. If you do run a group, it is worth **emailing the maintainer its name and link** so the weekly annotation backup can cover it.
 
+**Briefing your students.** There is a short student-facing guide to the annotation sidebar — reading comments, leaving one, and the two things students reliably get wrong (that comments are public, and that previous cohorts' comments are still on the page). Point them at it rather than writing your own: [[how-to-comment|Commenting in the margins]] (`docs/how-to-comment.md`). It assumes the default public layer, so if you do run a private group, add the dropdown instruction from point 6 yourself.
+
 ---
 
 ## When the textbook updates (yearly)
@@ -280,7 +284,7 @@ The maintainer folds accepted fixes into the next edition, and they flow back to
 
 **The site loads but images are missing.** The `assets` folder isn't inside `content`, or wasn't copied completely. Re-do Step 3, point 4, and push.
 
-**A page shows a link that leads nowhere.** The chapter links to a page you didn't copy. Either copy that file from the canonical textbook into `content` too, or remove the `[[link]]` (brackets and text together) from the chapter.
+**A page shows a link that leads nowhere.** The chapter links to a page you didn't copy. Nine times out of ten it is a concept page — check that `content/chapters/Definitions/` still holds all six files. Otherwise copy the missing file from the canonical textbook into `content` too, or remove the `[[link]]` (brackets and text together) from the chapter.
 
 **"Edit on GitHub" opens the wrong repo or a 404.** The second setting in Step 7 still has the placeholder, or has a typo in your username/repo name.
 

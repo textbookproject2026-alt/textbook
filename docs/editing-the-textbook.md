@@ -57,6 +57,7 @@ that runs itself.
 | `publish.css`, `publish.js` | How the site looks and the extra things it does. Don't edit — but they matter at publish time, see below. |
 | `textbook.config.json` | The book's title, maintainer, web address and licence, in one small file. Changing a value here rewrites `index.md`, `README.md` and `CONTRIBUTING.md` on its own — `docs/changing-settings.md` has the four steps. |
 | `backups/`, `scripts/`, `.github/`, `admin/`, `configure.mjs`, `OAUTH-SETUP.md` | Machinery. Ignore entirely. |
+
 ![[File_index.png]]
 
 **Chapter file names are load-bearing.** The word `chapter`, a dash, two digits,

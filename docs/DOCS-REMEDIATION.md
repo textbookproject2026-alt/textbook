@@ -327,10 +327,16 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
     escalate when it hasn't run, and there is no diagnostic entry for it anywhere;
   - `stats.yml` — still present as a `workflow_dispatch`-only stub.
 - **Done together with 2.4** — same file, one commit.
-- **Found while writing it:** `link-check.yml` runs lychee with
-  `--exclude-path docs`, so **a broken link inside `docs/` is never caught by CI**,
-  including links between the guides. Recorded in the health-check doc. Relevant to
-  every doc fix in this worklist: cross-references have to be checked by hand.
+- **Found while writing it: `docs/` is excluded from BOTH CI checks.**
+  `link-check.yml` runs lychee with `--exclude-path docs`, and
+  `.markdownlint-cli2.yaml` lists `docs/**` under `ignores`. So neither a broken
+  link between the guides nor malformed markdown in them is ever caught. Recorded
+  in the health-check doc. Relevant to every doc fix in this worklist:
+  cross-references and table syntax have to be checked by hand. Running
+  `markdownlint-cli2` over `docs/` with the repo's rules found one real defect
+  (fixed under 2.5) and otherwise only MD060 table-style nits from a newer
+  markdownlint than CI pins, which fire on the whole existing doc set and are
+  house style, not errors.
 
 ### Stale references
 
@@ -438,6 +444,8 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
   left as written — it describes the intended convention, and the fact that it is
   currently empty is a state, not a doc error. Whether the authoring app should
   write there instead of `<chapter>-media/` is part of 2.1 and was not touched.
+  Also inserted the missing blank line before `![[File_index.png]]`, which sat
+  directly against the last table row and parsed as a malformed extra row.
 - **Repos/files:** `Obsidian Vault/docs/editing-the-textbook.md`
 - **What's wrong:** `images/` has no row, although it holds the four screenshots the
   guide itself embeds (`Vault.png`, `File_index.png`, `Publish-dialog.png`,
@@ -453,16 +461,22 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
   pending items, not stale text, and each needs something a fix session cannot
   supply.
 - **Repos/files:** `Obsidian Vault/docs/for-course-coordinators.md:299` and the
-  `[SCREENSHOT: …]` markers in `docs/for-course-coordinators.md` (~12),
-  `docs/for-trusted-contributors.md` (5), `docs/moderating-comments.md` (5),
-  `docs/editing-the-textbook.md` (1)
+  `[SCREENSHOT: …]` markers, counted 4 Sep 2026:
+  `docs/for-course-coordinators.md` (11), `docs/for-trusted-contributors.md` (6),
+  `docs/moderating-comments.md` (5), `docs/editing-the-textbook.md` (1),
+  `docs/releasing-versions.md` (1) — 24 in total.
 - **What's pending:**
   - `**[MAINTAINER EMAIL — fill in at handover]**` is the only contact route in the
     coordinators' guide, and "Before you start" step 5 requires the coordinator to
     email the maintainer for their Plausible line before they can finish setup.
     Needs the real address at handover.
   - The `[SCREENSHOT: …]` markers are unshot images, not broken text. Only
-    `docs/editing-the-textbook.md` currently has real images.
+    `docs/editing-the-textbook.md` currently has real images (four, in `images/`).
+    Several of the remaining 24 need access nobody in a doc session has — the
+    Cloudflare dashboard mid-setup, the CMS signed in as a contributor, a live
+    annotation sidebar with comments in it.
+- **Reviewed 4 Sep 2026** and deliberately left as placeholders. A placeholder that
+  reads as a placeholder is better than prose pretending the image is there.
 
 ---
 

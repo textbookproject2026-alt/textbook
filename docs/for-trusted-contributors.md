@@ -79,23 +79,23 @@ contact.
 
 ## Finding a chapter
 
-After signing in you will see a list on the left called **Chapters and concept
-pages**. Click it and you get the chapter files — `chapter-01`, `chapter-03`, and
-the rest as they are written.
+After signing in you will see two lists on the left, and between them they hold
+every page in the book:
 
-[SCREENSHOT: The CMS entry list, showing the chapter files.]
+- **Chapters** — the chapters themselves, named `chapter-01`, `chapter-03`, and
+  so on.
+- **Concept pages** — the short pages named for the idea they explain:
+  `Critical Realism`, `Emergence`, `Monism`, `Retroduction`, `The Three Domains`,
+  `Unobservables`. These are the little definitions readers see pop up when they
+  hover a term in a chapter.
 
-Click the one you want.
+Both kinds are edited exactly the same way, and everything in this guide applies
+to both. They are two lists rather than one only because of how the files are
+filed on disk; nothing about editing them differs.
 
-**About the concept pages.** These are the short definitions readers see pop up
-when they hover a term in a chapter: `Critical Realism`, `Emergence`, `Monism`,
-`Retroduction`, `The Three Domains`, `Unobservables`. They used to sit alongside
-the chapters, and they were listed here with them. They have since moved into a
-`Definitions` folder inside `chapters/`, and the list only shows files sitting
-directly in `chapters/` — so they do not appear in it at the moment.
+[SCREENSHOT: The CMS sidebar showing both lists, Chapters and Concept pages, with the Concept pages list open on Critical Realism, Emergence, Monism, Retroduction, The Three Domains and Unobservables.]
 
-If you have been asked to edit one, tell the technical contact rather than
-hunting for it. It is a setting on their side, not anything you are doing wrong.
+Click the list you want, then the page you want.
 
 ---
 

@@ -231,7 +231,7 @@ deliberately by hand, never from a script.
 2. Click **Sign in with GitHub** and authorise the app. A popup that closes and
    leaves you signed out usually means `ALLOWED_DOMAINS` does not match the
    hostname you are actually on.
-3. Open **Chapters and concept pages** → `chapter-03` and make a trivial edit.
+3. Open **Chapters** → `chapter-03` and make a trivial edit.
 4. Save. Confirm on GitHub that a `cms/chapters/chapter-03` branch and a pull
    request appeared, that the PR targets **`drafts`**, and that `main` is
    untouched.

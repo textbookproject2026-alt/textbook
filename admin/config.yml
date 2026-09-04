@@ -54,9 +54,24 @@ media_folder: assets
 public_folder: /assets
 
 collections:
+  # Two collections, not one, and that is forced rather than chosen. A folder
+  # collection in Sveltia matches ONE directory level: it compiles `folder` into
+  # `^chapters\/(?<subPath>[^/]+?)\.md$`, and `[^/]` is what excludes
+  # chapters/Definitions/*.md. Decap's `nested: {depth: 2}` is the option that
+  # would lift that, and Sveltia does not implement it — 0.193.1 carries it in
+  # its UNSUPPORTED_OPTIONS table and warns "Nested collections are not yet
+  # supported in Sveltia CMS." while ignoring the key. It is slated for Sveltia
+  # 2.0. A `path` template cannot stand in either: the template is regex-escaped
+  # before use, so it can match one fixed depth but never both.
+  #
+  # So each directory gets its own collection. When nested collections do land,
+  # these two can fold back into one; until then, adding a directory under
+  # chapters/ means adding a collection here, or its files will be invisible in
+  # the editor exactly as the concept pages were.
+
   - name: chapters
-    label: Chapters and concept pages
-    label_singular: Page
+    label: Chapters
+    label_singular: Chapter
     folder: chapters
     create: true
 
@@ -73,7 +88,6 @@ collections:
     # from, and Sveltia's fallback is a random UUID fragment. `{{fields._slug}}`
     # replaces that with a visible slug box in the editor, so a new chapter
     # can be named to match the existing convention: chapter-04, chapter-05.
-    # (Concept pages keep their prose filenames, e.g. "Critical Realism".)
     slug: '{{fields._slug}}'
 
     # Sort/browse by filename — there is no frontmatter date or title to use.
@@ -88,6 +102,40 @@ collections:
         # would quietly rewrite them into plain text or escaped brackets,
         # breaking every concept link in the book. Plain markdown editing
         # is the only mode that is safe here.
+        widget: markdown
+        modes: [raw]
+        required: true
+
+  # The six concept pages in chapters/Definitions/ — the hover definitions the
+  # chapters reach through [[wikilinks]]. Same file shape as the chapters (no
+  # frontmatter, body only), so the settings below match that collection; only
+  # `folder` differs. Sveltia resolves a save back to `folder` + slug, so an
+  # entry edited here is written to chapters/Definitions/<name>.md and stays in
+  # the folder rather than being flattened up into chapters/.
+  - name: concepts
+    label: Concept pages
+    label_singular: Concept page
+    folder: chapters/Definitions
+    create: true
+
+    # No frontmatter here either: each file opens on `# Critical Realism`.
+    format: raw
+    extension: md
+
+    # The slug IS the link target. A chapter says [[Retroduction]] and Obsidian
+    # resolves that against the filename, so the box this exposes has to keep
+    # saying `Retroduction` — renaming an entry here breaks every chapter that
+    # links to it. Prose filenames with spaces and capitals are correct.
+    slug: '{{fields._slug}}'
+
+    sortable_fields: ['slug']
+
+    fields:
+      - name: body
+        label: Page text
+        # Raw for the same reason as the chapters: these pages contain
+        # [[wikilinks]] to each other, and a rich-text round-trip would
+        # rewrite them.
         widget: markdown
         modes: [raw]
         required: true

@@ -120,8 +120,10 @@ and launches a site titled *EDITION TITLE - Department Edition*
 3. **Which guide is canonical**, and does the other become a pointer to it or get
    deleted?
 
-**Blocks:** 3.5 (the plugin-update doc must describe whichever path is real), 2.6,
-and any correction to `docs/for-course-coordinators.md`.
+**Blocks:** 2.6, and any correction to `docs/for-course-coordinators.md`. It does
+**not** block 3.5 — `sync-upstream.sh` works over a git remote whether the edition
+is a fork or a template copy, so the update mechanics are the same either way. What
+3.4 decides is *who runs them*, not what they are.
 
 ---
 
@@ -173,7 +175,8 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 
 #### 3.5 — FIX-DOC — No doc for `sync-upstream.sh`, plugin pinning, or publishing a template update
 
-- **Status:** TODO
+- **Status:** DONE (4 Sep 2026 — `docs/updating-department-editions.md`; pointer
+  added from `docs/troubleshooting.md`)
 - **Repos/files:** `Obsidian Vault/` — new maintainer-facing doc;
   cross-references `textbook-edition-template/sync-upstream.sh`,
   `textbook-edition-template/quartz.lock.json`,
@@ -188,6 +191,15 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 - **Scope note:** this doc describes the maintainer's side and points at the
   template repo's guides for the coordinator's side. It deliberately does not
   restate the fork-vs-template question — that is 3.4.
+- **Found while writing it — FIX-CODE, not actioned:**
+  `textbook-edition-template/quartz.lock.json` pins both `edition-integrations` and
+  `edit-on-github` at `eece8e6`, **7 commits behind** `quartz-edition-extras` `main`
+  (`487b814`). Everything since is unreleased to every edition, including the whole
+  Hypothes.is-across-SPA-navigation fix series and the commit removing the
+  Publisher-tier group-lock references. The template's own demo site, and any
+  edition forked from it, build the old plugin. Bumping the pin is a config change
+  and needs a build check afterwards, so it is left for a code session. Recorded in
+  `docs/updating-department-editions.md` as a live discrepancy.
 
 #### 3.6 — FIX-DOC — `quartz-edition-extras` has no README
 
@@ -477,7 +489,7 @@ the code on 4 September 2026.
 | 3.2 | FIX-DOC | BLOCKED — needs mechanism confirmed |
 | 3.3 | DECIDE | BLOCKED — decision |
 | 3.4 | DECIDE | BLOCKED — decision |
-| 3.5 | FIX-DOC | TODO |
+| 3.5 | FIX-DOC | DONE — `docs/updating-department-editions.md` (spawned one FIX-CODE item) |
 | 3.6 | FIX-DOC | TODO |
 | 1.1 | FIX-DOC | TODO |
 | 1.2 | FIX-DOC | TODO |

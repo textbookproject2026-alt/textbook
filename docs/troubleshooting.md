@@ -247,7 +247,9 @@ answers.
   older than the fix, nothing has been picked up regardless of which kind it is.
 
 **Fix:** tell the coordinator which of the two it is. If it is the second, the
-technical contact gives them the exact update step. Their guide is emphatic that
+technical contact gives them the exact update step —
+`docs/updating-department-editions.md` is where that step is written down, along
+with how to tell the three kinds of update apart. Their guide is emphatic that
 nothing in that setup should be improvised from a generic tutorial, and this is
 precisely the case it means.
 

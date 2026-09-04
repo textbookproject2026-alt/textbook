@@ -131,7 +131,7 @@ and any correction to `docs/for-course-coordinators.md`.
 
 #### 3.1 — FIX-DOC — No single doc records what runs where, under which account, and who owns it
 
-- **Status:** TODO
+- **Status:** DONE (4 Sep 2026 — `docs/INFRASTRUCTURE.md`)
 - **Repos/files:** `Obsidian Vault/` — new file `docs/INFRASTRUCTURE.md`
 - **Sources to consolidate:** `admin/config.yml`, `OAUTH-SETUP.md`,
   `.obsidian/publish.json`, `publish.js`, `scripts/backup-annotations.mjs`,
@@ -473,7 +473,7 @@ the code on 4 September 2026.
 
 | ID | Category | Status |
 |---|---|---|
-| 3.1 | FIX-DOC | TODO |
+| 3.1 | FIX-DOC | DONE — `docs/INFRASTRUCTURE.md` |
 | 3.2 | FIX-DOC | BLOCKED — needs mechanism confirmed |
 | 3.3 | DECIDE | BLOCKED — decision |
 | 3.4 | DECIDE | BLOCKED — decision |

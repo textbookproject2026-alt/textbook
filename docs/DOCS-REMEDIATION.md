@@ -431,7 +431,13 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 
 #### 2.5 — FIX-DOC — `editing-the-textbook.md` vault-organisation table is incomplete
 
-- **Status:** TODO
+- **Status:** DONE (4 Sep 2026 — `docs/editing-the-textbook.md`)
+- **What was done:** added rows for `images/` and `textbook.config.json`; corrected
+  `templates/` to say it also holds `README.md` and `CONTRIBUTING.md`; added
+  `configure.mjs` and `OAUTH-SETUP.md` to the machinery row. The `assets/` row was
+  left as written — it describes the intended convention, and the fact that it is
+  currently empty is a state, not a doc error. Whether the authoring app should
+  write there instead of `<chapter>-media/` is part of 2.1 and was not touched.
 - **Repos/files:** `Obsidian Vault/docs/editing-the-textbook.md`
 - **What's wrong:** `images/` has no row, although it holds the four screenshots the
   guide itself embeds (`Vault.png`, `File_index.png`, `Publish-dialog.png`,
@@ -513,5 +519,5 @@ the code on 4 September 2026.
 | 2.2 | FIX-DOC | HELD — maintainer review, may be deleted |
 | 2.3 | FIX-CODE | HELD — code + test together |
 | 2.4 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
-| 2.5 | FIX-DOC | TODO |
+| 2.5 | FIX-DOC | DONE — `docs/editing-the-textbook.md` |
 | 2.6 | PARKED | Recorded; left as placeholders |

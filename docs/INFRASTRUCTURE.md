@@ -307,9 +307,11 @@ console also revokes the CMS, and the two flows have nothing in common.
 
 ## 11. The bot account and `BOT_TOKEN`
 
-- **Account:** recorded as `aldogo-bot`. **Confirm at handover** — this name
-  survives in one place only (`docs/file-tree-reference.md`, a stale planning
-  document that may be deleted), which is precisely why it is written down here.
+- **Account:** recorded as `aldogo-bot`. **Confirm at handover** — nothing this
+  project can read proves the account exists. The name survives here and in one
+  code comment (`EXTRA_BOTS` in `scripts/gen-contributors.mjs`, which keeps the bot
+  out of the contributors table); it was recovered from a planning document since
+  deleted (`docs/DOCS-REMEDIATION.md`, 2.2), which is why this entry exists.
 - **Why it exists:** so reader suggestions filed by the Vercel function are
   visually distinct from human commits and issues.
 - **Credential:** a fine-grained PAT, stored as `BOT_TOKEN` in Vercel (§6) and

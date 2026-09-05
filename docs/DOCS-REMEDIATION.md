@@ -152,8 +152,9 @@ way. What 3.4 decided is *who runs them*, not what they are.
 - **Repos/files:** `Obsidian Vault/` — new file `docs/INFRASTRUCTURE.md`
 - **Sources to consolidate:** `admin/config.yml`, `OAUTH-SETUP.md`,
   `.obsidian/publish.json`, `publish.js`, `scripts/backup-annotations.mjs`,
-  `docs/file-tree-reference.md` (the only record of the bot account and the SSH
-  push identity), `suggest-edit-function/README.md`,
+  `docs/file-tree-reference.md` (then the only record of the bot account and the
+  SSH push identity; deleted under 2.2 once both had landed here),
+  `suggest-edit-function/README.md`,
   `authoring-assistant/BUILD.md`, `textbook-edition-template/quartz.config.yaml`
 - **What a new maintainer hits:** they cannot answer "what breaks, and whose
   dashboard do I log into?" for any incident. Two docs refer to "handover" as
@@ -452,8 +453,9 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
   - **FIX-CODE** — `ALLOWED_ORIGIN` is hardcoded to `https://bptext2026.xyz` in
     `api/suggest-edit.js` and must change at the production-domain cutover, as must
     the Plausible site registration and `publish.js`'s baked-in script. The cutover
-    is referenced in `suggest-edit-function/README.md` and
-    `docs/file-tree-reference.md` and is tracked nowhere else.
+    is now described in `docs/INFRASTRUCTURE.md` (*The domain cutover*), which
+    lists all five places that change, and is referenced in
+    `suggest-edit-function/README.md` — but it is still nobody's named task.
 
 #### 1.7 — FIX-DOC — `scheduled-actions-health-check.md` omits four of the eight workflows
 
@@ -532,12 +534,13 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
 
 #### 2.2 — FIX-DOC — `file-tree-reference.md` is a build-plan artefact presented as a reference
 
-- **Status:** HELD — explicitly withheld pending maintainer review; **may be
-  deleted rather than fixed**. Do not edit.
-- **Repos/files:** `Obsidian Vault/docs/file-tree-reference.md`
-- **What's wrong (partial list):** `chapters/main.md`, `page-a.md`, `page-b.md`
-  (none exist); `chapters/Definitions/` absent from the tree entirely — the one doc
-  the folder move never reached; `community/forks.md` (the file is
+- **Status:** DONE (5 Sep 2026 — the file was **deleted**, not repaired).
+- **Repos/files:** `Obsidian Vault/docs/file-tree-reference.md` (removed);
+  `docs/INFRASTRUCTURE.md` §11 amended
+- **What was wrong (partial list), kept as the record of why it went:**
+  `chapters/main.md`, `page-a.md`, `page-b.md` (none exist);
+  `chapters/Definitions/` absent from the tree entirely — the one doc the folder
+  move never reached; `community/forks.md` (the file is
   `derivatives.md`); `stats.yml` shown as the generator of all three community
   pages; backups shown on `main` rather than the `backups` branch; `docs/` lists two
   files that don't exist and omits eight that do; workflows list omits
@@ -551,9 +554,41 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
   **its own Hypothes.is group ID** … the one-group-per-edition rule expressed in
   config." Per-cohort isolation was not adopted; five other docs say so correctly,
   and this doc's own header says so before the body contradicts it.
-- **If deleted:** it is the **only** record of the `aldogo-bot` account name and of
-  the SSH push identity `github-textbook` → `~/.ssh/id_ed25519_textbook`. Both must
-  land in `docs/INFRASTRUCTURE.md` (3.1) first.
+- **Decision — delete rather than repair (maintainer, 5 Sep 2026).** Three
+  reasons, in order of weight:
+  1. It is *titled* like the canonical architecture reference, so a new maintainer
+     reads it first and is misled by it. That is worse than the document not
+     existing at all.
+  2. Its infrastructure half is now covered properly by `docs/INFRASTRUCTURE.md`
+     (3.1), organised by service and failure mode rather than by directory listing.
+  3. A repository-layout document drifts again the moment anything moves. The ~20
+     defects above accumulated within weeks; repairing it buys a document that is
+     wrong again by the next folder move.
+- **Checked for unique content before deleting.** Both items the audit flagged had
+  already been migrated under 3.1 and needed no further move:
+  - `aldogo-bot` — `docs/INFRASTRUCTURE.md` §11, and independently in
+    `scripts/gen-contributors.mjs` (`EXTRA_BOTS`). §11's own claim that the name
+    "survives in one place only" was itself stale and has been corrected.
+  - SSH push identity `github-textbook` → `~/.ssh/id_ed25519_textbook` —
+    `docs/INFRASTRUCTURE.md` §1 and its *Local credentials* table, with the
+    remote-URL consequence spelled out.
+
+  Also checked and found **not** unique: the `__GROUP_ID__` Publisher-tier seam
+  (documented at length in `publish.js:157-168` itself); the domain cutover
+  (`INFRASTRUCTURE.md`, *The domain cutover*); the repo coordinates, staging domain
+  and Publish `siteId` (`INFRASTRUCTURE.md` §1–2); the `.gitignore` treatment of
+  `.obsidian/workspace.json` (the `.gitignore` itself). Nothing surfaced that
+  argued for keeping the file. The one orphan is the plan vocabulary "Scenario B",
+  left as a bare term in a comment at
+  `textbook-edition-template/quartz.config.yaml:3` — but the deleted doc named it
+  without defining it either, so no definition was lost.
+- **References fixed:** `docs/INFRASTRUCTURE.md` §11; in this file, the 3.1 sources
+  list, the 1.6 cutover note, and two *Verified current* rows. **No reference
+  existed in any other repository** (checked across `authoring-assistant`,
+  `quartz-edition-extras`, `suggest-edit-function`, `textbook-edition-template`,
+  `textbook-convert`, `coordinator-test`). `.obsidian/workspace.json` still lists
+  the path in Obsidian's recent-files array; that file is git-ignored and Obsidian
+  rewrites it, so it was left alone.
 
 #### 2.3 — FIX-CODE — De-personalisation is incomplete: the app still says "Alec", and a test asserts on it
 
@@ -655,13 +690,14 @@ the code on 4 September 2026.
   *onward* handoff is 3.3; the CMS side is right.)
 - **`chapters/Definitions/`.** Correct in `docs/editing-the-textbook.md`,
   `docs/for-course-coordinators.md`, `docs/releasing-versions.md`, and in the CMS's
-  two-collection config. Stale only in `docs/file-tree-reference.md` (2.2).
+  two-collection config. Was stale only in `docs/file-tree-reference.md`, deleted
+  under 2.2.
 - **Publisher tier / no per-cohort groups.** Correctly and consistently stated in
   `docs/moderating-comments.md`, `docs/releasing-versions.md`,
   `docs/for-course-coordinators.md`, `docs/how-to-comment.md`,
   `docs/annotation-restore.md`, and
-  `textbook-edition-template/docs/department-edition-setup.md`. Stale only in
-  `docs/file-tree-reference.md` (2.2).
+  `textbook-edition-template/docs/department-edition-setup.md`. Was stale only in
+  `docs/file-tree-reference.md`, deleted under 2.2.
 - **The two CMS collections.** `docs/for-trusted-contributors.md` correctly
   describes "Chapters" and "Concept pages" as two lists, matching the current
   `admin/config.yml`.
@@ -696,7 +732,7 @@ the code on 4 September 2026.
 | 1.6 | FIX-DOC | TODO (carries one PARKED and one FIX-CODE item) |
 | 1.7 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
 | 2.1 | FIX-DOC | DONE — `docs/word-to-markdown.md` (image destination still FIX-CODE/DECIDE) |
-| 2.2 | FIX-DOC | HELD — maintainer review, may be deleted |
+| 2.2 | FIX-DOC | DONE — deleted, not repaired; unique content already in `INFRASTRUCTURE.md` |
 | 2.3 | FIX-CODE | HELD — code + test together |
 | 2.4 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
 | 2.5 | FIX-DOC | DONE — `docs/editing-the-textbook.md` |

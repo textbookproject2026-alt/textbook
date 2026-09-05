@@ -12,9 +12,10 @@ severity, not by ID.
 
 ## How to use this file
 
-1. Read the **Decisions required** section first. Two items are blocked on a human
-   decision and everything downstream of them is unsafe to write until they are
-   settled.
+1. Read the **Decisions required** section first. One item (3.3) is still blocked on
+   a human decision and everything downstream of it is unsafe to write until it is
+   settled. 3.4 was decided on 4 Sep 2026 and its decision box is kept there as the
+   record of what was chosen.
 2. Pick the highest-severity item whose status is `TODO` and whose category is
    `FIX-DOC`.
 3. Do one gap per commit, with the gap ID in the commit message
@@ -40,9 +41,10 @@ session, with the reason) · `BLOCKED` (waiting on a DECIDE item or on informati
 
 ## Decisions required
 
-Nothing downstream of these two should be written until they are answered. Both
-affect what the correct documentation actually *says*, so writing the doc first
-would mean writing it twice.
+Nothing downstream of an *open* item here should be written until it is answered:
+these affect what the correct documentation actually *says*, so writing the doc
+first would mean writing it twice. **3.3 is open. 3.4 was decided on 4 Sep 2026**
+and is kept below, decision first, question second, as the record.
 
 ### 3.3 — DECIDE — Who moves accepted contributor work from `drafts` to `main`, and when?
 
@@ -85,9 +87,21 @@ stops there. Both the moderator and the author believe the handoff is complete.
 and `docs/for-trusted-contributors.md`. Also implies a FIX-CODE change to the
 console's "It reaches readers when you next publish" string whichever way it goes.
 
-### 3.4 — DECIDE — Which coordinator setup path is canonical: fork, or "Use this template"?
+### 3.4 — DECIDED (4 Sep 2026) — fork is canonical
 
-**The question.** Two live guides give incompatible instructions:
+> **Decision, 4 September 2026.** **Forking is the canonical way to create a
+> department edition**, and "Use this template" is warned against by name in both
+> guides. `gen-derivatives.mjs` keeps its forks-API discovery — no FIX-CODE. The
+> no-terminal promise is **scoped, not dropped**: setup and the yearly content copy
+> stay terminal-free, the two machinery channels are stated as needing a terminal,
+> and a coordinator may hand them to the technical contact. **Both guides survive**
+> with an explicit audience split — vault = coordinator walkthrough, template repo =
+> technical companion — each naming the other. Settings count is **four** in both
+> (the vault guide was missing `pageTitle`); build command is
+> `git fetch --unshallow || true && …` in both. Written up under 3.4 in the worklist
+> below. The original question is kept here for the record.
+
+**The question (as posed).** Two live guides gave incompatible instructions:
 
 | | `Obsidian Vault/docs/for-course-coordinators.md` | `textbook-edition-template/docs/department-edition-setup.md` |
 |---|---|---|
@@ -120,10 +134,11 @@ and launches a site titled *EDITION TITLE - Department Edition*
 3. **Which guide is canonical**, and does the other become a pointer to it or get
    deleted?
 
-**Blocks:** 2.6, and any correction to `docs/for-course-coordinators.md`. It does
-**not** block 3.5 — `sync-upstream.sh` works over a git remote whether the edition
-is a fork or a template copy, so the update mechanics are the same either way. What
-3.4 decides is *who runs them*, not what they are.
+**Blocked (now released):** 2.6, and any correction to
+`docs/for-course-coordinators.md` — both free to proceed as of the decision above.
+It never blocked 3.5 — `sync-upstream.sh` works over a git remote whether the
+edition is a fork or a template copy, so the update mechanics were the same either
+way. What 3.4 decided is *who runs them*, not what they are.
 
 ---
 
@@ -169,9 +184,59 @@ is a fork or a template copy, so the update mechanics are the same either way. W
 
 See *Decisions required* above. **Status:** BLOCKED on decision.
 
-#### 3.4 — DECIDE — Which coordinator setup path is canonical
+#### 3.4 — DECIDE → FIX-DOC — Which coordinator setup path is canonical
 
-See *Decisions required* above. **Status:** BLOCKED on decision.
+- **Status:** DONE (4 Sep 2026 — decision taken, both guides reconciled)
+- **Decision:** see the box under *Decisions required* above.
+- **Repos/files changed:**
+  - `textbook-edition-template/docs/department-edition-setup.md` — rewritten around
+    forking; new "Who this guide is for" section; local clone + Node + `npm install`
+    moved out of Step 1 into the maintenance section; build command gains `|| true`;
+    `--unshallow` note explains both halves; announce-checklist and troubleshooting
+    gain a department-editions-page item.
+  - `Obsidian Vault/docs/for-course-coordinators.md` — terminal promise scoped;
+    "Use this template" warned against in Step 1; Step 7 goes from three settings to
+    **four** (adds `pageTitle`, with the placeholder's consequence spelled out); new
+    "When the machinery updates (occasional)" section; new troubleshooting entry for
+    a site still titled *EDITION TITLE*.
+  - `Obsidian Vault/docs/updating-department-editions.md` — "Open question" section
+    replaced with what the decision settled; "Who runs it" column now
+    "coordinator, or you on their behalf" for the two machinery channels.
+
+**How each of the five contradictions was resolved:**
+
+| Contradiction | Resolution |
+|---|---|
+| Copy method | **Fork**, in both. Both guides warn against "Use this template" by name and say why (forks-API discovery). |
+| Terminal | **Scoped.** Setup and the yearly content copy: no terminal, in both. Machinery + plugin updates: terminal, in both, and explicitly reassignable to the technical contact. |
+| Settings count | **Four**, in both. The vault guide was missing `pageTitle` — the omission that ships a site titled *EDITION TITLE - Department Edition*. |
+| Build command | `git fetch --unshallow \|\| true && …`, in both. The `\|\| true` is correct (`--unshallow` errors on a complete clone) and the template guide now explains it rather than only explaining `--unshallow`. |
+| Config step markers | **Left as `guide step 3a`–`3d`.** They match the template guide's numbering; the vault guide now says so explicitly and maps them to its own Step 7. Rewriting the markers would put a conflicting edit on the four lines every fork has already changed, for no gain. |
+
+- **Audience split, made explicit rather than removed:** the vault guide is the
+  coordinator walkthrough (screenshots, a worked localisation example, the yearly
+  routine); the template guide is the technical companion (condensed setup, then the
+  terminal work). Each names the other, and each states where the numbering and the
+  step order differ so the difference doesn't read as disagreement.
+- **Follow-up worth doing, not actioned here (repo setting, not a doc):** the
+  template repository still has GitHub's *template repository* flag set, so the
+  "Use this template" button is still offered next to Fork. Turning that flag off
+  (Settings → General → Template repository) would enforce the decision instead of
+  documenting it. Recorded as **3.4a**.
+
+#### 3.4a — FIX-CODE — the "Use this template" button is still offered on the template repo
+
+- **Status:** TODO — found 4 Sep 2026 while writing 3.4; needs repo-admin access
+- **Repo:** `textbookproject2026-alt/textbook-edition-template` (GitHub repository
+  setting, nothing in the tree)
+- **What's wrong:** 3.4 decided forking is canonical and both guides now warn
+  against "Use this template" — but GitHub still renders that button, because the
+  repository's *template repository* flag is on. Documentation is the only thing
+  stopping a coordinator from clicking it, and an edition created that way is
+  invisible to `scripts/gen-derivatives.mjs` with no error anywhere.
+- **Fix:** clear Settings → General → **Template repository** on the template repo.
+  Forking is unaffected. Check first whether anything else relies on the flag (no
+  automation in these repos reads it).
 
 #### 3.5 — FIX-DOC — No doc for `sync-upstream.sh`, plugin pinning, or publishing a template update
 
@@ -191,15 +256,96 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 - **Scope note:** this doc describes the maintainer's side and points at the
   template repo's guides for the coordinator's side. It deliberately does not
   restate the fork-vs-template question — that is 3.4.
-- **Found while writing it — FIX-CODE, not actioned:**
-  `textbook-edition-template/quartz.lock.json` pins both `edition-integrations` and
-  `edit-on-github` at `eece8e6`, **7 commits behind** `quartz-edition-extras` `main`
-  (`487b814`). Everything since is unreleased to every edition, including the whole
+- **Found while writing it — FIX-CODE — DONE (4 Sep 2026):**
+  `textbook-edition-template/quartz.lock.json` pinned both `edition-integrations`
+  and `edit-on-github` at `eece8e6`, behind `quartz-edition-extras` `main`.
+  Everything since was unreleased to every edition, including the whole
   Hypothes.is-across-SPA-navigation fix series and the commit removing the
-  Publisher-tier group-lock references. The template's own demo site, and any
-  edition forked from it, build the old plugin. Bumping the pin is a config change
-  and needs a build check afterwards, so it is left for a code session. Recorded in
-  `docs/updating-department-editions.md` as a live discrepancy.
+  Publisher-tier group-lock references. Both pins are now bumped to `8f4e323`.
+  - **Correction to the original finding:** it recorded `main` as `487b814` and the
+    gap as 7 commits. `main` was in fact `8f4e323` — `487b814` plus the 3.6 README
+    commit (`docs(3.6): add a repository README (#1)`), so the gap was 8 commits.
+    The pins were bumped to actual `main`, not to the SHA named in the finding.
+  - **Mechanism:** the pin lives only in `quartz.lock.json`
+    (`plugins.<name>.commit`, lockfile `version` 1.0.0); there are no integrity
+    hashes and `.quartz/plugins/` is gitignored, so the lockfile is the sole
+    committed pin. Bumped with `npx quartz plugin install --latest
+    edition-integrations edit-on-github` (the CLI rewrites `commit` and
+    `installedAt`); `npx quartz plugin update` is the deprecated alias. Scoping to
+    the two names matters — an unscoped run bumps all ~45 plugins, as every one
+    currently reports an update available.
+  - **Verified:** `npx quartz build -d docs -v` succeeds and the emitted HTML now
+    carries the run-once guard and the `<head>`-injected `embed.js`
+    (`data-edition-hypothesis`) that survives SPA navigation. `tsc --noEmit`
+    passes. (`npx prettier . --check` flags `content/index.md`,
+    `docs/department-edition-setup.md` and `docs/resolving-sync-conflicts.md` in
+    the template — pre-existing, untouched by this change, but it does gate
+    `npm run check` in `deploy-v5.yaml`.)
+  - **Spawned a further FIX-CODE item — see 3.5a below.**
+
+#### 3.5a — FIX-CODE — `plugin install` cannot detect a stale plugin cache, so a pin bump may not reach a deploy
+
+- **Status:** PARTIAL (5 Sep 2026) — the `restore-keys` fallback is removed from
+  `deploy-v5.yaml`. The two other workflows, the `gitLoader` defect underneath, and
+  the Cloudflare build cache are all still open; see *What was done* below.
+- **Repos/files:** `textbook-edition-template/.github/workflows/deploy-v5.yaml`
+  (also `ci.yaml`, `build-preview.yaml`);
+  `textbook-edition-template/quartz/plugins/loader/gitLoader.ts`
+- **The defect:** for `subdir` plugin installs — which both edition plugins are —
+  `installPlugin` strips `.git` after extraction, so its already-installed check
+  tests only for the presence of `package.json` and never compares the checkout to
+  the lockfile commit. A stale directory is therefore kept, and the CLI *reports
+  the lockfile commit it did not install*.
+- **Reproduced:** replacing `.quartz/plugins/edition-integrations` with `eece8e6`
+  content and running `npx quartz plugin install` printed
+  `✓ edition-integrations@8f4e323 already installed (subdir)` while the old code
+  stayed on disk.
+- **Why it bites deploys:** `deploy-v5.yaml` keys the plugin cache on
+  `hashFiles('quartz.lock.json')` but carries `restore-keys: ${{ runner.os }}-plugins-`.
+  A pin bump misses the exact key and then *restores the previous cache anyway*,
+  which `plugin install` declines to correct — so the build ships the old plugin
+  behind a green log.
+- **Fix options:** drop the `restore-keys` fallback so the lockfile hash alone keys
+  the cache (smallest change, keeps caching); or make the subdir branch record and
+  compare the installed commit. Workaround until then: delete the plugin
+  directories (or the Actions cache) before building.
+
+**What was done (5 Sep 2026).** The first fix option, in `deploy-v5.yaml` only:
+the `Cache Quartz plugins` step keeps its exact key
+(`${{ runner.os }}-plugins-${{ hashFiles('quartz.lock.json') }}`) and no longer
+carries `restore-keys`. A lockfile bump now misses the cache outright and the
+plugins are re-fetched, so `plugin install` is never handed a stale directory it
+cannot detect. A comment above the key records why the fallback must not come back.
+The `Cache dependencies` (npm) step above it is untouched — `npm ci` verifies what
+it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
+
+**Still open — this did not close 3.5a:**
+
+1. **`ci.yaml` and `build-preview.yaml` carry the identical plugin-cache block**
+   (`ci.yaml:43-45`, `build-preview.yaml:35-37`) and were left alone, so the same
+   stale restore is still reachable through them. Same one-line fix; not applied
+   here only because this change was scoped to `deploy-v5.yaml`.
+2. **The `gitLoader.ts` defect is untouched.** Dropping `restore-keys` removes the
+   most likely *way* a stale checkout arrives on a runner; it does not make
+   `installPlugin` able to notice one. Any other route to a populated
+   `.quartz/plugins` — a warm local clone, a restored Cloudflare build cache — still
+   ships the old plugin and still reports the lockfile commit it did not install.
+   The durable fix is the second option above.
+3. **None of these three workflows run for a department edition, or for this
+   template.** All three are guarded `if: github.repository == 'jackyzha0/quartz'`
+   — they are upstream's own pipelines, inherited by the fork. Editions build on
+   **Cloudflare Pages**, whose build command is
+   `git fetch --unshallow || true && npx quartz plugin install && npx quartz build`
+   (`docs/for-course-coordinators.md`, `department-edition-setup.md` Step 4). So the
+   deploy path that actually reaches readers is not covered by this change at all;
+   whether Cloudflare's build cache can preserve `.quartz/plugins` across a pin bump
+   is **unverified** and is the question that decides how much of 3.5a is real for
+   editions. Worth answering before this item is closed.
+4. **The edit is on an upstream-owned file.** `deploy-v5.yaml` came from upstream
+   (`5ec3f4a`, saberzero1) and the cache block with it, so this is now a local
+   divergence that `sync-upstream.sh` can conflict on. It is a small, well-commented
+   hunk; `docs/resolving-sync-conflicts.md` covers the resolution. Worth reporting
+   upstream — the defect is upstream's, not this template's.
 
 #### 3.6 — FIX-DOC — `quartz-edition-extras` has no README
 
@@ -519,8 +665,10 @@ the code on 4 September 2026.
 | 3.1 | FIX-DOC | DONE — `docs/INFRASTRUCTURE.md` |
 | 3.2 | FIX-DOC | BLOCKED — needs mechanism confirmed |
 | 3.3 | DECIDE | BLOCKED — decision |
-| 3.4 | DECIDE | BLOCKED — decision |
-| 3.5 | FIX-DOC | DONE — `docs/updating-department-editions.md` (spawned one FIX-CODE item) |
+| 3.4 | DECIDE → FIX-DOC | DONE — fork is canonical; both setup guides reconciled (spawned 3.4a) |
+| 3.4a | FIX-CODE | TODO — turn off the template-repository flag so "Use this template" is no longer offered |
+| 3.5 | FIX-DOC | DONE — `docs/updating-department-editions.md`; spawned FIX-CODE (pin bump) DONE — pins at `8f4e323` |
+| 3.5a | FIX-CODE | PARTIAL — `restore-keys` dropped from `deploy-v5.yaml`; `ci.yaml`/`build-preview.yaml`, the `gitLoader` defect and the Cloudflare build cache still open |
 | 3.6 | FIX-DOC | DONE — `quartz-edition-extras/README.md` |
 | 1.1 | FIX-DOC | TODO |
 | 1.2 | FIX-DOC | TODO |

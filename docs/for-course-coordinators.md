@@ -2,7 +2,11 @@
 
 **A guide for course coordinators**
 
-This guide walks you through creating your own department edition of the textbook: a copy of the chapters you choose, on your own web address, sharing the textbook's public annotation layer with every other edition. You do everything through websites and one free desktop app. **You never need to type commands into a terminal.** If a tutorial elsewhere tells you to, stop and check with the maintainer first.
+This guide walks you through creating your own department edition of the textbook: a copy of the chapters you choose, on your own web address, sharing the textbook's public annotation layer with every other edition. You do everything through websites and one free desktop app.
+
+**Setting up needs no terminal, and neither does the yearly content update.** Steps 1–8 below, and the yearly copy of revised chapters, are all browser and GitHub Desktop. If a tutorial elsewhere tells you to type a command as part of *this* work, stop and check with the maintainer first — generic Quartz tutorials in particular can damage your settings file (see the warning in Step 7).
+
+**Two later jobs do need one, and there is no browser way to do them.** Updating the site machinery (`./sync-upstream.sh`) and updating a plugin (`npx quartz plugin update`) are terminal commands run against a copy of your fork on your own computer. They are not part of setup, they are occasional, and they only happen when the maintainer announces one. If you would rather not run them, agree with the maintainer or your technical contact that they do it for you — but somebody has to, because nothing reaches a live edition on its own. Both are written up in `textbook-edition-template/docs/department-edition-setup.md`, under "Keeping your edition up to date"; see [When the machinery updates](#when-the-machinery-updates-occasional) near the end of this guide.
 
 Budget an afternoon (2–3 hours) the first time. Yearly updates after that take under an hour.
 
@@ -66,6 +70,8 @@ You need, in this order:
    - Leave everything else as it is.
 4. Click **Create fork**.
 
+> **⚠️ Fork it — do not use the "Use this template" button.** GitHub shows both on that page and the copies look identical to you. Only a fork is recorded by GitHub as descended from the template, and the project's department-editions page is built from the template's list of forks. An edition made with "Use this template" never appears on that page, and the maintainer reads its absence as something broken. If you have already made one that way, tell the maintainer rather than working around it.
+
 You land on your copy: `github.com/YOUR-USERNAME/textbook-bio-edition`. Bookmark it.
 
 ---
@@ -81,7 +87,7 @@ You land on your copy: `github.com/YOUR-USERNAME/textbook-bio-edition`. Bookmark
 
    [SCREENSHOT: GitHub Desktop clone dialog with the fork selected and the Local path field visible]
 
-You now have the repo as a normal folder on your computer. **Show in Explorer / Reveal in Finder** (in the Repository menu) opens it. Inside you'll see a `content` folder (nearly empty — that's expected), a `quartz` folder (the machinery — never touch it), and a file called `quartz.config.yaml` (you'll edit exactly three lines of it in Step 7 — nothing else, ever).
+You now have the repo as a normal folder on your computer. **Show in Explorer / Reveal in Finder** (in the Repository menu) opens it. Inside you'll see a `content` folder (nearly empty — that's expected), a `quartz` folder (the machinery — never touch it), and a file called `quartz.config.yaml` (you'll edit exactly four lines of it in Step 7 — nothing else, ever).
 
 ---
 
@@ -191,9 +197,11 @@ Your edition is live. If the build fails instead, it's almost always one of the 
 
 ---
 
-## Step 7 — Set your three settings (~10 min)
+## Step 7 — Set your four settings (~10 min)
 
-Your site works, but three settings still point at placeholder values. All three live in **one file**: `quartz.config.yaml`, at the top level of your fork. The three lines are clearly marked with comments inside the file — change those three lines and nothing else.
+Your site works, but four settings still point at placeholder values. All four live in **one file**: `quartz.config.yaml`, at the top level of your fork. The four lines are clearly marked with comments inside the file — change those four lines and nothing else.
+
+> **A note on the numbering in the file.** The `← EDIT` comments read *"guide step 3a"*, *"3b"* and so on. Those numbers belong to the template repository's technical guide (`textbook-edition-template/docs/department-edition-setup.md`), where the same four settings are its Step 3. They are the same four lines, in the same file, with the same values — only the step number differs. In *this* guide they are all Step 7.
 
 The easiest way to edit it is directly on github.com (no download/upload dance, and the site rebuilds itself when you save):
 
@@ -201,10 +209,11 @@ The easiest way to edit it is directly on github.com (no download/upload dance, 
 
    [SCREENSHOT: quartz.config.yaml open on github.com with the pencil/edit icon highlighted]
 
-2. Set the three marked values:
+2. Set the four marked values:
 
    | Setting | What to put there | Why |
    |---|---|---|
+   | **`pageTitle`** | your edition's name, e.g. `"Biology Edition — <Textbook Title>"` | it is the heading on every page and the text in the browser tab. Leave it and your site is publicly titled *EDITION TITLE - Department Edition* — which looks entirely normal to you and tells every reader the site is unfinished |
    | **`baseUrl`** | your Pages address from Step 6, *without* `https://` — e.g. `bio-edition-2027.pages.dev` | so internal links, previews, and the sitemap point at your site |
    | **Edit-on-GitHub `repo` and `branch`** | `YOUR-USERNAME/your-repo-name` and `main` — *your fork*, from Step 1 | every page has an "Edit on GitHub" button; this makes it open *your* copy of the chapter, not someone else's |
    | **Plausible script** | the single line the maintainer emailed you (it contains `plausible.io/js/pa-…`) | your visitor statistics, privacy-friendly (no cookies, no personal data) |
@@ -212,6 +221,8 @@ The easiest way to edit it is directly on github.com (no download/upload dance, 
    For orientation, the relevant lines look roughly like this once filled in (the comments in your actual file are the authority):
 
    ```yaml
+   pageTitle: "Biology Edition — <Textbook Title>"
+
    baseUrl: bio-edition-2027.pages.dev
 
    # edit-on-github plugin
@@ -226,7 +237,7 @@ The easiest way to edit it is directly on github.com (no download/upload dance, 
 
 > **⚠️ Two hard rules about this file.**
 > **Never delete `quartz.config.yaml` or remove it from the repo** — the site cannot build without it, and it must stay in GitHub, not just on your computer.
-> **Never run terminal commands from generic Quartz tutorials against this repo** — in particular, a command called `quartz plugin remove` silently strips every explanatory comment out of this file, including the markers this guide relies on. Nothing in this setup ever requires a terminal. If you're ever told otherwise, ask the maintainer first.
+> **Never run terminal commands from generic Quartz tutorials against this repo** — in particular, a command called `quartz plugin remove` silently strips every explanatory comment out of this file, including the markers this guide relies on. Nothing in *setup* requires a terminal, so a tutorial that tells you to type something here is a tutorial about a different site. The two commands that are genuinely part of running an edition — `./sync-upstream.sh` and `npx quartz plugin update` — come from the maintainer, not from a search result, and are never needed during setup. If you're ever told otherwise, ask the maintainer first.
 
 ---
 
@@ -265,6 +276,26 @@ Each year the maintainer publishes a new edition of the canonical textbook and e
 
 **Make step 3 painless for future-you:** keep a file called `LOCAL-CHANGES.md` in your `content` folder listing every localisation — which file, which section, what you changed. Five minutes of notes now saves an hour of archaeology every summer. Keep localisations few and chunky (a swapped example, an added local case study) rather than scattered one-word tweaks.
 
+None of that needs a terminal. The next section is the part that does.
+
+---
+
+## When the machinery updates (occasional)
+
+The yearly content copy above is one of **three** things that can fall out of date, and it is the only one you can do from the browser. The other two are the site machinery and the plugins, and each has exactly one command:
+
+| What changed | How it reaches your edition |
+|---|---|
+| **Chapter content** — the book's text | you copy the files by hand, yearly (above). No terminal. |
+| **Site machinery** — layout, styling, build fixes | `./sync-upstream.sh`, run in a copy of your fork on your computer |
+| **Plugins** — the sidebar, search, contents list, *Edit on GitHub*, the annotation and analytics integration | `npx quartz plugin update <plugin-name>`, then commit and push |
+
+Three things are worth knowing before the first announcement lands:
+
+- **Nothing arrives on its own.** Your fork pins every plugin to a fixed version, deliberately, so your site can't change under you mid-term. The price is that a fix only reaches you when somebody runs the command — the maintainer cannot push it to you. An edition nobody ever updates keeps its bugs indefinitely, and nothing anywhere tells you so.
+- **These are the two terminal jobs.** They need a local copy of your fork, Node.js 22 or newer, `npm install` run once in that folder, and command-line Git — which GitHub Desktop does *not* install on its own. The full instructions, including that first-time setup, are in `textbook-edition-template/docs/department-edition-setup.md` under "Keeping your edition up to date". If a sync stops with a conflict, `textbook-edition-template/docs/resolving-sync-conflicts.md` walks through it, and `bash sync-upstream.sh --abort` returns everything to how it was.
+- **You do not have to be the one who runs them.** If a terminal isn't for you, say so to the maintainer and agree that they or a technical contact handle these two; then treat update announcements as something you forward. What doesn't work is assuming somebody else is already doing it.
+
 ---
 
 ## Improving the textbook itself
@@ -286,7 +317,9 @@ The maintainer folds accepted fixes into the next edition, and they flow back to
 
 **A page shows a link that leads nowhere.** The chapter links to a page you didn't copy. Nine times out of ten it is a concept page — check that `content/chapters/Definitions/` still holds all six files. Otherwise copy the missing file from the canonical textbook into `content` too, or remove the `[[link]]` (brackets and text together) from the chapter.
 
-**"Edit on GitHub" opens the wrong repo or a 404.** The second setting in Step 7 still has the placeholder, or has a typo in your username/repo name.
+**Your site is called "EDITION TITLE - Department Edition".** `pageTitle` (the first setting in Step 7) is still the placeholder. Nothing breaks, which is why this one survives to launch — check the browser tab before you send the address to anyone.
+
+**"Edit on GitHub" opens the wrong repo or a 404.** The Edit-on-GitHub setting in Step 7 still has the placeholder, or has a typo in your username/repo name.
 
 **You pushed changes but the site didn't change.** Check the deployments list in your Cloudflare Pages project — a build may have failed (see above). If the newest deployment says Success, hard-refresh your browser: `Ctrl+Shift+R` (Windows) / `Cmd+Shift+R` (Mac).
 

@@ -7,18 +7,24 @@ editions — and why, most of the time, it doesn't until somebody asks for it.
 author to hand this to you and says "the technical contact gives them the exact
 update step". This is that step, plus the model behind it.
 
-The coordinator-facing versions live in the template repository:
+The instructions to send a coordinator live in the template repository:
 `textbook-edition-template/docs/department-edition-setup.md` ("Keeping your edition
-up to date") and `textbook-edition-template/docs/resolving-sync-conflicts.md`. Send
-coordinators there; this page is for you.
+up to date") and `textbook-edition-template/docs/resolving-sync-conflicts.md`. That
+first file is the *technical* companion to `docs/for-course-coordinators.md` — the
+two agree on how an edition is created (fork) and configured (four settings), and
+it is the one that carries the terminal work. Send coordinators there for the
+commands; this page is for you.
 
 ---
 
 ## The one thing to understand: three channels, three mechanisms
 
-A department edition is a fork. **Nothing propagates automatically** — that is the
-design, not a defect, because a coordinator teaching from a frozen site all year is
-the behaviour the whole system is built around
+A department edition is a fork — and after the 3.4 decision (4 Sep 2026) that is
+the *only* supported shape: forking is what both setup guides now instruct, because
+`scripts/gen-derivatives.mjs` discovers editions through GitHub's forks API and a
+"Use this template" copy is invisible to it. **Nothing propagates automatically** —
+that is the design, not a defect, because a coordinator teaching from a frozen site
+all year is the behaviour the whole system is built around
 (`docs/how-versioning-works.md`).
 
 Three different kinds of change reach an edition three different ways, and they
@@ -27,14 +33,22 @@ never travel together. Getting these confused is the single biggest source of
 
 | What changed | Where you change it | How it reaches an edition | Who runs it |
 |---|---|---|---|
-| **Site machinery** — layout, build config, workflows, the Quartz engine | `textbook-edition-template` | the coordinator runs `./sync-upstream.sh` | coordinator |
-| **Plugins** — the sidebar, search, table of contents, *Edit on GitHub*, the annotation and analytics integration | `quartz-edition-extras` (ours) or upstream `quartz-community` | the coordinator runs `npx quartz plugin update <name>` | coordinator |
-| **Chapter content** | `textbook` (this repo) | the coordinator copies files by hand, yearly | coordinator |
+| **Site machinery** — layout, build config, workflows, the Quartz engine | `textbook-edition-template` | somebody runs `./sync-upstream.sh` | coordinator, **or you on their behalf** |
+| **Plugins** — the sidebar, search, table of contents, *Edit on GitHub*, the annotation and analytics integration | `quartz-edition-extras` (ours) or upstream `quartz-community` | somebody runs `npx quartz plugin update <name>` | coordinator, **or you on their behalf** |
+| **Chapter content** | `textbook` (this repo) | the coordinator copies files by hand, yearly | coordinator (no terminal) |
 
 Note what is *not* in that table: nothing you can do reaches a live edition on its
-own. Every row ends with the coordinator running something. Your job in all three
-cases is to publish the change and then **tell coordinators, naming which channel
-it is and which command to run.**
+own. Every row ends with somebody running something in that edition's own fork.
+Your job in all three cases is to publish the change and then **tell coordinators,
+naming which channel it is and which command to run.**
+
+**Who runs the two terminal channels is now a per-edition arrangement, not a rule.**
+The 3.4 decision kept the coordinators' guide terminal-free for *setup* and the
+yearly content copy, and made channels 1 and 2 explicitly optional for them: a
+coordinator who doesn't want a terminal is told to hand those two to you or to a
+technical contact. So when you take on a new edition, settle that question once and
+write down the answer — the failure mode is not a coordinator refusing, it is both
+of you assuming the other is doing it while the edition quietly ages.
 
 ---
 
@@ -116,15 +130,21 @@ is broken.
 
 Step 2 is easy to forget and invisible when it is. Which brings us to:
 
-> **Live discrepancy, as of 4 September 2026 — not yet fixed.**
-> `textbook-edition-template/quartz.lock.json` pins both `edition-integrations` and
-> `edit-on-github` at `eece8e6`, which is **7 commits behind**
-> `quartz-edition-extras` `main` (`487b814`). Everything since is unreleased to
-> every edition, including the whole Hypothes.is-across-SPA-navigation fix series
-> and the correction removing the Publisher-tier group-lock references. The
-> template's demo site and any edition forked from it are building the old plugin.
-> Bumping the pin is a config change, so it is tracked as a code-side item in
-> `docs/DOCS-REMEDIATION.md` (3.5) rather than done here.
+> **Resolved 4 September 2026.** `textbook-edition-template/quartz.lock.json`
+> pinned both `edition-integrations` and `edit-on-github` at `eece8e6`, behind
+> `quartz-edition-extras` `main` — holding back the whole
+> Hypothes.is-across-SPA-navigation fix series and the correction removing the
+> Publisher-tier group-lock references. Both pins are now at `8f4e323`, and the
+> template builds the current plugin. See `docs/DOCS-REMEDIATION.md` (3.5).
+
+> **Still live — read before you trust a deploy.** `npx quartz plugin install`
+> cannot tell that a cached plugin directory is stale: for `subdir` plugins it
+> checks only that `package.json` exists, then reports the *lockfile* commit it did
+> not actually install. Because `deploy-v5.yaml` keeps a `restore-keys` fallback on
+> the plugin cache, a pin bump can be silently ignored by CI and the old plugin
+> shipped behind a green log. Until that is fixed
+> (`docs/DOCS-REMEDIATION.md` 3.5a), a deploy that must pick up a plugin bump
+> should delete the Actions plugin cache — or the plugin directories — first.
 
 ---
 
@@ -160,7 +180,8 @@ Work down this list; it separates the three channels quickly.
    prompts them about.
 4. **Is it layout, styling or the build itself?** Channel 1, `./sync-upstream.sh`.
 5. **Still nothing?** Check that the pin you expect actually shipped — see the
-   discrepancy note above. It is possible the fix never left the plugin repo.
+   notes above. The fix may never have left the plugin repo, or the build may have
+   reused a stale plugin cache and reported the new commit regardless.
 
 ---
 
@@ -176,11 +197,28 @@ round of confused email. Include:
 
 ---
 
-## Open question that touches this page
+## Settled: the 3.4 decision, and what it changed here
 
-`docs/DOCS-REMEDIATION.md` item **3.4** is undecided and affects one thing here:
-`docs/for-course-coordinators.md` promises coordinators they will never type a
-terminal command, while both update channels above require one. The mechanics on
-this page are unaffected by how that is resolved — `sync-upstream.sh` works over a
-git remote either way — but *who* runs them may move from the coordinator to you.
-Read this page as "what has to happen", not "who has to do it".
+`docs/DOCS-REMEDIATION.md` item **3.4** was decided on 4 September 2026. It used to
+be the open question on this page: `docs/for-course-coordinators.md` promised
+coordinators they would never type a terminal command, while both machinery
+channels above require one.
+
+What was decided, and what it means for you:
+
+- **Forking is the canonical way to create an edition**, and "Use this template" is
+  now warned against in both setup guides. Discovery via the forks API stands;
+  `gen-derivatives.mjs` needs no change. An edition missing from the
+  department-editions page is worth checking as a possible template-copy before you
+  chase it as a workflow fault (`docs/scheduled-actions-health-check.md`).
+- **The no-terminal promise was scoped, not dropped.** Setup and the yearly content
+  copy stay terminal-free; channels 1 and 2 are stated plainly as needing one, and
+  as reassignable to you.
+- **Both setup guides survive, with an explicit split.**
+  `docs/for-course-coordinators.md` is the coordinator's walkthrough;
+  `textbook-edition-template/docs/department-edition-setup.md` is the technical
+  companion and now carries the maintenance commands. Each names the other and
+  states where their step numbers differ.
+
+The mechanics on this page were never affected by the decision — `sync-upstream.sh`
+works over a git remote either way. Only the "who runs it" column moved.

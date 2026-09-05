@@ -77,18 +77,12 @@ The app flags each of them in its report (Part 3), and they have to be redone.
   and left exactly where it is: never changed, never moved.
 - **The chapter** goes into whichever folder you choose — for this textbook, that
   is `chapters`.
-- **The chapter's pictures** go into a folder the app names after the chapter,
-  with `-media` on the end, placed **next to the chapter**. A chapter saved as
-  `chapters/chapter-05.md` gets `chapters/chapter-05-media/`, and the picture
-  links inside the chapter point there. The app does not put pictures in
-  `assets/`, and does not ask you where they should go.
-
-  > `docs/editing-the-textbook.md` describes the vault's own convention for
-  > hand-made chapters, which is `assets/chapter-05/`. The converter does not
-  > follow it. If you want a converted chapter's pictures to live under `assets/`
-  > you have to move the folder yourself **and** edit every picture link in the
-  > chapter to match — so unless you have a reason to, leave them where the app
-  > put them.
+- **The chapter's pictures** go into the textbook folder's own `assets/`, in a
+  folder named after the chapter. A chapter saved as `chapters/chapter-05.md`
+  gets `assets/chapter-05/`, and the picture links inside the chapter point
+  there. This is the same convention `docs/editing-the-textbook.md` describes for
+  hand-made chapters, so converted and hand-made chapters keep their pictures in
+  the same place. The app does not ask you where the pictures should go.
 
 ### The steps
 
@@ -113,14 +107,21 @@ The app flags each of them in its report (Part 3), and they have to be redone.
    chapters are already in that folder, which is a quick way to tell you picked
    the right one.
 
+   **It has to be a folder inside the textbook folder.** Because the pictures go
+   into the textbook's own `assets/`, the app looks upwards from the folder you
+   chose for the top of the textbook — the folder holding `chapters`, `assets`
+   and `glossary.md`. If it cannot find one it says so there and then, before any
+   converting happens, and asks you to choose a folder inside your textbook.
+
 4. **Name the chapter.** The app fills this in for you from the Word file's own
    name, and you can edit it. This is the name you will see in Obsidian.
 
    **What the app enforces:** the name must end in `.md` (if you leave it off,
    the app adds it); it must be a plain name, not a path with folders in it; it
-   cannot contain `/ \ : * ? " < > |`; and no file of that name may already exist
-   in that folder. **The app never writes over an existing file and has no undo**,
-   so a clash stops the conversion and asks you for a different name.
+   cannot contain `/ \ : * ? " < > |`; no file of that name may already exist in
+   that folder; and this chapter's folder under `assets/` must not already hold
+   anything. **The app never writes over an existing file and has no undo**, so
+   either kind of clash stops the conversion and asks you for a different name.
 
    **What the app does not enforce — but you should still do.** Name chapters
    `chapter-05`, `chapter-12`: the word `chapter`, a dash, and the two-digit
@@ -135,8 +136,9 @@ The app flags each of them in its report (Part 3), and they have to be redone.
      is what keeps chapters' pictures apart. Word calls its images `image1`,
      `image2` in *every* document, so two chapters sharing one picture folder
      would overwrite each other's figures. (The app will not let that happen
-     silently: if a folder of that name is already sitting next to the chapter,
-     it stops before writing anything and asks you to rename the chapter.)
+     silently: if `assets/<chapter-name>/` already has something in it, it stops
+     before writing anything and asks you to rename the chapter. An empty folder
+     of that name is fine.)
 
 5. **Press "Convert and show me", and read what comes back.** The conversion
    happens in a temporary folder — **nothing is written into your vault at this
@@ -254,8 +256,8 @@ it. Tick these off:
 - [ ] **Tables** — each one displays as a proper grid with its header row, not as
       a run-together block of text.
 - [ ] **Pictures** — every figure from the Word document shows in the chapter,
-      and the files are in this chapter's own `-media` folder. Same count as
-      Word. None shows as a broken image.
+      and the files are in this chapter's own folder under `assets/`. Same count
+      as Word. None shows as a broken image.
 - [ ] **Skim the full chapter once** for anything that looks off — stray symbols,
       a gap where something used to be, a formula that turned to gibberish.
 
@@ -388,7 +390,8 @@ Once the checklist passes:
 
 4. **Publish to the website.** Click the **Publish** icon in Obsidian's left
    sidebar. Obsidian shows a list of files that are new or changed since the last
-   publish — your new chapter, the files in its `-media` folder, and `index.md`.
+   publish — your new chapter, the files in its `assets/<chapter-name>` folder,
+   and `index.md`.
    Read the list before confirming: anything ticked will go live, anything
    unticked won't. Click **Publish** and wait; the site updates within a minute
    or two.

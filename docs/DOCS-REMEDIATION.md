@@ -524,13 +524,22 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
   warn-level notes. Part 4's entries are now headed with the app's verbatim note
   headlines. Part 5 step 2 now says `templates/index.md` and explains why, citing
   `editing-the-textbook.md` and `changing-settings.md`.
-- **Still open (not a doc item):** the image-destination divergence itself. The doc
-  now documents the code — pictures go to `<chapter-stem>-media/` next to the
-  chapter — and carries a short note that `docs/editing-the-textbook.md` states the
-  vault convention as `assets/chapter-NN/` and that the converter does not follow
-  it. The three-way disagreement between `app/convert.py`, that guide, and the
-  CMS's `media_folder: assets` (`admin/config.yml`) is a **FIX-CODE/DECIDE** matter
-  and was deliberately not resolved by prose.
+- **The image-destination divergence — now closed (5 Sep 2026).** It was left open
+  here as a **FIX-CODE/DECIDE** matter, deliberately not resolved by prose: at the
+  time the doc documented the code (`<chapter-stem>-media/` next to the chapter)
+  and carried a note that `docs/editing-the-textbook.md` stated the vault
+  convention as `assets/chapter-NN/` and the converter did not follow it. The
+  decision went to the documented convention, and the code was changed to match:
+  `app/convert.py` now writes extracted media to `assets/<chapter-name>/` at the
+  vault root, finding the vault by looking upwards for `chapters` + `assets` +
+  `glossary.md` and refusing a folder it cannot trace to one. That agrees with
+  `docs/editing-the-textbook.md` and with the CMS's `media_folder: assets`
+  (`admin/config.yml`), so the three-way disagreement is gone.
+  `docs/word-to-markdown.md` was updated to match: the *Where things live* bullet
+  and the note beside it, the folder-choice requirement in step 3, the `assets/`
+  clash in step 4's naming rules and its enforced-rules list, the Part 3 picture
+  checklist item, and the Part 5 publish list (which now matches
+  `editing-the-textbook.md:206`).
 
 #### 2.2 — FIX-DOC — `file-tree-reference.md` is a build-plan artefact presented as a reference
 

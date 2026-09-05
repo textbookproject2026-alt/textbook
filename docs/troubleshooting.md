@@ -151,6 +151,12 @@ you which if you read the wording.
 appeared — that alone separates "the backend is down" from "the backend is fine
 and rate-limiting someone", which are completely different problems.
 
+**For the technical contact:** the form is a Vercel serverless function, and
+`vercel logs <deployment-url>` is the only place the validation rejection,
+honeypot hit or rate-limit trip behind that message is visible — the response
+withholds it deliberately. See `docs/the-authoring-app-operations.md`,
+*The suggest-edit function*, and `docs/INFRASTRUCTURE.md` §6.
+
 ---
 
 ## Analytics show no data
@@ -261,8 +267,9 @@ precisely the case it means.
 them.**
 
 The console is the **Waiting for you** tab in the Authoring Assistant, beside
-**Chapters**. Signing in is GitHub's device flow and there is no relay of the
-technical contact's involved: you press **Sign in**, the app shows a code and
+**Chapters** — `docs/the-authoring-app.md` is the guide to the whole app, and to
+what each queue in that tab is for. Signing in is GitHub's device flow and there
+is no relay of the technical contact's involved: you press **Sign in**, the app shows a code and
 opens a web page, you type the code there and approve, and the sign-in is kept
 in this Mac's Keychain. Once it has worked the tab reads **Signed in as** and
 your name.

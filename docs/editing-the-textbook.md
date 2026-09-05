@@ -48,7 +48,7 @@ that runs itself.
 | `chapters/` | The book. One file per chapter: `chapter-03.md`, and later `chapter-04.md`, `chapter-05.md`. |
 | `chapters/Definitions/` | The concept pages — one short, standalone page per idea, named for the idea itself (`Critical Realism.md`, `Emergence.md`). These are what a reader sees pop up when they hover a linked term inside a chapter. |
 | `assets/` | Every image in the book, in one subfolder per chapter: `assets/chapter-05/`. |
-| `glossary.md` | The list of terms with the chapter each was first used in. |
+| `glossary.md` | The list of terms with the chapter each was first used in. **Written by the authoring app**, not by hand: terms you approve there are spliced in alphabetically, and your own wording is never rewritten. See `docs/the-authoring-app.md` before reorganising it. |
 | `docs/` | These handover guides, including this one. |
 | `images/` | The screenshots used *by these guides* — not pictures for the book. Those go in `assets/`. |
 | `templates/` | The source of the front page, and of the two files GitHub shows to visitors (`README.md`, `CONTRIBUTING.md`). See *Adding a new chapter*. |
@@ -290,5 +290,15 @@ whoever does look.
 address, maintainer or licence changes, or whenever `templates/` is edited. That
 is the mechanism described under *Adding a new chapter*.
 
-If a file changed and it wasn't you, it was one of these five, and the right
+**The authoring app writes to the vault when you tell it to.** The **Authoring
+Assistant** — the Mac app that links citations and concept pages, builds the
+glossary, and brings chapters in from Word — rewrites the chapter you are working
+on and appends to `glossary.md`, always after showing you the whole change and
+asking you to tick a box. It is also where reader suggestions and contributors'
+draft changes arrive, under **Waiting for you**, so the first three items above
+reach you through it rather than through a website.
+`docs/the-authoring-app.md` is its guide; `docs/word-to-markdown.md` covers the
+Word half.
+
+If a file changed and it wasn't you, it was one of these six, and the right
 response is to carry on writing.

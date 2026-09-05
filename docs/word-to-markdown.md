@@ -8,6 +8,11 @@ There is no terminal here, nothing to install and no commands to type. The app
 does the conversion itself, and it shows you what it did before anything is
 written.
 
+The app is the **Authoring Assistant**, the same one that links your citations
+and concept pages and builds the glossary. `docs/the-authoring-app.md` covers
+where it comes from, how to install it and everything else it does; this guide
+covers the Word half only.
+
 The guide has five parts:
 
 1. **Write it right in Word** — habits that make conversion painless (read this before writing)

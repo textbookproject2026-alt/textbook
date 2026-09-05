@@ -47,7 +47,7 @@ The root of everything. Five repositories:
 | `textbook-edition-template` | The Quartz site machinery department editions build from | Editions are **forks** of this. See the open question in `docs/DOCS-REMEDIATION.md` (3.4). |
 | `quartz-edition-extras` | Two Quartz plugins every edition installs at build time | See its `README.md`. |
 | `suggest-edit-function` | The Vercel serverless function behind the suggest-edit form | |
-| `authoring-assistant` | The macOS app the author writes and reviews in | Cloned over **HTTPS**, unlike the others. |
+| `authoring-assistant` | The macOS app the author writes and reviews in | Cloned over **HTTPS**, unlike the others. Operator guide: `docs/the-authoring-app-operations.md`. |
 
 **Push identity.** The other four repos are pushed over SSH using an alias:
 `github-textbook` → key `~/.ssh/id_ed25519_textbook`, configured in
@@ -199,7 +199,9 @@ project's control by design and are not listed here.
     Real hardening is deferred.
   - `ALLOWED_ORIGIN` is hardcoded to `https://bptext2026.xyz` and **must be changed
     at the domain cutover**.
-- **Guides:** `suggest-edit-function/README.md`, `TESTING.md`.
+- **Guides:** `docs/the-authoring-app-operations.md` (*The suggest-edit
+  function* — what to watch and where to look), `suggest-edit-function/README.md`,
+  `TESTING.md`.
 
 ---
 
@@ -301,7 +303,9 @@ console also revokes the CMS, and the two flows have nothing in common.
   never a file, never the vault.
 - **Revoking:** <https://github.com/settings/applications>. The app treats a
   revoked token exactly like an expired one and offers to sign in again.
-- **Guide:** `authoring-assistant/BUILD.md`, "One-time sign-in setup".
+- **Guides:** `docs/the-authoring-app-operations.md` (*The sign-in identifier* —
+  what the author is being asked for, and how to create it),
+  `authoring-assistant/BUILD.md`, "One-time sign-in setup".
 
 ---
 
@@ -340,7 +344,8 @@ book or the website depends on it.
   behind this.
 - **Breaks if gone:** existing installs keep working; no new version can be shipped
   without Gatekeeper refusing it on the author's Mac.
-- **Guide:** `authoring-assistant/BUILD.md`.
+- **Guides:** `docs/the-authoring-app-operations.md` (*Building, signing and
+  notarising*), `authoring-assistant/BUILD.md`.
 
 ---
 
@@ -355,9 +360,13 @@ book or the website depends on it.
   timeout, malformed answer — falls back to the deterministic checks and says so on
   screen.
 - **Worth knowing:** this sends the text of a chapter to a third party, and only
-  when the author ticks the box. It is documented in
-  `authoring-assistant/README.md` and nowhere in this repository's docs. Tracked as
-  1.3 in `docs/DOCS-REMEDIATION.md`.
+  when the author ticks the box, and only when a key has been configured at all.
+- **Nobody has recorded who approved book text going to a third-party LLM, or who
+  pays for the key.** That is an open question for the maintainer, not an
+  assumption for a technical contact to make either way.
+- **Guides:** `docs/the-authoring-app-operations.md` (*DeepSeek: book text leaving
+  the university*), `docs/the-authoring-app.md` (*Settings*, for the author),
+  `authoring-assistant/README.md`.
 
 ---
 
@@ -413,3 +422,7 @@ Kept honest and visible rather than left to be rediscovered. Each is tracked in
   (§5).
 - **Whether the deferred rate-limit hardening on the suggest-edit function was ever
   done** (1.6).
+- **Who approved sending book text to a third-party LLM, and who pays for the
+  key** (§13, 1.3). The path is off by default and the key is the author's own, so
+  nothing happens by accident — but the decision itself was never recorded, and it
+  is the maintainer's to make.

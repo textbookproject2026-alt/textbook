@@ -370,20 +370,37 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
 
 #### 1.1 — FIX-DOC — The Authoring Assistant is not documented anywhere in `docs/`
 
-- **Status:** TODO (not in the current session's scope)
-- **Repos/files:** `Obsidian Vault/docs/` — new doc; `authoring-assistant/README.md`,
-  `authoring-assistant/BUILD.md`
+- **Status:** DONE (5 Sep 2026 — `docs/the-authoring-app.md`, new, and
+  `docs/the-authoring-app-operations.md`, new)
+- **Repos/files:** `Obsidian Vault/docs/the-authoring-app.md`,
+  `docs/the-authoring-app-operations.md`; written against
+  `authoring-assistant/app/`, `README.md`, `BUILD.md`
 - **What's absent:** `docs/` contains zero occurrences of "Authoring Assistant" or
   the repo URL. `docs/word-to-markdown.md` says "the authoring app" without naming
   it, saying where it comes from, or who builds it. `docs/troubleshooting.md`
   names it once in passing. The repo also uses a different remote protocol from
   the others (HTTPS rather than the `github-textbook` SSH alias) — undocumented.
 - **Depends on:** 3.1 (the inventory gives it a home).
+- **What was done:** `docs/the-authoring-app.md` is the author's guide — what the
+  app is, that it is a signed, notarised Mac app built and sent by the technical
+  contact (no app store, no self-update), how to install and open it, the two
+  habits (close the chapter in Obsidian; there is no undo), the three analyses,
+  the console, and Settings. `docs/the-authoring-app-operations.md` is the
+  technical contact's half. The repo URL and its **HTTPS rather than
+  `github-textbook` SSH** remote are recorded in the operations doc's *The
+  repository*. `docs/word-to-markdown.md` now names the app in its opening and
+  points at the new guide instead of saying "the authoring app"; the app is also
+  added to `docs/editing-the-textbook.md`'s *What happens around you* (now six
+  items, not five), and both new docs are linked from `INFRASTRUCTURE.md`'s
+  **Guides:** lines for §6, §10, §12 and §13 and from `docs/troubleshooting.md`.
 
 #### 1.2 — FIX-DOC — The three analyses (citations, concept links, glossary generation) are undocumented
 
-- **Status:** TODO (not in the current session's scope)
-- **Repos/files:** `Obsidian Vault/docs/`;
+- **Status:** DONE (5 Sep 2026 — `docs/the-authoring-app.md`, *Chapters: the three
+  questions* and *`glossary.md` is written by the app*;
+  `docs/editing-the-textbook.md`, the `glossary.md` row)
+- **Repos/files:** `Obsidian Vault/docs/the-authoring-app.md`,
+  `docs/editing-the-textbook.md`;
   `authoring-assistant/app/references.py`, `app/terms.py`, `app/glossary.py`
 - **What's absent:** the app's main function is documented only in
   `authoring-assistant/README.md`. `docs/editing-the-textbook.md` describes
@@ -392,12 +409,29 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
   agreement by hand.
 - **What a new maintainer hits:** they don't know `glossary.md` is machine-appended,
   so a hand edit to it is at risk.
+- **What was done:** each analysis is described from its own module — citations
+  matched only against that chapter's own References section and never invented
+  (`references.py`), concept-page mentions with the skip rules and `aliases`
+  (`terms.py`), and the three glossary signals (`glossary.py`). `glossary.md` has
+  a section of its own saying plainly that the app writes it: `## Term` blocks
+  spliced into alphabetical position, existing lines copied through untouched,
+  never added twice, never rewritten — so **a hand-edited definition is safe, but
+  restructuring the file is not**, and why. `docs/editing-the-textbook.md`'s
+  vault-layout table no longer calls it just "the list of terms".
+- **Still open (not this item):** `docs/releasing-versions.md` still asks the
+  maintainer to check glossary/chapter agreement by hand. That is a sensible check
+  either way and was left alone; it is now checkable against a documented
+  mechanism rather than a guess.
 
 #### 1.3 — FIX-DOC — DeepSeek is mentioned nowhere in `docs/`
 
-- **Status:** TODO (not in the current session's scope)
-- **Repos/files:** `Obsidian Vault/docs/`; `authoring-assistant/app/llm.py`,
-  `authoring-assistant/app/keychain.py`
+- **Status:** DONE (5 Sep 2026 — `docs/the-authoring-app-operations.md`,
+  *DeepSeek: book text leaving the university*; `docs/the-authoring-app.md`,
+  *Settings*; `INFRASTRUCTURE.md` §13 amended). **The decision this was expected
+  to surface is now stated as an open question for the maintainer, not resolved.**
+- **Repos/files:** `Obsidian Vault/docs/the-authoring-app-operations.md`,
+  `docs/the-authoring-app.md`, `docs/INFRASTRUCTURE.md`;
+  `authoring-assistant/app/llm.py`, `authoring-assistant/app/keychain.py`
 - **What's absent:** `app/llm.py` sends the full text of a chapter to
   `https://api.deepseek.com/chat/completions` (model `deepseek-chat`) for extra
   glossary suggestions, keyed by a user-supplied API key in the macOS Keychain.
@@ -406,12 +440,32 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
   surface a question for the maintainer — an undocumented third-party LLM egress
   path for book text, with no record of who approved it or who pays for the key.
   Expect this to turn into a decision.
+- **What was done:** the operations doc states the egress path exactly — the full
+  chapter text (truncated at 90,000 characters, and the author is told when),
+  model `deepseek-chat`, up to 25 suggested terms merged into the deterministic
+  ones for the author to approve individually. It records the three things that
+  bound it: off unless a key is configured **and** off unless the author ticks the
+  box for that chapter; the key is the author's own, in the login Keychain
+  (`deepseek-key`), with no project-level account; and every failure path falls
+  back to the deterministic checks. The author's guide says the same in her own
+  terms and adds: it sends chapter text to a company outside the university, so
+  ask before using it.
+- **The question, left open on purpose.** Nothing in either repository records who
+  approved book text going to a third-party LLM, or who pays for the key. That is
+  written into the operations doc as the maintainer's to settle — including the
+  case that matters (material that cannot leave the institution) — rather than
+  resolved by a documentation session or quietly omitted. `INFRASTRUCTURE.md` §13
+  now carries the same open question instead of "documented nowhere in this
+  repository's docs", which is no longer true.
 
 #### 1.4 — FIX-DOC — The author's console has no guide, and its operator setup is recorded only in a sibling repo
 
-- **Status:** BLOCKED on 3.3 (the draft-review half cannot be described correctly
-  until the handoff is settled)
-- **Repos/files:** `Obsidian Vault/docs/`; `authoring-assistant/app/console.py`,
+- **Status:** DONE (5 Sep 2026 — `docs/the-authoring-app.md`, *Waiting for you*;
+  `docs/the-authoring-app-operations.md`, *The sign-in identifier* and *The
+  weekly-jobs strip*). **Unblocked by the code, not by 3.3** — see the residual
+  note at the end of this entry, which is still 3.3's.
+- **Repos/files:** `Obsidian Vault/docs/the-authoring-app.md`,
+  `docs/the-authoring-app-operations.md`; `authoring-assistant/app/console.py`,
   `app/github.py`, `app/server.py`, `authoring-assistant/BUILD.md`
 - **What is already covered:** `docs/troubleshooting.md` covers device-flow sign-in
   failure modes thoroughly and accurately. That part is good and should be kept.
@@ -423,6 +477,36 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
   `docs/scheduled-actions-health-check.md`); and **operator setup** — creating the
   "Textbook Author Console" OAuth app with Device Flow ticked and giving the author
   its client ID, which lives only in `authoring-assistant/BUILD.md`.
+- **What was done.** The author's guide covers the **suggested-edit queue**
+  (accept/decline; the fixed thank-you and decline replies, stated plainly as
+  posted publicly **under her own name**; that "accept" does not mean the app
+  rewrites the chapter; and the single case where it does — an exact quoted
+  replacement whose old wording appears in the chapter exactly once, one line
+  changed, refused when it appears twice or not at all); the **draft-review
+  queue**; **Going live**, including that the drafts area is shared so what
+  publishes is all of it, that the app never publishes on its own, and the
+  `clean`/`conflict`/`blocked`/`unknown` states in the author's words; and the
+  **weekly-jobs strip**. Sign-in is cross-referenced to
+  `docs/troubleshooting.md` rather than duplicated, as that entry is good.
+- **Operator setup** is now in `docs/the-authoring-app-operations.md`: what the
+  "identifier" the author is asked for actually is, how to create the *Textbook
+  Author Console* OAuth app, that **Enable Device Flow must be ticked** and what
+  it fails with if not, that no client secret should be generated, why the CMS's
+  app is not reused, the `public_repo` scope, and how the ID reaches the author.
+  `BUILD.md` remains the full procedure and is pointed at, not copied.
+- **`WEEKLY_JOBS` is recorded as a duplicate.** The operations doc reproduces the
+  four-row list from `app/github.py` beside the fact that
+  `docs/scheduled-actions-health-check.md` holds the same list with no mechanical
+  link, and says what has to happen when a weekly workflow is added, renamed or
+  retired — both places, and a new build of the app for the author's half.
+- **Residual, and still 3.3's:** the console's Accept button versus the CMS's
+  "Ready" column. The code answered the mechanical half of 3.3 in the meantime —
+  accepting opens or refreshes the single `drafts` → `main` pull request, and
+  **Going live** merges it on the author's press — and the new docs describe that
+  as it is. What is still undecided is whether the "Ready" column is the approval
+  gate, and therefore whether `docs/moderating-comments.md` and
+  `docs/for-trusted-contributors.md` are describing a workflow that no longer
+  exists. Neither new doc asserts an answer.
 
 #### 1.5 — FIX-DOC — No backup story for the vault or the repo, only for annotations
 
@@ -438,13 +522,27 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
 
 #### 1.6 — FIX-DOC — No operator doc for `suggest-edit-function`
 
-- **Status:** TODO (not in the current session's scope)
-- **Repos/files:** `Obsidian Vault/docs/troubleshooting.md` (needs a pointer);
-  `suggest-edit-function/README.md`, `TESTING.md`, `api/suggest-edit.js`
+- **Status:** DONE (5 Sep 2026 — `docs/the-authoring-app-operations.md`, *The
+  suggest-edit function*; `docs/troubleshooting.md` given the pointer it lacked).
+  The two non-doc items below are unchanged and still open.
+- **Repos/files:** `Obsidian Vault/docs/the-authoring-app-operations.md`,
+  `docs/troubleshooting.md`; `suggest-edit-function/README.md`, `TESTING.md`,
+  `api/suggest-edit.js`
 - **What's absent:** nothing in `docs/` acknowledges Vercel exists.
   `docs/troubleshooting.md` correctly triages the two user-visible error messages
   and then says "the technical contact's, either way" with no pointer to where to
   look — logs are only visible via `vercel logs <deployment-url>`.
+- **What was done:** the operations doc names Vercel, says the function and the
+  console's suggestion queue are two ends of one pipeline, and covers the four
+  things an operator needs: that `vercel logs <deployment-url>` is the **only**
+  place validation rejections, honeypot hits and rate-limit trips are visible and
+  that nothing is queued or retried; the per-instance rate limit and what it is
+  really worth; `ALLOWED_ORIGIN` and the cutover; and `BOT_TOKEN` rotation
+  (both Vercel environments, no code change, verify with a real submission).
+  `docs/troubleshooting.md`'s *The suggest-edit form shows an error* now ends with
+  a **For the technical contact** line pointing at the logs and at
+  `INFRASTRUCTURE.md` §6, instead of stopping at "the technical contact's, either
+  way".
 - **Carries two non-doc items, recorded here so they are not lost:**
   - **PARKED** — the rate limit is per-serverless-instance and resets on cold
     start; `suggest-edit-function/README.md` calls it "a speed bump, not a control"
@@ -762,14 +860,14 @@ the code on 4 September 2026.
 | 3.5 | FIX-DOC | DONE — `docs/updating-department-editions.md`; spawned FIX-CODE (pin bump) DONE — pins at `8f4e323` |
 | 3.5a | FIX-CODE | PARTIAL — `restore-keys` dropped from `deploy-v5.yaml`; `ci.yaml`/`build-preview.yaml`, the `gitLoader` defect and the Cloudflare build cache still open |
 | 3.6 | FIX-DOC | DONE — `quartz-edition-extras/README.md` |
-| 1.1 | FIX-DOC | TODO |
-| 1.2 | FIX-DOC | TODO |
-| 1.3 | FIX-DOC | TODO |
-| 1.4 | FIX-DOC | BLOCKED on 3.3 |
+| 1.1 | FIX-DOC | DONE — `docs/the-authoring-app.md` + `docs/the-authoring-app-operations.md` |
+| 1.2 | FIX-DOC | DONE — `docs/the-authoring-app.md`; `editing-the-textbook.md`'s `glossary.md` row fixed |
+| 1.3 | FIX-DOC | DONE — documented; **who approved the LLM egress and who pays is now an open question for the maintainer** |
+| 1.4 | FIX-DOC | DONE — console + operator setup written; the "Ready" column contradiction stays with 3.3 |
 | 1.5 | FIX-DOC | BLOCKED on 3.2 |
-| 1.6 | FIX-DOC | TODO (carries one PARKED and one FIX-CODE item) |
+| 1.6 | FIX-DOC | DONE — `docs/the-authoring-app-operations.md`; the PARKED rate limit and FIX-CODE `ALLOWED_ORIGIN` are unchanged |
 | 1.7 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
-| 2.1 | FIX-DOC | DONE — `docs/word-to-markdown.md` (image destination still FIX-CODE/DECIDE) |
+| 2.1 | FIX-DOC | DONE — `docs/word-to-markdown.md`; the image destination was decided and the code now writes `assets/<chapter>/` |
 | 2.2 | FIX-DOC | DONE — deleted, not repaired; unique content already in `INFRASTRUCTURE.md` |
 | 2.3 | FIX-CODE | DONE — app strings, the test guarding them and `troubleshooting.md`'s quotes moved together |
 | 2.4 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |

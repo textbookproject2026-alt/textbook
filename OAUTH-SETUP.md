@@ -1,9 +1,9 @@
 # CMS OAuth setup — manual steps
 
-**Operator guide. Audience: Alec.** Everything in this file has to be done by hand
-in a browser: GitHub will not issue an OAuth client secret to a script, and the
-secret has to be typed into Cloudflare rather than committed anywhere. Budget
-about 30 minutes.
+**Operator guide. Audience: the technical contact.** Everything in this file has
+to be done by hand in a browser: GitHub will not issue an OAuth client secret to
+a script, and the secret has to be typed into Cloudflare rather than committed
+anywhere. Budget about 30 minutes.
 
 The contributor-facing guide is [docs/for-trusted-contributors.md](docs/for-trusted-contributors.md).
 Do not send contributors here.

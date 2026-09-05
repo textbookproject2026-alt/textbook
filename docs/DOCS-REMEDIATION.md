@@ -592,14 +592,14 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
 
 #### 2.3 — FIX-CODE — De-personalisation is incomplete: the app still says "Alec", and a test asserts on it
 
-- **Status:** HELD — explicitly withheld. Requires code and test changes together.
-  Do not edit.
-- **Repos/files:** `authoring-assistant/app/github.py:113,139,207`,
-  `app/convert.py:888,913`, `app/web/index.html:368,529`, `app/web/app.js:1063`,
-  `tests/test_all.py:838,840`; `Obsidian Vault/OAUTH-SETUP.md:3`,
-  `admin/config.yml:28`; `authoring-assistant/BUILD.md:229,272`;
-  `Obsidian Vault/docs/annotation-restore.md:106`;
-  `Obsidian Vault/docs/troubleshooting.md:290-330`
+- **Status:** DONE (5 Sep 2026 — the app's strings, the test that guards them and
+  the guide that quotes them, changed together in one pass)
+- **Repos/files:** `authoring-assistant/app/github.py:121,152,220`,
+  `app/convert.py:1051,1076`, `app/web/index.html:368,553`, `app/web/app.js:1088`,
+  `app/server.py:768`, `README.md:236,322,355`, `BUILD.md:254,283,298,358`,
+  `tests/test_all.py:1170-1176`; `Obsidian Vault/OAUTH-SETUP.md:3`,
+  `admin/config.yml:27`; `Obsidian Vault/docs/troubleshooting.md:288-330`;
+  `Obsidian Vault/docs/annotation-restore.md:102` (left as-is — see below)
 - **Why it is FIX-CODE:** user-facing strings in the app still say "ask Alec".
   `tests/test_all.py` **asserts on those exact strings** — the test was added to
   keep them in sync with `docs/troubleshooting.md`, so de-personalising the app
@@ -612,6 +612,35 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
   is correct — that is the `__MAINTAINER__` token rendered from
   `textbook.config.json`, and `docs/changing-settings.md` documents how to change
   it.
+- **What was done.** All three had to move in the same commit, and did:
+  1. **The app's strings.** "ask Alec" → "ask the technical contact" across
+     `app/github.py` (three error messages), `app/convert.py` (two conversion
+     warnings), `app/web/index.html` (the one-off-setup card and the Settings
+     note) and `app/web/app.js` (the failed-weekly-job line). Two more the
+     original audit had not listed turned up in the same sweep and were included:
+     `README.md` (three places, the author's own guide) and the `app/server.py`
+     comment that mirrors `BUILD.md`'s publishing rationale.
+  2. **The test.** `tests/test_all.py` — the two `QUOTED_BY_THE_GUIDE` entries for
+     `app/github.py` now quote the new wording. The check flattens the source but
+     leaves the quote characters that join adjacent string literals, so a quoted
+     string may not span that seam; both messages now wrap mid-sentence and are
+     listed as the two pieces the source wraps them into, with a comment saying
+     why. The guard passes: **190 passed, 0 failed**.
+  3. **The guide.** `docs/troubleshooting.md` — the three quotes in *The author's
+     console won't sign in* now match the app word for word again, so its prose
+     ("belong to the technical contact") and its quotes finally agree.
+- **Gendered pronouns.** `BUILD.md` "as himself" → "as themselves"; "his
+  authorised-apps list" → "their list of authorised apps"; "writing there behind
+  his back would leave his own copy" reworked to "behind the author's back would
+  leave that copy", and the same sentence in the `app/server.py` comment it
+  mirrors. `README.md` "until he has" → "until they have". `app/web/index.html`
+  "a short piece of text he will give you" → "they will give you".
+- **Deliberate exception — `docs/annotation-restore.md:102`.** The line
+  `"account": "acct:AlecGordon@hypothes.is"` sits inside a sample backup JSON. It
+  is **data, not prose**: it shows the shape of a real Hypothes.is record so the
+  reader can recognise one, and a restore is checked against it. Changing it
+  would make the sample wrong. Left as-is, deliberately. The same account is
+  recorded, correctly and for the same reason, at `docs/INFRASTRUCTURE.md:231`.
 
 #### 2.4 — FIX-DOC — `scheduled-actions-health-check.md` predates auto-merge
 
@@ -708,7 +737,7 @@ the code on 4 September 2026.
   rationale, and the honesty about the untested pruning path.
 - **`docs/troubleshooting.md`, device-flow section.** Matches
   `authoring-assistant/app/github.py` and `app/web/index.html` string for string.
-  (Its "Alec" quotes are accurate; the app is what needs changing — 2.3.)
+  (Its quotes now say "the technical contact", matching the app — 2.3.)
 
 ---
 
@@ -733,7 +762,7 @@ the code on 4 September 2026.
 | 1.7 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
 | 2.1 | FIX-DOC | DONE — `docs/word-to-markdown.md` (image destination still FIX-CODE/DECIDE) |
 | 2.2 | FIX-DOC | DONE — deleted, not repaired; unique content already in `INFRASTRUCTURE.md` |
-| 2.3 | FIX-CODE | HELD — code + test together |
+| 2.3 | FIX-CODE | DONE — app strings, the test guarding them and `troubleshooting.md`'s quotes moved together |
 | 2.4 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
 | 2.5 | FIX-DOC | DONE — `docs/editing-the-textbook.md` |
 | 2.6 | PARKED | Recorded; left as placeholders |

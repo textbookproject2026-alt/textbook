@@ -286,13 +286,13 @@ your name.
 - **Did an error box appear?** Errors come up in a box headed **Something needs
   your attention**, with one button, **All right**. Three of the messages are
   configuration and belong to the technical contact: _This copy has not been set
-  up for signing in yet. Ask Alec to add the sign-in identifier in Settings._,
-  _Signing in could not be started. Check the sign-in identifier in Settings, and
-  that Device Flow is switched on for it._, and _The sign-in identifier in
-  Settings is not recognised. Ask Alec to check it._ Two are yours: _Sign-in was
-  refused on the web page. Nothing was changed._ means Cancel was pressed on the
-  web page, and
-  _This Mac is not online, so signing in cannot start._ means what it says.
+  up for signing in yet. Ask the technical contact to add the sign-in identifier
+  in Settings._, _Signing in could not be started. Check the sign-in identifier
+  in Settings, and that Device Flow is switched on for it._, and _The sign-in
+  identifier in Settings is not recognised. Ask the technical contact to check
+  it._ Two are yours: _Sign-in was refused on the web page. Nothing was changed._
+  means Cancel was pressed on the web page, and _This Mac is not online, so
+  signing in cannot start._ means what it says.
 - **Did it sign in and then ask again?** _Signing in worked, but the token could
   not be stored in this Mac's Keychain…_ means a Keychain prompt was refused, or
   the Keychain is locked; sign in again and allow the prompt when it appears.
@@ -320,7 +320,7 @@ the same list, because it is the whole repository's open suggestions and draft
 changes rather than anything belonging to your account. The wrong account shows
 up as the wrong name after **Signed in as**, and it bites later, at the moment
 you accept or decline: _Your sign-in does not have permission to do that. Signing
-in again may fix it; if not, ask Alec._
+in again may fix it; if not, ask the technical contact._
 
 **Fix:** yours are the expired code, the blocked page, the refused Keychain
 prompt and being offline — press **Sign in** again and finish it in one go.

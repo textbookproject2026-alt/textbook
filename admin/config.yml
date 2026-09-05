@@ -24,7 +24,7 @@ backend:
   # becomes able to change the live book with no review step at all.
   #
   # `main` is updated by exactly one route: a human opening a
-  # drafts -> main pull request, and Brandon merging it.
+  # drafts -> main pull request, and the maintainer merging it.
   #
   # Keep this as `drafts`.
   # =====================================================================

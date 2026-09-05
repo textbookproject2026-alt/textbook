@@ -11,9 +11,9 @@ written.
 The guide has five parts:
 
 1. **Write it right in Word** — habits that make conversion painless (read this before writing)
-2. **Converting a chapter** — the six clicks, each time
+2. **Converting a chapter** — what the app asks for, and in what order
 3. **Check it worked** — reading the app's report, plus a tick-box list per chapter
-4. **When something looks wrong** — the three most common problems and their fixes
+4. **When something looks wrong** — the common problems and their fixes
 5. **Getting it into the textbook** — from converted chapter to live website
 
 Part 1 is the one that matters most. Everything after it is quick when the Word
@@ -53,8 +53,8 @@ tables instead — it will also read better on phones.
 
 **Insert pictures the plain way.** Use **Insert → Picture** and place the image on
 its own line, "In Line with Text" (Word's default). Avoid text boxes, SmartArt,
-WordArt, and shapes drawn in Word — none of these survive conversion. Anything
-built out of them is reported as a leftover and has to be redone.
+WordArt, and shapes drawn in Word — none of these come through as usable content.
+The app flags each of them in its report (Part 3), and they have to be redone.
 
 **Before converting, tidy up:**
 
@@ -73,30 +73,99 @@ built out of them is reported as a leftover and has to be redone.
 
 - **Your Word files** stay wherever you like — for example a folder called `Word
   chapters` in your Documents. They do **not** go inside the textbook folder; the
-  textbook folder holds only the converted versions.
-- **The textbook folder** holds the result: the chapter text in `chapters`, and
-  the chapter's images in `assets`, in a subfolder named after the chapter.
+  textbook folder holds only the converted versions. The Word document is read
+  and left exactly where it is: never changed, never moved.
+- **The chapter** goes into whichever folder you choose — for this textbook, that
+  is `chapters`.
+- **The chapter's pictures** go into a folder the app names after the chapter,
+  with `-media` on the end, placed **next to the chapter**. A chapter saved as
+  `chapters/chapter-05.md` gets `chapters/chapter-05-media/`, and the picture
+  links inside the chapter point there. The app does not put pictures in
+  `assets/`, and does not ask you where they should go.
 
-### The six steps
+  > `docs/editing-the-textbook.md` describes the vault's own convention for
+  > hand-made chapters, which is `assets/chapter-05/`. The converter does not
+  > follow it. If you want a converted chapter's pictures to live under `assets/`
+  > you have to move the folder yourself **and** edit every picture link in the
+  > chapter to match — so unless you have a reason to, leave them where the app
+  > put them.
 
-1. **Choose Chapters → A Word document** in the authoring app.
-2. **Pick the .docx file.** A file picker opens; find the chapter you wrote and
-   choose it. Nothing is changed in the Word file itself — it is only read.
-3. **Pick the destination.** The app asks where the converted chapter should go.
-   Choose the textbook folder's `chapters`; the app puts the images alongside it
-   in `assets` for you.
-4. **Name the chapter.** Use the word `chapter`, a dash, and the two-digit chapter
-   number: `chapter-05`, `chapter-12`. This matches the chapters already in the
-   book, and the website builds its links out of these names, so the shape is not
-   optional. Each chapter also gets its own image folder under this name —
-   Word calls its images `image1`, `image2` in *every* document, so two chapters
-   sharing one folder would silently overwrite each other's pictures.
-5. **Read the preview.** The app shows what it found — headings, pictures,
-   tables, footnotes — and anything it could not convert. Read it before
-   confirming; this is the moment when a problem is cheapest to fix. If something
-   looks wrong, cancel, fix the Word document (Part 4), and start again.
-6. **Confirm.** The app writes the chapter and its images, and shows the finished
-   report. Part 3 is what to do with it.
+### The steps
+
+1. **Choose "A Word document"** on the app's opening screen (*What would you like
+   to work on?*), alongside "One chapter" and "My whole vault".
+
+   The first time only, you may get a screen headed **One thing is missing**: the
+   converter itself, a free program called pandoc, isn't on this Mac yet. Press
+   the button and the app downloads pandoc's own installer, checks that it really
+   is signed by the people who make it, and opens it for you — press **Continue**,
+   then **Install**, give the Mac's password when the installer asks, then come
+   back and press **Check again**. It is about a 40 MB download. Nothing in your
+   vault is touched.
+
+2. **Choose the Word document.** A file picker opens. It has to be a `.docx` —
+   the kind Word has saved since 2007. If yours is an older `.doc`, the app says
+   so and asks you to open it in Word and use **File → Save As** to save it as a
+   `.docx` first.
+
+3. **Choose where it should go in your vault.** A folder picker opens; choose the
+   textbook folder's `chapters`. The app confirms your choice and says how many
+   chapters are already in that folder, which is a quick way to tell you picked
+   the right one.
+
+4. **Name the chapter.** The app fills this in for you from the Word file's own
+   name, and you can edit it. This is the name you will see in Obsidian.
+
+   **What the app enforces:** the name must end in `.md` (if you leave it off,
+   the app adds it); it must be a plain name, not a path with folders in it; it
+   cannot contain `/ \ : * ? " < > |`; and no file of that name may already exist
+   in that folder. **The app never writes over an existing file and has no undo**,
+   so a clash stops the conversion and asks you for a different name.
+
+   **What the app does not enforce — but you should still do.** Name chapters
+   `chapter-05`, `chapter-12`: the word `chapter`, a dash, and the two-digit
+   number. Nothing in the app checks this, so the responsibility is yours, and it
+   matters for three reasons:
+
+   - the chapters already in the book are named this way, and the website builds
+     its page addresses out of the file names;
+   - links between chapters are written from the name — `[[chapter-04]]` only
+     works if the file really is `chapter-04.md`;
+   - the picture folder is named after the chapter, so a distinctive chapter name
+     is what keeps chapters' pictures apart. Word calls its images `image1`,
+     `image2` in *every* document, so two chapters sharing one picture folder
+     would overwrite each other's figures. (The app will not let that happen
+     silently: if a folder of that name is already sitting next to the chapter,
+     it stops before writing anything and asks you to rename the chapter.)
+
+5. **Press "Convert and show me", and read what comes back.** The conversion
+   happens in a temporary folder — **nothing is written into your vault at this
+   point**. The screen that follows, *Here is what came out*, shows four things:
+
+   - a one-line summary: `Chapter 5.docx became a chapter of 4,312 words,
+     18 headings, 2 tables, 9 footnotes, 6 pictures`;
+   - **What to check** — the app's notes on this document. Part 3 explains them;
+   - **The chapter as it will be saved** — the whole converted text, and the path
+     it will be written to;
+   - **The pictures** — every picture file that came out, with its kind and size,
+     and the name of the folder they will go into.
+
+   This is the moment when a problem is cheapest to fix. If something is wrong,
+   press **Go back and change something**, fix the Word document (Part 4), and
+   convert again — nothing has been written, so there is nothing to undo.
+
+6. **Confirm and save.** Tick *I have looked at the chapter above and I want to
+   save it* — the **Save this chapter** button stays greyed out until you do —
+   and press it. The app writes the pictures first and the chapter last, so a
+   chapter never ends up in the vault pointing at pictures that failed to copy.
+   The screen that follows tells you exactly where the chapter and its pictures
+   were written, and reminds you that your Word document has not been touched.
+
+   It then offers **Go through this chapter now** — the app's three linking
+   questions (citations, concept-page mentions, glossary terms) run over the new
+   chapter straight away. A chapter fresh out of Word has no links in it at all,
+   so this is worth doing, but it is not part of the conversion and you can leave
+   it for another day.
 
 ### Cross-references to other chapters
 
@@ -119,37 +188,74 @@ and type new sentences the same way.
 
 ### The report
 
-When the conversion finishes, the app reports five things:
+The report is not a table of counts to tick off. It is **a list of notes written
+about your document**, under the heading *What to check*, and the app writes only
+the ones that apply — a plain chapter with no tables and no maths produces a
+short report, and that is the report working correctly.
 
-| The report says | What it means |
+Each note has a headline, a paragraph explaining what happened and why, and a
+**What to check** line telling you what to do about it. Notes come at three
+levels, and the level is the thing to read first:
+
+| Level | What it means |
 |---|---|
-| **Headings** | How many headings it found, and their levels. This should match Word's Navigation Pane. |
-| **Pictures** | How many images it pulled out, and the folder they went into. |
-| **Tables** | How many tables it converted as grids. |
-| **Footnotes** | How many real footnotes it found — hand-typed ones are not counted here. |
-| **Leftovers** | Anything it could not convert: text boxes, SmartArt, WordArt, drawn shapes. **This should be empty.** Anything listed here is missing from the chapter. |
+| **ok** | This went as it should. Nothing to do. |
+| **look** | It converted, and nothing is lost — but go and look at it, because markdown holds it differently from Word. |
+| **warn** | Something is probably wrong. These are the ones to act on before saving. |
 
-Compare those numbers against the Word document. A count that is lower than you
-expect is the earliest sign of the problems in Part 4 — usually headings made by
-hand, or footnotes typed by hand.
+Above the notes sits a single summary line — *`Chapter 5.docx` became a chapter of
+4,312 words, 18 headings, 2 tables, 9 footnotes, 6 pictures* — which is where the
+counts live. Anything that came out as zero is left out of that line, so a
+missing count is itself the signal: no "headings" in the summary means no
+headings were found.
+
+**What the notes cover.** Roughly in the order they appear:
+
+- **Pictures** — how many came out and the folder they went into; pictures in
+  formats nothing can display; pictures the chapter refers to that never
+  arrived; pictures written as `<img>` tags rather than markdown (normal, and
+  fine in reading view).
+- **Tables** — how many converted cleanly into markdown tables, and how many had
+  to be written as blocks of web markup instead.
+- **Footnotes** — how many came across, and whether any number in the text has no
+  note at the bottom, or any note at the bottom has no number pointing to it.
+- **Headings** — how many, and at which levels; whether there are several
+  top-level headings; whether a level was skipped; and whether any lines look
+  like headings that were made by hand rather than styled.
+- **Everything else worth a look** — Word bookmarks left as `[]{#something}`;
+  underlining and other formatting markdown cannot hold, left as
+  `[text]{.underline}`; mathematics; forced line breaks; text boxes and sidebars
+  that came out as blocks of web markup; and whether the chapter has a
+  **References** section (without one, the citation check has nothing to match
+  against).
+- **What the converter itself said** — usually nothing. When it does say
+  something, the note quotes it verbatim and treats it as a warning, because it
+  normally means part of the document was skipped rather than converted.
+- **The shape of the chapter** — a confirmation that each paragraph is on a
+  single line, which is what keeps your vault's history readable (see Part 2).
+
+There is **no "leftovers" summary**: things that could not be converted are not
+gathered into one field. Each surfaces as its own note, and Part 4 lists the ones
+that matter.
 
 ### The checklist
 
 Then open the textbook folder in **Obsidian**, click the new chapter, and read
 it. Tick these off:
 
+- [ ] **No warnings left unread** — every `warn`-level note in the report has
+      either been dealt with or consciously accepted.
 - [ ] **Headings** — the chapter title and all section headings are there, at the
       right levels. Open Obsidian's outline panel and compare it to Word's
       Navigation Pane: same headings, same order, same nesting.
-- [ ] **Footnotes** — the count in the report matches the last footnote number in
-      Word, the notes are listed at the bottom of the file, and the numbers in the
-      text are clickable.
+- [ ] **Footnotes** — the count in the summary line matches the last footnote
+      number in Word, the notes are listed at the bottom of the file, and the
+      numbers in the text are clickable.
 - [ ] **Tables** — each one displays as a proper grid with its header row, not as
       a run-together block of text.
-- [ ] **Pictures** — every figure from the Word document shows in the chapter, and
-      the files are in this chapter's own image folder. Same count as Word.
-- [ ] **Leftovers** — the report listed none. If it listed something, that content
-      is not in the chapter; go to Part 4.
+- [ ] **Pictures** — every figure from the Word document shows in the chapter,
+      and the files are in this chapter's own `-media` folder. Same count as
+      Word. None shows as a broken image.
 - [ ] **Skim the full chapter once** for anything that looks off — stray symbols,
       a gap where something used to be, a formula that turned to gibberish.
 
@@ -161,36 +267,85 @@ If everything ticks, go to Part 5. If not, Part 4 below.
 
 Almost every conversion problem traces back to how the Word document was built,
 and the fix is always the same shape: **fix it in Word, then convert again.**
-Converting again is cheap and safe — it simply replaces the chapter — so never
-patch problems in the converted chapter while the Word document still has the
-flaw. Your patches would be lost the next time, and the flaw would come back.
+Converting again is cheap and safe — until you tick the box and press *Save this
+chapter*, nothing has been written — so never patch problems in the converted
+chapter while the Word document still has the flaw. Your patches would be lost
+the next time you convert, and the flaw would come back.
 
-**A table came out scrambled** — text run together, columns misaligned, rows
-missing, or the report counted fewer tables than the document has. Cause: merged
-or split cells. Fix: in Word, click the table and look for merged cells (one cell
-spanning several columns or rows). Unmerge them (**Layout → Split Cells**) or
-rebuild that table as two or three simple grids. Convert again.
+Each heading below is the app's own wording, so you can match a note on screen to
+the fix for it.
 
-**Headings are missing** — sections that were clearly headed in Word show up as
-ordinary bold text, the report's heading count is low, and the outline panel in
-Obsidian is empty or patchy. Cause: the headings were made by hand (bold and a
-bigger font) instead of with Word's Heading styles. Fix: in Word, click each
-heading line and apply **Heading 1/2/3** from the Styles gallery (see Part 1). The
-text won't visibly change much, but the structure will now be recorded. Convert
-again.
+**"N tables could not be made into proper tables"** — a `warn` note. Cause: cells
+in the table have been merged, or a single cell holds more than one paragraph.
+Markdown tables can do neither, so the table is written out as a block of web
+markup instead. None of your text is lost, and Obsidian still shows it as a table
+in reading view — but it is unpleasant to edit, and the app's citation and
+concept-page checks skip over it entirely, so nothing inside it will ever be
+linked. Fix: in Word, unmerge the cells (**Layout → Split Cells**) or rebuild the
+table as two or three simple grids, and convert again. If the table is genuinely
+complicated, the app's own advice is to leave it and accept that its contents
+won't be linked.
 
-**Footnotes turned into plain text** — the notes appear as a numbered list
-mid-document, the numbers in the text aren't clickable, or the report says there
-are no footnotes when the document plainly has some. Cause: the footnotes were
-typed by hand rather than inserted with Word's footnote tool. Fix: in Word, delete
-the hand-made version and re-create each note with **References → Insert
-Footnote**, pasting the note's text into the footnote area Word creates. Tedious,
-but only ever needed once per chapter. Convert again.
+**"No headings came across at all"** — a `warn` note, and it also tells you how
+many lines in the chapter *look* like headings written by hand. Cause: the
+headings in Word were made by making text bigger and bold rather than with Word's
+Heading styles, so Word records them as ordinary paragraphs. Fix: in Word, apply
+**Heading 1 / 2 / 3** from the Styles gallery (Part 1), save, and convert again.
+The app also offers the alternative of typing `#` in front of each heading in
+Obsidian afterwards; going back to Word is quicker if there are many.
 
-**The report listed leftovers** — a text box, SmartArt, WordArt or a drawn shape.
-None of these can be converted, so whatever was inside them is simply not in the
-chapter. Fix: in Word, retype the text as ordinary paragraphs, or export the
-diagram as a picture and insert it with **Insert → Picture**. Convert again.
+**"N lines may be headings that did not convert"** — a `look` note, which appears
+when *some* headings converted. These are lines standing alone and entirely in
+bold, which is what a hand-made heading looks like after conversion — though they
+may equally be genuine emphasis. Fix: find them in the preview, and where one
+really is a heading, either put the right number of `#` marks in front of it in
+Obsidian or restyle it in Word and convert again.
+
+**Footnotes are missing from the report entirely.** There is no note claiming
+zero footnotes — if the document plainly has footnotes and no footnote note
+appears at all, they were typed by hand rather than inserted with Word's footnote
+tool, and have converted to loose text. Fix: in Word, delete the hand-made
+version and re-create each note with **References → Insert Footnote**, pasting
+the note's text into the footnote area Word creates. Tedious, but only ever
+needed once per chapter. Convert again.
+
+**"Some footnotes do not match up"** — a `warn` note, listing footnote numbers in
+the text with no note at the bottom, and notes at the bottom nothing points to.
+Cause: usually a footnote deleted in Word without its number being removed, or
+the other way round. Fix: the app's advice is to find them in the preview and
+tidy them up after saving.
+
+**"N pictures came out in a format nothing can display"** — a `warn` note naming
+the file types, which will be `.emf`, `.wmf`, `.bin` or `.vml`. This is what
+charts, SmartArt diagrams, WordArt and pasted spreadsheet ranges become: Word
+draws them itself, so nothing outside Word can show them, and they appear as
+broken pictures in Obsidian. Fix: in Word, right-click each chart or diagram,
+choose **Copy**, then **Paste Special** as a Picture (PNG), and save. Converting
+again then produces a picture that works everywhere.
+
+**"Pictures were mentioned but none came out"** — a `warn` note. The chapter
+refers to pictures but no picture files were produced, which happens when the
+pictures are linked to files elsewhere on the Mac rather than stored inside the
+Word document. Fix: open the Word document and check the pictures show up there;
+if they do, copy each one and paste it back in, save, and convert again.
+
+**"Some blocks of the document have no markdown equivalent"** — a `look` note.
+Text boxes, sidebars and content controls come across as blocks of web markup
+rather than plain paragraphs. Nothing is lost, but they read awkwardly. Fix:
+decide whether the text inside should simply become ordinary paragraphs — and if
+so, make it ordinary paragraphs in Word and convert again.
+
+**"The converter reported a problem"** — a `warn` note that quotes the
+converter's own words verbatim, because they are not written for you. The
+converter is usually silent, so when it speaks it nearly always means a part of
+the document was skipped rather than converted. Fix: compare the chapter in the
+preview against the Word document, looking for anything missing. If the wording
+means nothing to you, send it to the technical contact — the note says so itself.
+
+**"The paragraphs may have been broken up"** — a `warn` note, and the one problem
+on this list that is not yours to fix. It means the one-paragraph-per-line rule
+the whole tool depends on (Part 2) did not hold. Tell the technical contact; the
+conversion needs looking at.
 
 If you hit something not on this list, don't sink time into it — keep the Word
 file and the converted chapter side by side and note what looks wrong. The
@@ -207,9 +362,24 @@ Once the checklist passes:
    this textbook carry no front-matter block — `chapter-03.md` starts straight in
    with its title, and yours should too. If a stray blank line or a duplicate
    title has been left at the very top, delete it.
-2. **Add the chapter to the front page.** Open `index.md` (the textbook's table of
-   contents) and add a line for the new chapter, written the same way as the
-   existing entries.
+
+2. **Add the chapter to the front page — in `templates/index.md`, not
+   `index.md`.** Open **`templates/index.md`** and add a bullet under
+   **Contents**, copying the shape of the one already there:
+
+       - **[[chapter-05|Chapter 5 — Photosynthesis]]**
+         One sentence saying what the chapter covers.
+
+   The front page readers see at `index.md` is *generated* from
+   `templates/index.md` by an automatic step that fills in the book's title, web
+   address, maintainer and licence. **Anything typed directly into `index.md` is
+   wiped the next time that runs.** The same is true of `README.md` and
+   `CONTRIBUTING.md`. `docs/editing-the-textbook.md` and
+   `docs/changing-settings.md` both cover this; the short version is: edit the
+   template, then check at publish time that `index.md` has caught up. If it
+   hasn't, the rewrite hasn't run yet — publish the chapter itself and tell the
+   technical contact the front page is waiting.
+
 3. **Nothing to sync or commit.** There is no source-control step in this workflow
    and you don't need one — saving the file in Obsidian is all the storing it
    needs. Getting the chapter in front of readers is the publish step, and that
@@ -218,9 +388,10 @@ Once the checklist passes:
 
 4. **Publish to the website.** Click the **Publish** icon in Obsidian's left
    sidebar. Obsidian shows a list of files that are new or changed since the last
-   publish — your new chapter, its images, and `index.md`. Read the list before
-   confirming: anything ticked will go live, anything unticked won't. Click
-   **Publish** and wait; the site updates within a minute or two.
+   publish — your new chapter, the files in its `-media` folder, and `index.md`.
+   Read the list before confirming: anything ticked will go live, anything
+   unticked won't. Click **Publish** and wait; the site updates within a minute
+   or two.
 
    **Saving and publishing are separate, and only publishing reaches readers.**
    Saving in Obsidian stores the chapter; the Publish dialog is what sends it to
@@ -237,5 +408,5 @@ Once the checklist passes:
    page, and give it one last skim — especially the images and tables.
 
 That's the whole cycle: write in Word with Part 1's habits, convert with Part 2's
-six steps, tick Part 3's list, publish with Part 5. For a chapter written the way
+steps, tick Part 3's list, publish with Part 5. For a chapter written the way
 Part 1 describes, the whole thing takes a few minutes end to end.

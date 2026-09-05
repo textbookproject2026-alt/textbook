@@ -488,9 +488,11 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
 
 #### 2.1 — FIX-DOC — `word-to-markdown.md` Parts 2 and 3 describe an app that doesn't exist
 
-- **Status:** HELD — explicitly withheld pending maintainer review. Do not edit.
+- **Status:** DONE (5 Sep 2026 — `docs/word-to-markdown.md`, Parts 2–5 rewritten
+  against the code; Part 1 kept). The hold was lifted by the maintainer.
 - **Repos/files:** `Obsidian Vault/docs/word-to-markdown.md`;
-  verified against `authoring-assistant/app/convert.py`
+  verified against `authoring-assistant/app/convert.py`,
+  `app/server.py:378-470`, `app/web/index.html`, `app/web/app.js:520-700`
 - **What's wrong:**
   - Step 3 says the app "puts the images alongside it in `assets`".
     `app/convert.py:286,415` writes them to `<chapter-stem>-media/` **next to the
@@ -507,10 +509,26 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
     line". `docs/editing-the-textbook.md` and `docs/changing-settings.md` both say
     `index.md` is generated and any direct edit is wiped — edit
     `templates/index.md`.
-- **Note for the fix session:** the image-destination divergence may be a FIX-CODE
-  item rather than a doc one — the app's `<name>-media` convention also conflicts
-  with the CMS's `media_folder: assets` (`admin/config.yml`). Decide which is right
-  before rewriting the doc.
+- **What was done:** Part 1 (the Word writing habits) was kept, minus one clause
+  that pointed at the non-existent "leftover" report field. Part 2 now describes
+  the real screens — the front-screen *A Word document* button, the one-off pandoc
+  install screen, the three-part setup screen, *Convert and show me*, the tick-box
+  confirmation and the *Save this chapter* button — and states the naming rules the
+  code actually enforces (`.md` extension added if absent, plain name not a path,
+  no `/ \ : * ? " < > |`, no collision) separately from the `chapter-NN`
+  convention, which is now given as a convention with its three reasons. Part 3 is
+  rewritten as what `report()` returns: a summary line of counts plus notes at
+  `ok`/`look`/`warn`, with no "Leftovers" field, and a checklist keyed to
+  warn-level notes. Part 4's entries are now headed with the app's verbatim note
+  headlines. Part 5 step 2 now says `templates/index.md` and explains why, citing
+  `editing-the-textbook.md` and `changing-settings.md`.
+- **Still open (not a doc item):** the image-destination divergence itself. The doc
+  now documents the code — pictures go to `<chapter-stem>-media/` next to the
+  chapter — and carries a short note that `docs/editing-the-textbook.md` states the
+  vault convention as `assets/chapter-NN/` and that the converter does not follow
+  it. The three-way disagreement between `app/convert.py`, that guide, and the
+  CMS's `media_folder: assets` (`admin/config.yml`) is a **FIX-CODE/DECIDE** matter
+  and was deliberately not resolved by prose.
 
 #### 2.2 — FIX-DOC — `file-tree-reference.md` is a build-plan artefact presented as a reference
 
@@ -677,7 +695,7 @@ the code on 4 September 2026.
 | 1.5 | FIX-DOC | BLOCKED on 3.2 |
 | 1.6 | FIX-DOC | TODO (carries one PARKED and one FIX-CODE item) |
 | 1.7 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |
-| 2.1 | FIX-DOC | HELD — maintainer review |
+| 2.1 | FIX-DOC | DONE — `docs/word-to-markdown.md` (image destination still FIX-CODE/DECIDE) |
 | 2.2 | FIX-DOC | HELD — maintainer review, may be deleted |
 | 2.3 | FIX-CODE | HELD — code + test together |
 | 2.4 | FIX-DOC | DONE — `docs/scheduled-actions-health-check.md` |

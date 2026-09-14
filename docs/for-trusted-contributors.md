@@ -40,7 +40,7 @@ The CMS is at:
 `https://textbook-cms.pages.dev`
 
 Bookmark it. Note that this is **not** the same address as the textbook itself —
-the book is at `https://bptext2026.xyz`. They look nothing alike on purpose. The
+the book is at `https://confused4now.org`. They look nothing alike on purpose. The
 CMS is a tool; it is not part of the book, and it is not published with it.
 
 ---
@@ -229,7 +229,7 @@ technical contact.
 ## Why the CMS is not part of the website
 
 You may wonder why the CMS lives at its own address rather than somewhere on
-`https://bptext2026.xyz`.
+`https://confused4now.org`.
 
 The book's website is built by Obsidian Publish, which takes the chapter files
 and turns them into readable pages. The CMS is not a chapter — it is a tool, and

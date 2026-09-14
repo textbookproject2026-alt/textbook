@@ -15,11 +15,12 @@ like.
 
 ## What gets backed up
 
-Three separate collections ("scopes"), in one file per week:
+Four separate collections ("scopes"), in one file per week:
 
 | Scope | What it is |
 |---|---|
-| `public` | Every public annotation on any page under `https://bptext2026.xyz` — the layer readers see without logging in |
+| `public` | Every public annotation on any page under `https://confused4now.org` — the layer readers see without logging in |
+| `public-legacy:bptext2026.xyz` | Every public annotation still attached to the old staging address, `https://bptext2026.xyz`. Annotations keep the address they were made on, so everything written before the 14 September 2026 domain move lives here |
 | `group:ZGY29zLM` | The **test-group** private group |
 | `group:L9KgjVPa` | The **Biology edition** private group |
 
@@ -37,7 +38,7 @@ next run. Nothing else needs to change.
 
 ### What is *not* backed up
 
-- Annotations on pages that are not under `bptext2026.xyz`.
+- Annotations on pages that are not under `confused4now.org` or `bptext2026.xyz`.
 - Private annotations belonging to individual readers ("Only Me" notes). These
   are invisible to the API for anyone but their author, by design.
 - Group membership lists, group names, or account settings — annotations only.

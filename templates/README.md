@@ -1,6 +1,6 @@
 # __TITLE__
 
-An open-access textbook maintained by __MAINTAINER__. The canonical edition is published at __SITE_URL__ (staging) and moves to its production domain at launch.
+An open-access textbook maintained by __MAINTAINER__. The canonical edition is published at __SITE_URL__.
 
 This repository is the single source of truth for the textbook's content. The published reading site is generated from these Markdown files; department editions are maintained as forks.
 

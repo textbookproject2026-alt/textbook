@@ -3,12 +3,14 @@
 //
 // Weekly lossless backup of this textbook's Hypothes.is annotations.
 //
-// Pulls three scopes and writes ONE file per run:
+// Pulls the scopes below and writes ONE file per run:
 //   backups/annotations-YYYY-MM-DD.json
 //
-//   1. public              — the public layer for https://bptext2026.xyz
-//   2. group:ZGY29zLM      — test-group
-//   3. group:L9KgjVPa      — Biology edition
+//   1. public              — the public layer for https://confused4now.org
+//   2. public-legacy:bptext2026.xyz
+//                          — the public layer left on the old staging domain
+//   3. group:ZGY29zLM      — test-group
+//   4. group:L9KgjVPa      — Biology edition
 //
 // Raw annotation JSON is stored verbatim (no field selection, no reshaping) so
 // a future restore or migration has everything the API returned.
@@ -24,7 +26,7 @@
 //
 //   * wildcard_uri works UNAUTHENTICATED for public annotations. Wildcards
 //     (* and _) are permitted only within the PATH; a wildcard anywhere in the
-//     domain is rejected 400. So `https://bptext2026.xyz/*` is legal and is
+//     domain is rejected 400. So `https://confused4now.org/*` is legal and is
 //     our primary route to "all public annotations under this domain".
 //   * limit  max 200 (limit=1000 -> 400 "greater than maximum value 200").
 //   * offset max 9800 (offset=9999 -> 400 "greater than maximum value 9800").
@@ -59,7 +61,16 @@ const ANNOTATION_GROUPS = [
 ];
 
 const API_BASE = 'https://api.hypothes.is/api';
-const DEFAULT_SITE = 'https://bptext2026.xyz';
+const DEFAULT_SITE = 'https://confused4now.org';
+
+// Origins the book used to be served from. Hypothes.is anchors every annotation
+// to the URL it was made on and never moves it, so annotations made before the
+// 2026-09-14 cutover stay under the staging domain for good — a wildcard on the
+// new domain does not see them. Each origin here is backed up as its own scope,
+// public-legacy:<host>, so they do not silently age out of the retained backups.
+// Drop an entry only once its annotations have been migrated or deliberately
+// abandoned.
+const LEGACY_SITES = ['https://bptext2026.xyz'];
 const PUBLIC_GROUP = '__world__'; // Hypothes.is' id for the public layer
 const PAGE_SIZE = 200; // API maximum, verified
 const KEEP_DEFAULT = 12; // ~3 months of weekly backups
@@ -461,6 +472,11 @@ async function main() {
 
   const jobs = [
     { key: 'public', label: `public layer for ${opts.site}`, run: () => collectPublic(token.trim(), opts) },
+    ...LEGACY_SITES.filter((site) => site !== opts.site).map((site) => ({
+      key: `public-legacy:${new URL(site).host}`,
+      label: `public layer left on the former domain ${site}`,
+      run: () => collectPublic(token.trim(), { ...opts, site }),
+    })),
     ...ANNOTATION_GROUPS.map((g) => ({
       key: `group:${g.id}`,
       label: `group ${g.id} (${g.label})`,
@@ -528,9 +544,9 @@ async function main() {
 
   log('\nSummary:');
   for (const [key, m] of Object.entries(scopeMeta)) {
-    log(`  ${key.padEnd(20)} ${String(m.count).padStart(6)}  ${m.ok ? m.method : `FAILED: ${m.error}`}`);
+    log(`  ${key.padEnd(30)} ${String(m.count).padStart(6)}  ${m.ok ? m.method : `FAILED: ${m.error}`}`);
   }
-  log(`  ${'TOTAL'.padEnd(20)} ${String(payload.meta.totalAnnotations).padStart(6)}`);
+  log(`  ${'TOTAL'.padEnd(30)} ${String(payload.meta.totalAnnotations).padStart(6)}`);
 
   if (opts.dryRun) {
     log('\n--dry-run: nothing written.');

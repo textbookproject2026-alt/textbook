@@ -22,7 +22,7 @@ first.
 | # | Service | What it is | Breaks if gone |
 |---|---|---|---|
 | 1 | GitHub org `textbookproject2026-alt` | Five repositories; the source of truth for everything | Everything |
-| 2 | Obsidian Publish | The reading site at `bptext2026.xyz` | The book is offline |
+| 2 | Obsidian Publish | The reading site at `confused4now.org` | The book is offline |
 | 3 | Cloudflare Worker `sveltia-cms-auth` | OAuth relay for the browser editor | Contributors cannot sign in to the CMS |
 | 4 | Cloudflare Pages `textbook-cms` | Hosts the browser editor | The CMS is offline |
 | 5 | Cloudflare Pages `textbook-edition-template` | The template's demo site | Coordinators lose the preview link |
@@ -81,7 +81,7 @@ failing — so the symptom is chore pull requests quietly piling up. See
 
 ## 2. Obsidian Publish — the reading site
 
-- **Address:** <https://bptext2026.xyz> (staging; see *The domain cutover* below)
+- **Address:** <https://confused4now.org> (since 14 Sep 2026; previously the staging domain `bptext2026.xyz` — see *The domain cutover* below)
 - **Site record:** `.obsidian/publish.json` — `siteId 1443b409a84e491249da35fdd4b91de6`,
   host `publish-01.obsidian.md`
 - **Account owner:** **confirm at handover.** A paid Obsidian Publish subscription
@@ -197,8 +197,9 @@ project's control by design and are not listed here.
   - The rate limit (5/hour/IP) lives in an in-memory `Map` inside **one serverless
     instance** and resets on every cold start. It is a speed bump, not a control.
     Real hardening is deferred.
-  - `ALLOWED_ORIGIN` is hardcoded to `https://bptext2026.xyz` and **must be changed
-    at the domain cutover**.
+  - `ALLOWED_ORIGIN` is hardcoded to `https://confused4now.org` (changed from the
+    staging domain at the 14 Sep 2026 cutover). A future domain move must change it
+    again, or the *Suggest an edit* modal fails with a CORS error.
 - **Guides:** `docs/the-authoring-app-operations.md` (*The suggest-edit
   function* — what to watch and where to look), `suggest-edit-function/README.md`,
   `TESTING.md`.
@@ -386,6 +387,14 @@ from a repository.
 ---
 
 ## The domain cutover
+
+> **Done 14 Sep 2026.** Production is `confused4now.org` (apex only; `www` does not
+> resolve). The code-side changes below were made that day; the text that follows is
+> the pre-cutover plan, kept as written. Still open at that date: the Plausible site
+> is still registered as `bptext2026.xyz` (so `plausible_public_url` was left
+> pointing at it), and the public annotations made on the staging domain were not
+> migrated — `scripts/backup-annotations.mjs` backs them up as their own scope
+> (`LEGACY_SITES`) until they are.
 
 `bptext2026.xyz` is a **staging** domain. Production moves to an Erasmus address
 at launch, late-stage. When that happens, at minimum these all change, and they

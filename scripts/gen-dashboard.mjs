@@ -671,7 +671,7 @@ async function readConfig() {
     title: 'this textbook',
     maintainer: 'the maintainer',
     licence: 'CC-BY-SA-4.0',
-    site_url: 'https://bptext2026.xyz',
+    site_url: 'https://confused4now.org',
     plausible_public_url: '',
   };
   try {

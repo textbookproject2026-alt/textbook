@@ -47,7 +47,8 @@ const SUGGEST_EDIT_ENDPOINT = 'https://suggest-edit-function.vercel.app/api/sugg
 // Path mapping: live Publish URL -> repo .md path (vault root == repo root).
 //
 // Observed Obsidian Publish URL scheme (same as help.obsidian.md, confirmed
-// against the live site at bptext2026.xyz):
+// against the live site while it was served from the staging domain,
+// bptext2026.xyz; the scheme belongs to Publish, not to the domain):
 //   - The URL path mirrors the vault-relative file path, minus the ".md"
 //     extension. Folder nesting maps 1:1 to path segments.
 //     e.g.  /chapters/page-a            -> chapters/page-a.md

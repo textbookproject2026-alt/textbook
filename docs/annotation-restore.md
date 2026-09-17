@@ -32,9 +32,13 @@ body, tags, author, timestamps, replies, and permissions are all preserved.
 There will not be a group per edition — per-cohort isolation was considered and
 not adopted, so reader discussion stays in the public layer. The two groups above
 are leftovers from testing and keep being backed up. If a group is ever added by
-hand (a coordinator may run one for their own cohort), it goes into a single list
-at the top of `scripts/backup-annotations.mjs` and starts being backed up on the
-next run. Nothing else needs to change.
+hand (a coordinator may run one for their own cohort), it is added to this book's
+`annotations.hypothesis_groups` in the platform registry
+(`textbook-registry/registry.json`) and starts being backed up on the next run.
+Nothing else needs to change. The site and the old staging address above come
+from the same entry (`site.domain` and `site.legacy_origins`). The backup reads
+the registry at the start of every run, and if it cannot, the job fails without
+writing or deleting anything.
 
 ### What is *not* backed up
 
@@ -100,6 +104,7 @@ Filename: `backups/annotations-YYYY-MM-DD.json`
   "meta": {
     "generatedAt": "2026-08-16T03:01:12.482Z",
     "runDate": "2026-08-16",
+    "book": "social-research-methods",
     "account": "acct:AlecGordon@hypothes.is",
     "complete": true,
     "totalAnnotations": 143,

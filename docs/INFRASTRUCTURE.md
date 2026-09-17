@@ -208,9 +208,11 @@ project's control by design and are not listed here.
 
 ## 7. Plausible — analytics
 
-- **Public dashboard:** <https://plausible.io/bptext2026.xyz> — genuinely public,
-  no login needed. `community/dashboard.md` links to it rather than fetching
-  figures, and `textbook.config.json` holds the URL as `plausible_public_url`.
+- **Public dashboard:** <https://plausible.io/confused4now.org> — genuinely public,
+  no login needed (the site was renamed from `bptext2026.xyz`, whose old address
+  now 404s). `community/dashboard.md` links to it rather than fetching figures.
+  The address is not stored anywhere: `scripts/gen-dashboard.mjs` builds it from
+  `analytics.plausible.site` in the platform registry.
 - **Account owner:** **confirm at handover.** One account holds a *site* per
   edition.
 - **How it is installed:** the per-site `pa-….js` script, injected by `publish.js`
@@ -242,9 +244,11 @@ project's control by design and are not listed here.
   - `ZGY29zLM` — *test-group*
   - `L9KgjVPa` — *Biology edition*
 
-  They are listed in `scripts/backup-annotations.mjs` (`ANNOTATION_GROUPS`). A
-  group added later — a coordinator running one for their own cohort — is added to
-  that array and starts being backed up on the next run. Nothing else changes.
+  They are listed in the platform registry, under this book's
+  `annotations.hypothesis_groups`, which the backup and the dashboard both read at
+  the start of each run. A group added later — a coordinator running one for their
+  own cohort — is added there and starts being backed up on the next run. Nothing
+  else changes.
 - **Secret:** `HYPOTHESIS_API_TOKEN` (see §1). Note the failure mode: an expired
   token returns **HTTP 200 with empty results**, not an error, which is why
   `scripts/gen-dashboard.mjs` pre-flights `/api/profile` and refuses to run when
@@ -394,7 +398,7 @@ from a repository.
 > is still registered as `bptext2026.xyz` (so `plausible_public_url` was left
 > pointing at it), and the public annotations made on the staging domain were not
 > migrated — `scripts/backup-annotations.mjs` backs them up as their own scope
-> (`LEGACY_SITES`) until they are.
+> (the registry's `site.legacy_origins`) until they are.
 
 `bptext2026.xyz` is a **staging** domain. Production moves to an Erasmus address
 at launch, late-stage. When that happens, at minimum these all change, and they

@@ -37,7 +37,7 @@ anywhere in the CMS that publishes to the live site. You cannot break the book.
 
 The CMS is at:
 
-`https://textbook-cms.pages.dev`
+`https://textbook-admin.pages.dev`
 
 Bookmark it. Note that this is **not** the same address as the textbook itself —
 the book is at `https://confused4now.org`. They look nothing alike on purpose. The
@@ -54,7 +54,7 @@ they do, you will be able to sign in but not to save.
 
 Then:
 
-1. Go to `https://textbook-cms.pages.dev`.
+1. Go to `https://textbook-admin.pages.dev`.
 2. Click **Sign in with GitHub**.
 3. A GitHub window pops up asking whether to authorise "Textbook CMS". Click
    **Authorize**.

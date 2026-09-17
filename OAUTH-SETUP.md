@@ -127,7 +127,7 @@ Cloudflare dashboard → **Workers & Pages** → **Create** → **Pages** →
 
 | Setting | Value |
 | --- | --- |
-| Project name | `textbook-cms` |
+| Project name | `textbook-admin` |
 | Production branch | `main` |
 | Framework preset | None |
 | Build command | *(leave empty)* |

@@ -103,7 +103,7 @@ Every page carries a **Suggest an edit** button in the row under the title. A re
 
 A handful of trusted contributors can edit chapters in a web page instead of Obsidian. Their guide is `docs/for-trusted-contributors.md`, and the one thing to know about it is the safety property: **nothing anyone does in that editor reaches the live site.** Every save goes into a holding area. There is no publish button in it, for them or for you.
 
-**Where you look.** The editor is at `https://textbook-cms.pages.dev`. You sign in with your own GitHub login — the technical contact sets that up once, and it is the only place in your routine where such an account is used; you never visit GitHub itself. Inside, entries sit in three columns: **Draft**, **In review**, **Ready**.
+**Where you look.** The editor is at `https://textbook-admin.pages.dev`. You sign in with your own GitHub login — the technical contact sets that up once, and it is the only place in your routine where such an account is used; you never visit GitHub itself. Inside, entries sit in three columns: **Draft**, **In review**, **Ready**.
 
 **In review** is your column. It means a contributor has finished and would like your eyes on it.
 

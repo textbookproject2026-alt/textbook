@@ -209,7 +209,7 @@ it is written for whoever is looking at the Actions tab, which is not you.
 
 **The technical contact fixes this.**
 
-The editor at `https://textbook-cms.pages.dev` signs people in with their own
+The editor at `https://textbook-admin.pages.dev` signs people in with their own
 GitHub account through a relay the technical contact runs. Two things break it,
 and they look different.
 

@@ -24,7 +24,7 @@ first.
 | 1 | GitHub org `textbookproject2026-alt` | Five repositories; the source of truth for everything | Everything |
 | 2 | Obsidian Publish | The reading site at `confused4now.org` | The book is offline |
 | 3 | Cloudflare Worker `sveltia-cms-auth` | OAuth relay for the browser editor | Contributors cannot sign in to the CMS |
-| 4 | Cloudflare Pages `textbook-cms` | Hosts the browser editor | The CMS is offline |
+| 4 | Cloudflare Pages `textbook-admin` | Hosts the browser editor | The CMS is offline |
 | 5 | Cloudflare Pages `textbook-edition-template` | The template's demo site | Coordinators lose the preview link |
 | 6 | Vercel `suggest-edit-function` | Backend for the *Suggest an edit* button | The button fails for every reader |
 | 7 | Plausible | Visitor analytics, per site | No readership figures; project health page loses a link |
@@ -133,7 +133,7 @@ failing — so the symptom is chore pull requests quietly piling up. See
 
 ---
 
-## 4. Cloudflare Pages — `textbook-cms`
+## 4. Cloudflare Pages — `textbook-admin`
 
 - **URL:** <https://textbook-admin.pages.dev>
 - **Account owner:** **confirm at handover** (same Cloudflare account as §3, as far

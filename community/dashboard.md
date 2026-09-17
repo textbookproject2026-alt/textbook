@@ -8,7 +8,7 @@ Nothing on this page names a reader. The margin is a place where people think ou
 
 ## Readership
 
-Visitor numbers are not repeated here — they live in the site's own analytics dashboard, which is public. Anyone can open it, with no login and no account: **[the readership dashboard for bptext2026.xyz](https://plausible.io/bptext2026.xyz)**.
+Visitor numbers are not repeated here — they live in the site's own analytics dashboard, which is public. Anyone can open it, with no login and no account: **[the readership dashboard for bptext2026.xyz](https://plausible.io/confused4now.org)**.
 
 It shows how many people have visited the book, which pages they spent time on, and where they arrived from, over whatever period you select. It counts visits rather than identities — no cookies, nothing that follows a reader from one site to another — which is why it is a fair measure of interest and a poor one of anything else.
 

@@ -75,7 +75,7 @@ Fill in exactly:
 | Field | Value |
 | --- | --- |
 | Application name | `Textbook CMS` |
-| Homepage URL | `https://textbook-cms.pages.dev` (the Pages URL from step 4) |
+| Homepage URL | `https://textbook-admin.pages.dev` (the Pages URL from step 4) |
 | Application description | leave empty |
 | Authorization callback URL | **the Worker URL from step 1, with `/callback` appended** |
 
@@ -104,12 +104,12 @@ In the Cloudflare dashboard: **Workers & Pages** → `sveltia-cms-auth` →
 | --- | --- | --- |
 | `GITHUB_CLIENT_ID` | Client ID from step 2 | plain text |
 | `GITHUB_CLIENT_SECRET` | Client secret from step 2 | **click Encrypt before saving** |
-| `ALLOWED_DOMAINS` | `textbook-cms.pages.dev` | optional but strongly recommended |
+| `ALLOWED_DOMAINS` | `textbook-admin.pages.dev` | optional but strongly recommended |
 
 `ALLOWED_DOMAINS` is what stops someone else's website from pointing at your
 Worker and borrowing your OAuth app to mint tokens against this repo. Set it to
 the production Pages hostname only. Cloudflare's per-deployment preview URLs
-(`<hash>.textbook-cms.pages.dev`) will not be able to sign in as a result, which
+(`<hash>.textbook-admin.pages.dev`) will not be able to sign in as a result, which
 is the behaviour we want.
 
 Save, and let the Worker redeploy.
@@ -139,8 +139,8 @@ uploads the contents of `admin/` and nothing else — the chapters, the Obsidian
 vault config and the rest of the repository are never copied to the Pages host.
 The CMS then lives at the root of the site:
 
-- `https://textbook-cms.pages.dev/` serves `admin/index.html`
-- `https://textbook-cms.pages.dev/config.yml` serves `admin/config.yml`
+- `https://textbook-admin.pages.dev/` serves `admin/index.html`
+- `https://textbook-admin.pages.dev/config.yml` serves `admin/config.yml`
 
 which is where Sveltia looks for its config by default.
 
@@ -232,7 +232,7 @@ deliberately by hand, never from a script.
 
 ## Checking it works
 
-1. Open `https://textbook-cms.pages.dev/` in a private window.
+1. Open `https://textbook-admin.pages.dev/` in a private window.
 2. Click **Sign in with GitHub** and authorise the app. A popup that closes and
    leaves you signed out usually means `ALLOWED_DOMAINS` does not match the
    hostname you are actually on.

@@ -118,7 +118,7 @@ failing — so the symptom is chore pull requests quietly piling up. See
   `sveltia-cms-auth` → Settings → Variables and Secrets):
   - `GITHUB_CLIENT_ID` — plain text
   - `GITHUB_CLIENT_SECRET` — **encrypted**
-  - `ALLOWED_DOMAINS` — currently `textbook-cms.pages.dev`. This is what stops
+  - `ALLOWED_DOMAINS` — currently `textbook-admin.pages.dev`. This is what stops
     another site pointing at this Worker and borrowing the OAuth app to mint tokens
     against the textbook repo. Setting it to the production hostname only also
     means Cloudflare's per-deployment preview URLs cannot sign in, which is
@@ -135,7 +135,7 @@ failing — so the symptom is chore pull requests quietly piling up. See
 
 ## 4. Cloudflare Pages — `textbook-cms`
 
-- **URL:** <https://textbook-cms.pages.dev>
+- **URL:** <https://textbook-admin.pages.dev>
 - **Account owner:** **confirm at handover** (same Cloudflare account as §3, as far
   as the repositories show).
 - **What it does:** serves the browser editor (Sveltia CMS). Built from the
@@ -279,7 +279,7 @@ project's control by design and are not listed here.
   shown once by GitHub at creation; if lost, generate a new one and delete the old.
 - **Callback URL:** the Worker URL with `/callback` appended. The suffix is not
   optional.
-- **Homepage URL:** `https://textbook-cms.pages.dev`.
+- **Homepage URL:** `https://textbook-admin.pages.dev`.
 - **Contributor access is separate.** Signing in proves identity; it grants
   nothing. A contributor also needs **Write** access on the `textbook` repo
   (Settings → Collaborators and teams). Write is the correct level — it permits the

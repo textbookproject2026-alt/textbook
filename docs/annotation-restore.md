@@ -15,14 +15,13 @@ like.
 
 ## What gets backed up
 
-Four separate collections ("scopes"), in one file per week:
+Separate collections ("scopes"), in one file per week:
 
 | Scope | What it is |
 |---|---|
 | `public` | Every public annotation on any page under `https://confused4now.org` — the layer readers see without logging in |
 | `public-legacy:bptext2026.xyz` | Every public annotation still attached to the old staging address, `https://bptext2026.xyz`. Annotations keep the address they were made on, so everything written before the 14 September 2026 domain move lives here |
-| `group:ZGY29zLM` | The **test-group** private group |
-| `group:L9KgjVPa` | The **Biology edition** private group |
+| `group:<id>` | One per private group in the registry. There are none now. Backups up to 2026-09-13 also hold `group:ZGY29zLM` (*test-group*) and `group:L9KgjVPa` (*Biology edition*). Both are testing leftovers, empty in every backup |
 
 Each annotation is stored **exactly as the Hypothes.is API returned it** —
 nothing is trimmed, renamed, or reformatted. That means the highlighted text,
@@ -30,11 +29,16 @@ the surrounding context used to re-locate the highlight on the page, the comment
 body, tags, author, timestamps, replies, and permissions are all preserved.
 
 There will not be a group per edition — per-cohort isolation was considered and
-not adopted, so reader discussion stays in the public layer. The two groups above
-are leftovers from testing and keep being backed up. If a group is ever added by
-hand (a coordinator may run one for their own cohort), it goes into a single list
-at the top of `scripts/backup-annotations.mjs` and starts being backed up on the
-next run. Nothing else needs to change.
+not adopted, so reader discussion stays in the public layer. The two testing
+groups above were taken out of the registry on 2026-09-17 and are no longer
+backed up. If a group is ever added by
+hand (a coordinator may run one for their own cohort), it is added to this book's
+`annotations.hypothesis_groups` in the platform registry
+(`textbook-registry/registry.json`) and starts being backed up on the next run.
+Nothing else needs to change. The site and the old staging address above come
+from the same entry (`site.domain` and `site.legacy_origins`). The backup reads
+the registry at the start of every run, and if it cannot, the job fails without
+writing or deleting anything.
 
 ### What is *not* backed up
 
@@ -100,6 +104,7 @@ Filename: `backups/annotations-YYYY-MM-DD.json`
   "meta": {
     "generatedAt": "2026-08-16T03:01:12.482Z",
     "runDate": "2026-08-16",
+    "book": "social-research-methods",
     "account": "acct:AlecGordon@hypothes.is",
     "complete": true,
     "totalAnnotations": 143,

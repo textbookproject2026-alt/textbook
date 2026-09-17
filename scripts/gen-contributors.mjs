@@ -55,10 +55,12 @@ const CONTENT_DIR = 'chapters';
 // catches GitHub's own actors (github-actions[bot], dependabot[bot], any App);
 // this list is for bots that commit under an ordinary-looking account.
 //
-// SEAM: aldogo-bot is the account the suggest-edit function will commit as. Its
-// commits carry a human's suggestion, but the authorship is the bot's — listing
-// it here as a person would credit the pipe rather than the contributor.
-const EXTRA_BOTS = new Set(['aldogo-bot']);
+// SEAM: aldogobot (no hyphen) is the ordinary user account the suggest-edit
+// function has acted as. Its commits carry a human's suggestion, but the
+// authorship is the bot's — listing it here as a person would credit the pipe
+// rather than the contributor. Must match the registry's
+// platform.automation_logins, which checks the account exists.
+const EXTRA_BOTS = new Set(['aldogobot']);
 
 const MAX_PAGES_PER_CONTRIBUTOR = 3; // per row in the table
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',

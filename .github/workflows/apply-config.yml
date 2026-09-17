@@ -19,11 +19,21 @@ jobs:
       - uses: actions/checkout@v5
         with:
           ref: ${{ github.head_ref }}   # check out the PR's own branch so we can commit to it
+          path: textbook
+      # configure.mjs reads ../textbook-registry/registry.json, so check the registry out
+      # beside the vault, the same layout as a local checkout. A registry change alone
+      # doesn't trigger this workflow; the next config or template PR picks it up.
+      - uses: actions/checkout@v5
+        with:
+          repository: textbookproject2026-alt/textbook-registry
+          path: textbook-registry
       - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: node configure.mjs
+        working-directory: textbook
       - name: Commit regenerated files
+        working-directory: textbook
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

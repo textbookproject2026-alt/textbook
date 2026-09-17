@@ -9,7 +9,7 @@
 
 const DEBUG = false; // single switch for all console output
 
-const REPO = 'textbookproject2026-alt/textbook';
+const REPO = '__CONTENT_REPO__';
 const BRANCH = 'main';
 
 // Suggest-an-edit endpoint. Placeholder until the Day-27 backend exists; the
@@ -42,7 +42,7 @@ const BRANCH = 'main';
 //                   renders it with textContent (never innerHTML) and caps it
 //                   at 200 chars, so no markup, links or long prose.
 // No credentials, no cookies: this is a plain cross-origin JSON POST.
-const SUGGEST_EDIT_ENDPOINT = 'https://suggest-edit-function.vercel.app/api/suggest-edit';
+const SUGGEST_EDIT_ENDPOINT = '__SUGGEST_EDIT_ENDPOINT__';
 
 // ---------------------------------------------------------------------------
 // Path mapping: live Publish URL -> repo .md path (vault root == repo root).
@@ -789,7 +789,7 @@ if (typeof document !== 'undefined') {
 
       const s = document.createElement('script');
       s.async = true;
-      s.src = 'https://plausible.io/js/pa-eii3VlmU1ClI0VxGOsCTe.js';
+      s.src = '__PLAUSIBLE_SCRIPT_SRC__';
       document.head.appendChild(s);
 
       window.plausible.init({ autoCapturePageviews: false });

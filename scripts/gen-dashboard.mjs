@@ -95,7 +95,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadBook, field, isString, isStringArray, exitOnRegistryError } from './lib/registry.mjs';
+import { loadBook, field, isString, isStringArray, exitOnRegistryError, RegistryError } from './lib/registry.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -158,8 +158,10 @@ function daysBetween(fromIso, toIso) {
   return Math.floor((Date.parse(toIso) - Date.parse(fromIso)) / 86_400_000);
 }
 
-/** Automation rather than a person — the same test gen-contributors.mjs uses. */
-const isBotName = (name = '') => /\[bot\]$/i.test(name.trim());
+/** Automation rather than a person — the same test gen-contributors.mjs uses:
+ *  a `[bot]` suffix, or one of the registry's platform.automation_logins. */
+const isBotName = (name = '', automationLogins) =>
+  /\[bot\]$/i.test(name.trim()) || automationLogins.has(name.trim().toLowerCase());
 
 // --- Hypothes.is -----------------------------------------------------------
 
@@ -374,13 +376,15 @@ async function githubList(url) {
 /** True for an issue carrying the suggest-edit route's label. */
 const isSuggestion = (i) => (i.labels ?? []).some((l) => (typeof l === 'string' ? l : l?.name) === SUGGESTED_EDIT_LABEL);
 
-async function collectGitHub({ repo, templateRepo, skipForkOwners }) {
+async function collectGitHub({ repo, templateRepo, skipForkOwners, automationLogins, suggestionsCountedFrom }) {
+  const isBot = (name) => isBotName(name, automationLogins);
+
   // Contributors, with their commit counts. Bots are dropped for the same
   // reason gen-contributors.mjs drops them: github-actions[bot] commits are
   // this page and its siblings landing on main, not work on the book.
   const contributors = (await githubList(
     `https://api.github.com/repos/${repo}/contributors?per_page=100&anon=0`,
-  )).filter((c) => c.type !== 'Bot' && !isBotName(c.login ?? ''));
+  )).filter((c) => c.type !== 'Bot' && !isBot(c.login ?? ''));
 
   // The newest commit by a person, for the date stamp — see note 3. One page of
   // 100 is plenty; if a run of automation ever fills it, the stamp simply falls
@@ -389,7 +393,7 @@ async function collectGitHub({ repo, templateRepo, skipForkOwners }) {
     `https://api.github.com/repos/${repo}/commits?per_page=100`,
   )).body;
   const newestHumanCommit = (Array.isArray(recentCommits) ? recentCommits : [])
-    .filter((c) => !isBotName(c.author?.login ?? '') && !isBotName(c.commit?.author?.name ?? ''))
+    .filter((c) => !isBot(c.author?.login ?? '') && !isBot(c.commit?.author?.name ?? ''))
     .map((c) => c.commit?.author?.date ?? c.commit?.committer?.date)
     .filter(Boolean)
     .reduce((acc, d) => laterOf(acc, d), null);
@@ -411,19 +415,26 @@ async function collectGitHub({ repo, templateRepo, skipForkOwners }) {
   // holds — a machine user once, now a GitHub App that shows as <app>[bot] — so
   // an author test would drop them or keep them depending on which credential
   // was live. The label is the route's own contract and survives both.
+  //
+  // Suggestions filed before the registry's suggest_edit.counted_from were tests
+  // of the route, filed under the same credentials real ones use, so a date is
+  // the only thing that tells them apart. They are left out of every count, and
+  // out of the date stamp; the page says how many there were.
+  const isCounted = (i) => !suggestionsCountedFrom || (i.created_at ?? '') >= suggestionsCountedFrom;
   const openItems = await githubList(
     `https://api.github.com/repos/${repo}/issues?state=open&per_page=100`,
   );
-  const openCounted = openItems.filter((i) => (!i.pull_request && isSuggestion(i)) || !isBotName(i.user?.login ?? ''));
+  const openCounted = openItems.filter((i) => (!i.pull_request && isSuggestion(i) ? isCounted(i) : !isBot(i.user?.login ?? '')));
   const openIssues = openCounted.filter((i) => !i.pull_request);
   const openPulls = openCounted.filter((i) => i.pull_request);
 
   // The Tier-1 pipeline: everything filed through the "Suggest an edit" link.
   // state=all so the page can say how many have been dealt with, not just how
   // many are waiting. Selected by label alone, whoever filed them — see above.
-  const suggestions = (await githubList(
+  const allSuggestions = (await githubList(
     `https://api.github.com/repos/${repo}/issues?state=all&labels=${encodeURIComponent(SUGGESTED_EDIT_LABEL)}&per_page=100`,
   )).filter((i) => !i.pull_request);
+  const suggestions = allSuggestions.filter(isCounted);
   const suggestionsOpen = suggestions.filter((i) => i.state === 'open');
   const suggestionsClosed = suggestions.filter((i) => i.state === 'closed');
 
@@ -439,6 +450,8 @@ async function collectGitHub({ repo, templateRepo, skipForkOwners }) {
     openIssues: openIssues.length,
     openPulls: openPulls.length,
     suggestions: {
+      countedFrom: suggestionsCountedFrom,
+      beforeCutoff: allSuggestions.length - suggestions.length,
       open: suggestionsOpen.length,
       closed: suggestionsClosed.length,
       unanswered: suggestionsOpen.filter((i) => (i.comments ?? 0) === 0).length,
@@ -500,11 +513,15 @@ function renderDiscussion(a, book) {
   );
 
   if (a.total === 0) {
-    // With no course groups — the normal state, since per-cohort margins were
-    // decided against — there is nothing to say about them, so nothing is said.
+    // No course groups is the normal state — per-cohort margins were decided
+    // against — so nothing is said about them. A group that IS in the registry
+    // was put there on purpose, so its emptiness is stated as a plain fact, with
+    // no guess at why.
     const groupsNote = a.groups.length === 0
       ? ''
-      : ` The ${plural(a.groups.length, 'private course group')} ${a.groups.length === 1 ? 'is' : 'are'} empty too, and expected to be — they are leftovers from testing, not the plan. Per-cohort margins would have needed the annotation provider's paid tier, which the project decided not to buy, so the public layer is where discussion stays.`;
+      : a.groups.length === 1
+        ? ` The course group registered for this book, ${a.groups[0].label}, is empty too.`
+        : ` The course groups registered for this book — ${joinList(a.groups.map((g) => g.label))} — are empty too.`;
     out.push(
       `There are no annotations yet in the public layer at ${site}, which is where the book's discussion currently lives. That is the ordinary reading for a book that has not yet been set as coursework: a margin fills during a teaching term, not before one, and the first cohort pointed at the book is what will change this number.${groupsNote}`,
     );
@@ -527,7 +544,7 @@ function renderDiscussion(a, book) {
     ? '' // no course groups, so the public clause above is the whole story
     : groupsWithAny.length > 0
     ? `${joinList(groupsWithAny.map((g) => `${plural(g.count, 'annotation')} in ${g.label}`))} ${groupsWithAny.length === 1 && groupsWithAny[0].count === 1 ? 'sits' : 'sit'} in the course groups, which are private to their cohorts and readable only by their members.`
-    : `${groupsNamed}, and that is the intended state rather than a fault. Giving each cohort a margin of its own would have needed the annotation provider's paid tier, and the decision has been taken not to buy it, so every conversation happens in the open — which is the launch model, not a stopgap.`;
+    : `${groupsNamed}.`;
 
   out.push(
     `There ${a.total === 1 ? 'is' : 'are'} **${plural(a.total, 'annotation')}** in total. ${[publicClause, groupClause].filter(Boolean).join(' ')}`,
@@ -610,9 +627,15 @@ function renderSuggestions(s, openIssues, book) {
 
   const total = s.open + s.closed;
 
+  // Said whenever something was left out, so a reader comparing this page with
+  // the repository's issue list is not left to find the difference alone.
+  const cutoffNote = s.countedFrom && s.beforeCutoff > 0
+    ? ` The count starts on ${longDate(s.countedFrom)}: the ${plural(s.beforeCutoff, 'suggestion')} filed before then ${s.beforeCutoff === 1 ? 'was a test' : 'were tests'} of the route itself, made while it was being set up, and ${s.beforeCutoff === 1 ? 'is' : 'are'} not counted here.`
+    : '';
+
   if (total === 0) {
     out.push(
-      `No suggestions have come in yet. The route is live, but a reader only uses it once they have read enough to disagree with something — so this figure moving is a better sign of the book being *read* than any visitor count is.`,
+      `No suggestions have come in from readers yet.${cutoffNote} The route is live, but a reader only uses it once they have read enough to disagree with something — so this figure moving is a better sign of the book being *read* than any visitor count is.`,
     );
     return out;
   }
@@ -645,7 +668,7 @@ function renderSuggestions(s, openIssues, book) {
     : ` ${plural(s.closed, 'suggestion has', 'suggestions have')} been closed since — accepted into the text, folded into another change, or answered and declined.`;
 
   out.push(
-    `${plural(total, 'suggestion has', 'suggestions have')} been filed. ${waiting}${unanswered}${handled}${oldest}`,
+    `${plural(total, 'suggestion has', 'suggestions have')} been filed. ${waiting}${unanswered}${handled}${oldest}${cutoffNote}`,
     '',
     'A suggestion left open is not lost, but it is unanswered, and an unanswered suggestion is the one thing on this page that costs the project something: it teaches a reader that the link does nothing.',
   );
@@ -685,11 +708,20 @@ function renderPage({ annotations, github, book, stampDate }) {
  */
 async function readBook() {
   try {
-    const { book, source } = await loadBook(REPO_ROOT);
+    const { book, registry, source } = await loadBook(REPO_ROOT);
     const plausible = field(book, 'analytics.plausible', (v) => v === null || (typeof v === 'object' && !Array.isArray(v)), 'an object or null');
     const plausibleSite = plausible && field(book, 'analytics.plausible.site', isString, 'a hostname');
     const plausiblePublic = plausible && field(book, 'analytics.plausible.dashboard_public', (v) => typeof v === 'boolean', 'true or false');
     const domain = field(book, 'site.domain', isString, 'a hostname');
+    // The one field here that may be absent, and absent means null: count every
+    // suggestion. Unlike a missing group list, that errs toward reporting too much,
+    // never toward a quiet zero, and it lets this script land before the registry
+    // adds the field. A value of the wrong shape is still an error.
+    const countedFrom = field(book, 'suggest_edit.counted_from', (v) => v == null || (isString(v) && /^\d{4}-\d{2}-\d{2}$/.test(v)), 'YYYY-MM-DD or null') ?? null;
+    const automationLogins = registry.platform?.automation_logins;
+    if (!isStringArray(automationLogins)) {
+      throw new RegistryError(`the registry has no valid platform.automation_logins (expected a list of logins, got ${JSON.stringify(automationLogins)}).`);
+    }
     return {
       slug: book.slug,
       source,
@@ -704,6 +736,8 @@ async function readBook() {
         (v) => Array.isArray(v) && v.every((g) => isString(g?.id) && isString(g?.label)),
         'a list of { id, label }',
       ),
+      automationLogins: new Set(automationLogins.map((l) => l.toLowerCase())),
+      suggestionsCountedFrom: countedFrom && `${countedFrom}T00:00:00Z`,
       plausibleSite: plausibleSite || null,
       // DESIGN §0b: derived from the site name, never stored.
       plausibleUrl: plausiblePublic ? `https://plausible.io/${plausibleSite}` : null,

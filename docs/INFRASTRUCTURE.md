@@ -240,15 +240,16 @@ project's control by design and are not listed here.
   bought**, so there are no per-cohort or per-edition groups and there never will
   be. All reader discussion is in the public layer. Five documents state this
   correctly; treat it as settled.
-- **Groups that exist**, both leftovers from testing, both still backed up weekly:
-  - `ZGY29zLM` — *test-group*
-  - `L9KgjVPa` — *Biology edition*
+- **No groups belong to the book.** Two groups from testing still exist on
+  Hypothes.is, `ZGY29zLM` (*test-group*) and `L9KgjVPa` (*Biology edition*). Every
+  weekly backup from 2026-08-17 to 2026-09-13 found them empty, so on 2026-09-17
+  they were removed from the registry. They are no longer backed up or reported.
+  Backups up to 2026-09-13 still include them, with no annotations.
 
-  They are listed in the platform registry, under this book's
-  `annotations.hypothesis_groups`, which the backup and the dashboard both read at
-  the start of each run. A group added later — a coordinator running one for their
-  own cohort — is added there and starts being backed up on the next run. Nothing
-  else changes.
+  The groups the backup and the dashboard read are this book's
+  `annotations.hypothesis_groups` in the platform registry, and that list is now
+  empty. If a coordinator runs a group for their own cohort, add it there and it is
+  backed up from the next run. Nothing else changes.
 - **Secret:** `HYPOTHESIS_API_TOKEN` (see §1). Note the failure mode: an expired
   token returns **HTTP 200 with empty results**, not an error, which is why
   `scripts/gen-dashboard.mjs` pre-flights `/api/profile` and refuses to run when
@@ -316,11 +317,14 @@ console also revokes the CMS, and the two flows have nothing in common.
 
 ## 11. The bot account and `BOT_TOKEN`
 
-- **Account:** recorded as `aldogo-bot`. **Confirm at handover** — nothing this
-  project can read proves the account exists. The name survives here and in one
-  code comment (`EXTRA_BOTS` in `scripts/gen-contributors.mjs`, which keeps the bot
-  out of the contributors table); it was recovered from a planning document since
-  deleted (`docs/DOCS-REMEDIATION.md`, 2.2), which is why this entry exists.
+- **Account:** `aldogobot`, with no hyphen: an ordinary GitHub user account,
+  created 2026-06-18. It filed 12 of the 13 suggested-edit issues from the
+  migration tests; the GitHub App filed the other one. The name was once recorded
+  as `aldogo-bot`, an account that does not exist. The platform registry
+  lists it under `platform.automation_logins`, and the registry's CI now checks that
+  the account exists. `EXTRA_BOTS` in `scripts/gen-contributors.mjs` must match
+  that list, and parity checks that it does. It keeps the bot out of the
+  contributors table.
 - **Why it exists:** so reader suggestions filed by the Vercel function are
   visually distinct from human commits and issues.
 - **Credential:** a fine-grained PAT, stored as `BOT_TOKEN` in Vercel (§6) and

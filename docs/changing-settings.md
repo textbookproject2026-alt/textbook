@@ -20,4 +20,4 @@ The title, maintainer name, web address, and licence are all set in one small fi
 
 ## Important
 
-Don't edit `README.md`, `CONTRIBUTING.md`, or `index.md` directly — they are written automatically and any direct change is overwritten. To change their wording (rather than just the title), edit the matching file in the `templates` folder instead, the same way.
+Don't edit `README.md`, `CONTRIBUTING.md`, `index.md`, `publish.js` or `.lycheeignore` directly — they are written automatically and any direct change is overwritten. To change their wording (rather than just the title), edit the matching file in the `templates` folder instead, the same way.

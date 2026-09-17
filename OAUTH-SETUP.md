@@ -173,8 +173,12 @@ of the website", so contributors are not confused by the two different addresses
 
 ## Step 5 — point the CMS at the Worker
 
-In `admin/config.yml`, replace the placeholder on the `base_url` line with the
-Worker URL from step 1:
+`admin/config.yml` is generated. Don't edit it by hand: `node configure.mjs` renders
+it from `templates/admin/config.yml`, and takes `repo`, `branch` and `base_url` from
+the platform registry (`content.repo`, `content.drafts_branch` and
+`platform.cms_auth_relay` in `textbook-registry/registry.json`). To point the CMS at
+a Worker, set `platform.cms_auth_relay` in the registry to the Worker URL from step 1,
+then run `node configure.mjs` and commit the result. The rendered block looks like this:
 
 ```yaml
 backend:
@@ -201,7 +205,8 @@ repository settings.
 ## Step 7 — protect `main` (recommended)
 
 `branch: drafts` in `admin/config.yml` is the primary guarantee, and it holds as
-long as nobody edits that line. A branch protection rule makes it hold even if
+long as nobody changes that line (in `templates/admin/config.yml`, or the registry's
+`content.drafts_branch`, which it is rendered from). A branch protection rule makes it hold even if
 somebody does.
 
 **Repo → Settings → Branches → Add branch ruleset** targeting `main`:
@@ -237,7 +242,8 @@ deliberately by hand, never from a script.
    untouched.
 
 Step 4 is the one that matters. If a PR ever targets `main`, stop and re-read
-the `branch` block in `admin/config.yml`.
+the `branch` block in `admin/config.yml`, and the `content.drafts_branch` value in
+the registry that it is rendered from.
 
 ## Troubleshooting
 

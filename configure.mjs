@@ -34,6 +34,11 @@ const book = registry.books?.find((b) => b.slug === config.slug);
 if (!book) fail(`no book with slug "${config.slug}" in ${REGISTRY}.`);
 if (book.status === "retired") fail(`book "${config.slug}" is retired.`);
 if (book.status === "live" && !book.site?.domain) fail(`book "${config.slug}" is live but has no site domain.`);
+// admin/config.yml's `branch:` is the line that keeps the browser editor off the live book.
+// The registry's CI enforces this too; checked again here because this is where it is written.
+if (!book.content?.drafts_branch) fail(`book "${config.slug}" has no content.drafts_branch.`);
+if (book.content.drafts_branch === book.content.live_branch)
+  fail(`book "${config.slug}" has drafts_branch equal to live_branch ("${book.content.live_branch}").`);
 
 // Unset values (missing, null or "") are left out, so their placeholder stays in the output
 // untouched and is reported below. Blanking it would defeat checks like publish.js's
@@ -50,8 +55,10 @@ const tokens = Object.fromEntries(
 // Registry values. Adding one is a line here plus its token in a template.
 const registryTokens = {
   __CONTENT_REPO__: book.content?.repo,
+  __DRAFTS_BRANCH__: book.content?.drafts_branch,
   __SITE_DOMAIN__: book.site?.domain,
   __SUGGEST_EDIT_ENDPOINT__: registry.platform?.suggest_edit_endpoint,
+  __CMS_AUTH_RELAY__: registry.platform?.cms_auth_relay,
   __PLAUSIBLE_SCRIPT_SRC__: book.analytics?.plausible?.script_src,
 };
 for (const [token, value] of Object.entries(registryTokens)) {
@@ -73,11 +80,18 @@ async function walk(dir) {
 const rendered = [];
 const leftovers = new Set();
 
+// Files that must render completely. A placeholder left in the CMS config would ship a broken
+// editor (a branch or repo named __SOMETHING__), so it stops the run instead of warning.
+const STRICT = new Set(["admin/config.yml"]);
+
 for (const src of await walk(TEMPLATES)) {
   let text = await readFile(src, "utf8");
   for (const [token, value] of Object.entries(tokens)) text = text.split(token).join(value);
-  for (const m of text.match(/__[A-Z0-9_]+__/g) ?? []) leftovers.add(m); // catch anything unfilled
-  rendered.push([join(ROOT, relative(TEMPLATES, src)), text]);
+  const unfilled = text.match(/__[A-Z0-9_]+__/g) ?? []; // catch anything unfilled
+  const rel = relative(TEMPLATES, src);
+  if (STRICT.has(rel) && unfilled.length) fail(`${rel} has unfilled placeholders: ${[...new Set(unfilled)].join(", ")}.`);
+  for (const m of unfilled) leftovers.add(m);
+  rendered.push([join(ROOT, rel), text]);
 }
 
 for (const [dest, text] of rendered) {

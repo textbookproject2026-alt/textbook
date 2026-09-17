@@ -1,0 +1,141 @@
+# Sveltia CMS configuration — __TITLE__ textbook
+#
+# This file is TOOLING, not content. It lives on `main` so it is versioned
+# alongside the book, but it must never be part of the Obsidian Publish set.
+# See docs/for-trusted-contributors.md ("Why admin/ is not on the website").
+#
+# Operator setup that cannot be scripted (GitHub OAuth App, Cloudflare):
+# see OAUTH-SETUP.md in the repository root.
+
+backend:
+  name: github
+  repo: __CONTENT_REPO__
+
+  # =====================================================================
+  # LOAD-BEARING LINE. Read this before touching it.
+  #
+  # `branch` is the only thing standing between a contributor's browser
+  # and the published textbook. Every write Sveltia performs is scoped to
+  # this branch: the commits it makes, the review branches it cuts
+  # (cms/<collection>/<slug>), the pull requests it opens, and the merge
+  # it performs when someone clicks Publish. All of it lands on `drafts`.
+  #
+  # Set this to `main` and any trusted contributor typing into a text box
+  # becomes able to change the live book with no review step at all.
+  #
+  # `main` is updated by exactly one route: a human opening a
+  # drafts -> main pull request, and the maintainer merging it.
+  #
+  # Keep this as `drafts`.
+  # =====================================================================
+  branch: __DRAFTS_BRANCH__
+
+  # OAuth relay. Contributors sign in as THEMSELVES with their own GitHub
+  # account; this Worker only exchanges the OAuth code for a token and
+  # hands it back to the browser. No bot account, no Netlify Identity
+  # (which Netlify no longer offers to new sites).
+  #
+  # REPLACE the placeholder below with the real Worker URL from step 2 of
+  # OAUTH-SETUP.md. Until it is replaced, the Sign In button will fail.
+  base_url: __CMS_AUTH_RELAY__
+
+# Second safety net, independent of `branch` above.
+#
+# With editorial workflow on, saving does not commit straight to `drafts`.
+# Sveltia cuts a per-entry branch off `drafts` and opens a pull request
+# against `drafts`, which the contributor moves through Draft -> In review
+# -> Ready. So work is reviewable twice: once as the entry PR into drafts,
+# and again when drafts is proposed into main.
+publish_mode: editorial_workflow
+
+# Images and figures. `media_folder` is the path in the repo; `public_folder`
+# is how the path is written into the markdown that Obsidian Publish renders.
+media_folder: assets
+public_folder: /assets
+
+collections:
+  # Two collections, not one, and that is forced rather than chosen. A folder
+  # collection in Sveltia matches ONE directory level: it compiles `folder` into
+  # `^chapters\/(?<subPath>[^/]+?)\.md$`, and `[^/]` is what excludes
+  # chapters/Definitions/*.md. Decap's `nested: {depth: 2}` is the option that
+  # would lift that, and Sveltia does not implement it — 0.193.1 carries it in
+  # its UNSUPPORTED_OPTIONS table and warns "Nested collections are not yet
+  # supported in Sveltia CMS." while ignoring the key. It is slated for Sveltia
+  # 2.0. A `path` template cannot stand in either: the template is regex-escaped
+  # before use, so it can match one fixed depth but never both.
+  #
+  # So each directory gets its own collection. When nested collections do land,
+  # these two can fold back into one; until then, adding a directory under
+  # chapters/ means adding a collection here, or its files will be invisible in
+  # the editor exactly as the concept pages were.
+
+  - name: chapters
+    label: Chapters
+    label_singular: Chapter
+    folder: chapters
+    create: true
+
+    # The chapter files have NO frontmatter — chapter-03.md opens directly
+    # on `# Chapter 3: ...`, and so do the concept pages. `format: raw` is
+    # the setting that respects that: the whole file is the body, and
+    # Sveltia will not prepend a `---` block on save.
+    #
+    # `raw` defaults to a .txt extension, so .md must be stated explicitly.
+    format: raw
+    extension: md
+
+    # With only a body field there is no title field to derive a filename
+    # from, and Sveltia's fallback is a random UUID fragment. `{{fields._slug}}`
+    # replaces that with a visible slug box in the editor, so a new chapter
+    # can be named to match the existing convention: chapter-04, chapter-05.
+    slug: '{{fields._slug}}'
+
+    # Sort/browse by filename — there is no frontmatter date or title to use.
+    sortable_fields: ['slug']
+
+    fields:
+      - name: body
+        label: Page text
+        # `modes: [raw]` deliberately disables the WYSIWYG editor. The
+        # chapters are Obsidian markdown: [[wikilinks]] and > [!abstract]
+        # callouts. A rich-text round-trip does not understand either and
+        # would quietly rewrite them into plain text or escaped brackets,
+        # breaking every concept link in the book. Plain markdown editing
+        # is the only mode that is safe here.
+        widget: markdown
+        modes: [raw]
+        required: true
+
+  # The six concept pages in chapters/Definitions/ — the hover definitions the
+  # chapters reach through [[wikilinks]]. Same file shape as the chapters (no
+  # frontmatter, body only), so the settings below match that collection; only
+  # `folder` differs. Sveltia resolves a save back to `folder` + slug, so an
+  # entry edited here is written to chapters/Definitions/<name>.md and stays in
+  # the folder rather than being flattened up into chapters/.
+  - name: concepts
+    label: Concept pages
+    label_singular: Concept page
+    folder: chapters/Definitions
+    create: true
+
+    # No frontmatter here either: each file opens on `# Critical Realism`.
+    format: raw
+    extension: md
+
+    # The slug IS the link target. A chapter says [[Retroduction]] and Obsidian
+    # resolves that against the filename, so the box this exposes has to keep
+    # saying `Retroduction` — renaming an entry here breaks every chapter that
+    # links to it. Prose filenames with spaces and capitals are correct.
+    slug: '{{fields._slug}}'
+
+    sortable_fields: ['slug']
+
+    fields:
+      - name: body
+        label: Page text
+        # Raw for the same reason as the chapters: these pages contain
+        # [[wikilinks]] to each other, and a rich-text round-trip would
+        # rewrite them.
+        widget: markdown
+        modes: [raw]
+        required: true

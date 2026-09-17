@@ -123,8 +123,10 @@ failing — so the symptom is chore pull requests quietly piling up. See
     against the textbook repo. Setting it to the production hostname only also
     means Cloudflare's per-deployment preview URLs cannot sign in, which is
     intended.
-- **Referenced from:** `admin/config.yml` (`base_url`). If the Worker is
-  redeployed at a different subdomain, that line must change too.
+- **Referenced from:** `admin/config.yml` (`base_url`), which `configure.mjs`
+  renders from the registry's `platform.cms_auth_relay`. If the Worker is
+  redeployed at a different subdomain, change that registry value and re-run
+  `node configure.mjs`.
 - **Breaks if gone:** every contributor's "Sign in with GitHub" fails — the popup
   opens and closes and they stay signed out.
 - **Guide:** `OAUTH-SETUP.md`.

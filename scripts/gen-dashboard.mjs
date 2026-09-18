@@ -399,8 +399,10 @@ async function collectGitHub({ repo, templateRepo, skipForkOwners, automationLog
     .reduce((acc, d) => laterOf(acc, d), null);
 
   // Department editions: forks of the TEMPLATE, filtered exactly as
-  // gen-derivatives.mjs filters them so the two pages cannot disagree.
-  const editions = (await githubList(
+  // gen-derivatives.mjs filters them so the two pages cannot disagree. A book
+  // whose registry entry has `editions: null` has no template, so nothing to
+  // count; that is recorded as null, not as a zero, and the page says nothing.
+  const editions = templateRepo === null ? [] : (await githubList(
     `https://api.github.com/repos/${templateRepo}/forks?per_page=100&sort=oldest`,
   )).filter((f) => !f.archived && !f.disabled && !skipForkOwners.has(f.owner.login.toLowerCase()));
 
@@ -446,7 +448,7 @@ async function collectGitHub({ repo, templateRepo, skipForkOwners, automationLog
   return {
     contributors: contributors.length,
     newestHumanCommit,
-    editions: editions.length,
+    editions: templateRepo === null ? null : editions.length,
     openIssues: openIssues.length,
     openPulls: openPulls.length,
     suggestions: {
@@ -597,13 +599,17 @@ function renderContribution(g, book) {
       ? `**One person** has written the book so far. That is what an early book looks like — it is written before it is contributed to — and the [[contributors|contributors page]], which is the standing record of who has changed what, is where a second name would appear.`
       : `**${plural(g.contributors, 'person', 'people')}** have written the book between them. Who they are, what each has changed and when they last did it is on the [[contributors|contributors page]] — that page, not this one, is the record of authorship.`;
 
-  const editions = g.editions === 0
-    ? 'No department has published its own edition yet. The template and the walkthrough exist and are waiting for the first one; see [[derivatives|department editions]].'
-    : g.editions === 1
-      ? 'One department is running its own edition of the book — the same chapters with its own margin. It is listed on the [[derivatives|department editions page]].'
-      : `**${plural(g.editions, 'department')}** are running their own editions of the book — the same chapters with their own margins — and are listed on the [[derivatives|department editions page]].`;
+  // null: this book has no department editions at all, and no derivatives page to link.
+  const editions = g.editions === null
+    ? null
+    : g.editions === 0
+      ? 'No department has published its own edition yet. The template and the walkthrough exist and are waiting for the first one; see [[derivatives|department editions]].'
+      : g.editions === 1
+        ? 'One department is running its own edition of the book — the same chapters with its own margin. It is listed on the [[derivatives|department editions page]].'
+        : `**${plural(g.editions, 'department')}** are running their own editions of the book — the same chapters with their own margins — and are listed on the [[derivatives|department editions page]].`;
 
-  out.push(people, '', editions, '');
+  out.push(people, '');
+  if (editions) out.push(editions, '');
 
   const openWork = g.openIssues === 0 && g.openPulls === 0
     ? 'Nothing is currently open against the repository: no issues waiting, no proposed changes unreviewed. On a project this size that means the queue is clear rather than that nobody is looking.'
@@ -713,6 +719,9 @@ async function readBook() {
     const plausibleSite = plausible && field(book, 'analytics.plausible.site', isString, 'a hostname');
     const plausiblePublic = plausible && field(book, 'analytics.plausible.dashboard_public', (v) => typeof v === 'boolean', 'true or false');
     const domain = field(book, 'site.domain', isString, 'a hostname');
+    // null means the book has no department editions. Missing is still an error:
+    // the registry always states it, and a typo must not read as "no editions".
+    const editions = field(book, 'editions', (v) => v === null || (typeof v === 'object' && !Array.isArray(v)), 'an object or null');
     // The one field here that may be absent, and absent means null: count every
     // suggestion. Unlike a missing group list, that errs toward reporting too much,
     // never toward a quiet zero, and it lets this script land before the registry
@@ -729,8 +738,8 @@ async function readBook() {
       domain,
       site: `https://${domain}`,
       repo: book.content.repo,
-      templateRepo: field(book, 'editions.template_repo', isString, 'owner/name'),
-      skipForkOwners: new Set(field(book, 'editions.skip_fork_owners', isStringArray, 'a list of logins').map((o) => o.toLowerCase())),
+      templateRepo: editions ? field(book, 'editions.template_repo', isString, 'owner/name') : null,
+      skipForkOwners: new Set(editions ? field(book, 'editions.skip_fork_owners', isStringArray, 'a list of logins').map((o) => o.toLowerCase()) : []),
       annotationGroups: field(
         book, 'annotations.hypothesis_groups',
         (v) => Array.isArray(v) && v.every((g) => isString(g?.id) && isString(g?.label)),
@@ -761,9 +770,9 @@ async function main() {
   const annotations = await collectAnnotations(book.site, book.annotationGroups);
   console.log(`  ${annotations.total} annotation(s): ${[`${annotations.publicCount} public`, ...annotations.groups.map((g) => `${g.count} in ${g.label}`)].join(', ')}`);
 
-  console.log(`Reading GitHub (${book.repo}, forks of ${book.templateRepo}) ...`);
+  console.log(`Reading GitHub (${book.repo}${book.templateRepo ? `, forks of ${book.templateRepo}` : ', no edition template'}) ...`);
   const github = await collectGitHub(book);
-  console.log(`  ${github.contributors} contributor(s), ${github.editions} edition(s), ${github.openIssues} open issue(s), ${github.openPulls} open PR(s), ${github.suggestions.open + github.suggestions.closed} suggested edit(s)`);
+  console.log(`  ${github.contributors} contributor(s), ${github.editions ?? 'no'} edition(s), ${github.openIssues} open issue(s), ${github.openPulls} open PR(s), ${github.suggestions.open + github.suggestions.closed} suggested edit(s)`);
 
   // The stamp: newest of exactly the four timestamps that move when a number
   // on this page moves. See note 3 — getting this wrong produces a pull

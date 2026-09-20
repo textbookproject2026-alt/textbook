@@ -164,6 +164,12 @@ way. What 3.4 decided is *who runs them*, not what they are.
 - **Note:** account ownership for Cloudflare, Vercel and Plausible cannot be
   determined from the repositories. The doc records what is known and marks the
   rest as *confirm at handover* rather than guessing.
+- **Update (20 Sep 2026):** the main Cloudflare account is confirmed on the
+  platform owner's word — `brandonproject2026` holds the `sveltia-cms-auth`
+  Worker, the `textbook-admin` editor host and the platform front page (the
+  portal Pages project). Those two rows in `docs/INFRASTRUCTURE.md` no longer say
+  *confirm at handover*. Vercel, Plausible, Obsidian Publish, Apple Developer and
+  the `textbook-edition-template` project are still open.
 
 #### 3.2 — FIX-DOC — How the author's vault reaches GitHub is undocumented
 

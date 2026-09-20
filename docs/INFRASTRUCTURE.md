@@ -108,9 +108,15 @@ failing — so the symptom is chore pull requests quietly piling up. See
 ## 3. Cloudflare Worker — `sveltia-cms-auth`
 
 - **URL:** `https://sveltia-cms-auth.brandonproject2026.workers.dev`
-- **Account owner:** **confirm at handover.** The `workers.dev` subdomain is
-  `brandonproject2026`, which identifies the Cloudflare account but not the person
-  holding its login.
+- **Account owner:** **confirmed — `brandonproject2026`**, held by the platform
+  owner. The `workers.dev` subdomain names the account. The same account owns the
+  **platform front page**: the Cloudflare Pages project for the portal at
+  `confused4now.org`. One login therefore holds both the OAuth relay every book's
+  editor depends on and the platform's public front door — treat it accordingly.
+  The apex is not pointed at the portal yet (checked 20 Sep 2026:
+  `confused4now.org` still returns Obsidian Publish's 404), so the front page is
+  an account the platform owns rather than a page readers can see. See
+  *The domain cutover* below.
 - **What it does:** OAuth relay for the browser editor. It swaps GitHub's one-time
   code for an access token and hands it back to the browser. It is *not* an
   identity provider and it stores nothing.
@@ -136,8 +142,7 @@ failing — so the symptom is chore pull requests quietly piling up. See
 ## 4. Cloudflare Pages — `textbook-admin`
 
 - **URL:** <https://textbook-admin.pages.dev>
-- **Account owner:** **confirm at handover** (same Cloudflare account as §3, as far
-  as the repositories show).
+- **Account owner:** **confirmed** — the same account as §3, `brandonproject2026`.
 - **What it does:** serves the browser editor (Sveltia CMS). Built from the
   `textbook` repository with **build output directory `admin`** and no build
   command, so only `admin/` is uploaded — the chapters never reach the Pages host.
@@ -489,9 +494,14 @@ cutover, not after.
 Kept honest and visible rather than left to be rediscovered. Each is tracked in
 `docs/DOCS-REMEDIATION.md`.
 
-- **Who holds the Cloudflare, Vercel, Plausible, Obsidian Publish and Apple
-  Developer accounts.** Marked *confirm at handover* above. This is the single
-  most important thing to resolve.
+- **Who holds the Vercel, Plausible, Obsidian Publish and Apple Developer
+  accounts.** Marked *confirm at handover* above. This is the single most
+  important thing to resolve. **The main Cloudflare account is settled:**
+  `brandonproject2026`, held by the platform owner, owns the `sveltia-cms-auth`
+  Worker (§3), the `textbook-admin` editor host (§4) and the platform front page
+  — the portal Pages project. That is on the platform owner's word, not something
+  the repositories show. Still open on Cloudflare: who holds the
+  `textbook-edition-template` project (§5), and the second account in §5.
 - **How the author's vault reaches GitHub** (3.2).
 - **Who moves accepted contributor work from `drafts` to `main`** (3.3) — there is
   no automation and no named owner.

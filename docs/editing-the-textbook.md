@@ -219,7 +219,7 @@ ticked in the Publish list.
 
 ## Checking the live site
 
-Open **https://confused4now.org** and give it two minutes:
+Open **https://social-research-methods.confused4now.org** and give it two minutes:
 
 - The front page lists the new chapter, and the link opens it.
 - The headings are there and nested the way the outline panel showed them.

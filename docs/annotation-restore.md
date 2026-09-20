@@ -19,7 +19,7 @@ Separate collections ("scopes"), in one file per week:
 
 | Scope | What it is |
 |---|---|
-| `public` | Every public annotation on any page under `https://confused4now.org` — the layer readers see without logging in |
+| `public` | Every public annotation on any page under `https://social-research-methods.confused4now.org` — the layer readers see without logging in |
 | `public-legacy:bptext2026.xyz` | Every public annotation still attached to the old staging address, `https://bptext2026.xyz`. Annotations keep the address they were made on, so everything written before the 14 September 2026 domain move lives here |
 | `group:<id>` | One per private group in the registry. There are none now. Backups up to 2026-09-13 also hold `group:ZGY29zLM` (*test-group*) and `group:L9KgjVPa` (*Biology edition*). Both are testing leftovers, empty in every backup |
 
@@ -42,7 +42,7 @@ writing or deleting anything.
 
 ### What is *not* backed up
 
-- Annotations on pages that are not under `confused4now.org` or `bptext2026.xyz`.
+- Annotations on pages that are not under `social-research-methods.confused4now.org` or `bptext2026.xyz`. That includes the week of 14–20 September 2026, when the book was at `confused4now.org`: that address is now the platform's front page rather than a former address of this book, so it is not a legacy scope. No annotation was made there, so nothing is lost by leaving it out.
 - Private annotations belonging to individual readers ("Only Me" notes). These
   are invisible to the API for anyone but their author, by design.
 - Group membership lists, group names, or account settings — annotations only.

@@ -32,7 +32,7 @@
 //
 //   * wildcard_uri works UNAUTHENTICATED for public annotations. Wildcards
 //     (* and _) are permitted only within the PATH; a wildcard anywhere in the
-//     domain is rejected 400. So `https://confused4now.org/*` is legal and is
+//     domain is rejected 400. So `https://social-research-methods.confused4now.org/*` is legal and is
 //     our primary route to "all public annotations under this domain".
 //   * limit  max 200 (limit=1000 -> 400 "greater than maximum value 200").
 //   * offset max 9800 (offset=9999 -> 400 "greater than maximum value 9800").

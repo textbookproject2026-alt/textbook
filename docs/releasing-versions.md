@@ -136,7 +136,7 @@ That link is permanent. It shows the text exactly as it stands today and
 will keep showing that, unchanged, whatever gets edited on the live site
 during the year — so it is safe to put in a syllabus.
 
-The live textbook is at https://confused4now.org as always. It always shows
+The live textbook is at https://social-research-methods.confused4now.org as always. It always shows
 the newest version rather than a fixed edition, which is why the link
 above exists.
 
@@ -162,7 +162,7 @@ Subject: Your textbook for [module / year]
 
 The textbook for this module is online and free to read:
 
-https://confused4now.org
+https://social-research-methods.confused4now.org
 
 Nothing to install, no account, no login. It works on a phone.
 
@@ -259,7 +259,7 @@ would come away with something false.
 When that happens:
 
 **1. Fix the live site first.** Obsidian, publish, done. Everyone reading the
-book at `confused4now.org` is now reading the corrected text, and that is most
+book at `social-research-methods.confused4now.org` is now reading the corrected text, and that is most
 readers. Do this before anything else; the rest can take a day.
 
 **2. Tell the technical contact, and say it's serious.** This is the sentence

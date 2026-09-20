@@ -170,7 +170,7 @@ withholds it deliberately. See `docs/the-authoring-app-operations.md`,
   blocker off — if numbers appear, nothing is wrong.
 - **Are you looking at the right site?** Each department edition has its own
   analytics line and its own dashboard. The canonical textbook's figures are for
-  `confused4now.org` only.
+  `social-research-methods.confused4now.org` only.
 - **Is it genuinely quiet?** Out of term, on a book that hasn't been announced to
   a cohort, zero is the true number. Compare against a week you know had traffic
   rather than against nothing.

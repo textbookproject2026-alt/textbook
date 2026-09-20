@@ -29,16 +29,16 @@ Deleting your *own* replies is always possible. Someone else's comment is theirs
 
 **1. Everything on the site at once.** This link lists every public comment on every page of the textbook, newest first:
 
-https://hypothes.is/search?q=url:https://confused4now.org/*
+https://hypothes.is/search?q=url:https://social-research-methods.confused4now.org/*
 
 Bookmark it. This is the starting point of the weekly routine. The `*` at the end means "any page on this site" — don't drop it, or the search returns nothing.
 
 To see just one kind of comment, add a tag to the end of the same link:
 
-- https://hypothes.is/search?q=url:https://confused4now.org/*+tag:copy-edit
-- https://hypothes.is/search?q=url:https://confused4now.org/*+tag:discussion
+- https://hypothes.is/search?q=url:https://social-research-methods.confused4now.org/*+tag:copy-edit
+- https://hypothes.is/search?q=url:https://social-research-methods.confused4now.org/*+tag:discussion
 
-Comments left before the book moved to `confused4now.org` on 14 September 2026 are still attached to the old address and do not show up in the links above. To see those, swap the address in the link for `https://bptext2026.xyz`.
+The book has had two earlier addresses, and comments stay attached to the address they were made on, so neither shows up in the links above. Everything written before 14 September 2026 is on `https://bptext2026.xyz` — swap that into the link to read it. Between 14 and 20 September the book was at `https://confused4now.org`; nobody annotated it in that week, so there is nothing to look for there.
 
 [SCREENSHOT: the hypothes.is search page showing the site-wide result list, with the "N Matching Annotations" count visible at the top]
 

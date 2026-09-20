@@ -1,6 +1,6 @@
 # Education Tool Project 2026
 
-An open-access textbook maintained by Brandon. The canonical edition is published at https://confused4now.org.
+An open-access textbook maintained by Brandon. The canonical edition is published at https://social-research-methods.confused4now.org.
 
 This repository is the single source of truth for the textbook's content. The published reading site is generated from these Markdown files; department editions are maintained as forks.
 

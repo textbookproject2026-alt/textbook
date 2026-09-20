@@ -212,11 +212,18 @@ project's control by design and are not listed here.
 
 ## 7. Plausible — analytics
 
-- **Public dashboard:** <https://plausible.io/confused4now.org> — genuinely public,
-  no login needed (the site was renamed from `bptext2026.xyz`, whose old address
-  now 404s). `community/dashboard.md` links to it rather than fetching figures.
-  The address is not stored anywhere: `scripts/gen-dashboard.mjs` builds it from
-  `analytics.plausible.site` in the platform registry.
+- **Public dashboard:** genuinely public, no login needed.
+  `community/dashboard.md` links to it rather than fetching figures. The address is
+  not stored anywhere: `scripts/gen-dashboard.mjs` builds it from
+  `analytics.plausible.site` in the platform registry, so the registry field and the
+  name of the Plausible site have to change together on every domain move.
+- **They are apart right now (20 Sep 2026).** The registry says
+  `social-research-methods.confused4now.org`; the Plausible site is still registered
+  as `confused4now.org`, which was itself the rename from `bptext2026.xyz`. So
+  <https://plausible.io/confused4now.org> is the dashboard that opens, and the link
+  the dashboard page generates 404s. **Rename the Plausible site** (Site settings →
+  domain) and both agree again; do it before the Sunday rebuild or the dead link is
+  published. See *The domain cutover*, move #2.
 - **Account owner:** **confirm at handover.** One account holds a *site* per
   edition.
 - **How it is installed:** the per-site `pa-….js` script, injected by `publish.js`
@@ -399,6 +406,55 @@ from a repository.
 ---
 
 ## The domain cutover
+
+Two moves so far, recorded newest first. The prose after the second quote is the
+*pre-cutover plan for move #1*, kept as written — see the note in move #2 about
+which parts of it no longer describe the work.
+
+> **Move #2 — done 20 Sep 2026.** Book one moved off the apex to
+> <https://social-research-methods.confused4now.org>. `confused4now.org` is no
+> longer a book address: it is reserved for the platform portal, and the
+> suggest-edit function now answers an `Origin` of `https://confused4now.org`
+> with **403 `origin not allowed`**. The move was made in one place — the
+> platform registry, commit `847483c`, live in production — and the function, the
+> annotation backup and the project health page all follow it with no edit of
+> their own. Verified on the day: `window.siteInfo` on the new hostname carries
+> `uid 1443b409…`, `status "active"` and `customurl` set to the new hostname, and
+> the function reports `X-Registry-Version: 847483c…` while accepting the new
+> origin.
+>
+> **What made it cheap.** `confused4now.org` had **zero** public annotations —
+> checked live against `api.hypothes.is` on the day of the move, for both the
+> `http` and `https` wildcard scopes. Nobody annotated the book in the six days it
+> lived there. The eight staging-era annotations are on `bptext2026.xyz`, are
+> untouched by this move, and are still backed up as their own scope. For the same
+> reason `https://confused4now.org` was deliberately **not** added to the
+> registry's `site.legacy_origins`: there is nothing on it to capture, and the
+> validator forbids a legacy origin that is also the portal's own address.
+>
+> **The five-place list below no longer describes this work.** Three of those five
+> places are gone: `ALLOWED_ORIGIN` no longer exists in the suggest-edit function
+> (since migration step 2 it matches the `Origin` header against `site.domain` in
+> the registry it bundles at build time, §6), `backup-annotations.mjs` has no
+> `DEFAULT_SITE` (it reads the registry, §8), and `textbook.config.json` no longer
+> holds `plausible_public_url`. A domain move is now a registry change plus the
+> external settings nobody's repository holds.
+>
+> **Still open at that date:**
+> - **The Plausible site has not been renamed.** The registry's
+>   `analytics.plausible.site` already says the new hostname, but the Plausible
+>   site is still registered as `confused4now.org`. So the dashboard that works is
+>   <https://plausible.io/confused4now.org>, while the link `scripts/gen-dashboard.mjs`
+>   builds from the registry points at a site that does not exist and 404s. The next
+>   Sunday rebuild of `community/dashboard.md` will publish that dead link. Renaming
+>   the Plausible site fixes both at once — see §7.
+> - **The apex serves nothing.** The portal has not been built or bound, so
+>   `confused4now.org` returns Obsidian Publish's empty 404, and the registry has no
+>   `platform.portal` block yet.
+> - **The one department-edition fork is two moves behind.**
+>   `coordinator-test/textbook-edition-template` still names `bptext2026.xyz` as the
+>   canonical textbook. Forks belong to coordinators (§5), so this can only be fixed
+>   by asking. The platform template and book two were both updated.
 
 > **Done 14 Sep 2026.** Production is `confused4now.org` (apex only; `www` does not
 > resolve). The code-side changes below were made that day; the text that follows is

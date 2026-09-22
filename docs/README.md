@@ -36,6 +36,8 @@ If you're inheriting this book cold, read these three files in this order:
 - **[`changing-settings.md`](changing-settings.md)**: the title, maintainer,
   address and licence, which are the platform registry's to change, and what
   you ask for.
+- **[`weekly-snapshots.md`](weekly-snapshots.md)**: where the Sunday snapshots
+  of the book are, and how to get an earlier week's text back.
 - **[`releasing-versions.md`](releasing-versions.md)**: the yearly release: what
   you decide, what the technical contact does, and what gets sent to whom.
 - **[`troubleshooting.md`](troubleshooting.md)**: ten things that have actually
@@ -47,7 +49,8 @@ If you're inheriting this book cold, read these three files in this order:
   running a department edition, with only a browser and GitHub Desktop. Budget an
   afternoon.
 - **[`how-versioning-works.md`](how-versioning-works.md)**: how a tag becomes a
-  permanent link, and how to pin a teaching year.
+  permanent link, how to pin a teaching year, and how a version differs from a
+  weekly snapshot.
 
 ## For trusted contributors and students
 

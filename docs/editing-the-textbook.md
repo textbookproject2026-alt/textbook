@@ -94,7 +94,8 @@ the chapter's own folder under `assets/` and give it a real name —
 **Nothing you type is ever the only copy.** Obsidian keeps timed snapshots of
 every file (**Settings → File recovery**), and every version of every chapter is
 stored off your machine automatically. Deleting three paragraphs and wanting them
-back tomorrow is a recoverable situation, not a lost one.
+back tomorrow is a recoverable situation, not a lost one. For last week's text, or
+last month's, see [`weekly-snapshots.md`](weekly-snapshots.md).
 
 ---
 
@@ -279,8 +280,9 @@ area — no button in that editor reaches the live site. You read their text and
 decide whether it belongs in the book; moving it out of the holding area is the
 maintainer's step, not yours.
 
-**Four automated jobs run every Sunday, unattended.** They back up the reader
-annotations and rewrite three pages under `community/`: the contributors list,
+**Five automated jobs run every Sunday, unattended.** They save a dated
+snapshot of the book (see [`weekly-snapshots.md`](weekly-snapshots.md)), back up
+the reader annotations, and rewrite three pages under `community/`: the contributors list,
 the department editions list, and the project health dashboard. That is why
 `community/` files change on their own. Nobody starts them and nobody needs to
 check them weekly — the platform's

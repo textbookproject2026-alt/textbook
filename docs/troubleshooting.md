@@ -190,8 +190,9 @@ you were looking at.
 
 **The technical contact fixes this.**
 
-Four jobs run unattended every Sunday: the annotation backup, and the three pages
-under `community/`.
+Five jobs run unattended every Sunday: the weekly snapshot, the annotation
+backup, and the three pages under `community/`. A Sunday with no new snapshot is
+not a failure: none is made in a week when the book didn't change.
 
 **Check:**
 

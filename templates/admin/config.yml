@@ -4,8 +4,9 @@
 # alongside the book, but it must never be part of the Obsidian Publish set.
 # See docs/for-trusted-contributors.md ("Why admin/ is not on the website").
 #
-# Operator setup that cannot be scripted (GitHub OAuth App, Cloudflare):
-# see OAUTH-SETUP.md in the repository root.
+# This book's side of the editor (the Pages host, contributor access):
+# docs/the-browser-editor.md. The shared sign-in relay and its OAuth App are
+# the platform's: textbook-registry/docs/CMS-RELAY.md.
 
 backend:
   name: github
@@ -35,8 +36,9 @@ backend:
   # hands it back to the browser. No bot account, no Netlify Identity
   # (which Netlify no longer offers to new sites).
   #
-  # REPLACE the placeholder below with the real Worker URL from step 2 of
-  # OAUTH-SETUP.md. Until it is replaced, the Sign In button will fail.
+  # Rendered from the registry's platform.cms_auth_relay. The relay only lets
+  # the editor sign in from hosts on its ALLOWED_DOMAINS list, which the
+  # platform owner keeps (textbook-registry/docs/CMS-RELAY.md).
   base_url: __CMS_AUTH_RELAY__
 
 # Second safety net, independent of `branch` above.

@@ -71,6 +71,16 @@ can never be blamed for someone else's edit.
 
 You should only have to authorise once per browser.
 
+**What you are agreeing to when you click Authorize.** The sign-in service the
+editor uses is shared by every textbook on this platform, and it asks GitHub for
+broad access: the key it hands the editor can read and change **every
+repository your GitHub account can reach**, private ones included, not just this
+book. The editor only ever uses it on this book, but you should know the key is
+that wide. If you keep private work on the same GitHub account and would rather
+not, make a separate free account just for editing the textbook, and give the
+technical contact that username instead. You can withdraw the key at any time
+from GitHub → Settings → Applications.
+
 **If the popup opens and closes and you are still signed out**, it is a
 configuration problem, not something you did wrong. Message the technical
 contact.

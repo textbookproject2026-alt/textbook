@@ -10,6 +10,17 @@ numbering reflects the audit's three groups — 3 = maintainer-blocking, 1 =
 undocumented features, 2 = stale references — and the list below is ordered by
 severity, not by ID.
 
+> **22 September 2026 — the platform split.** This worklist was written when the
+> docs described one textbook. Since then the platform's own documentation has
+> moved to `textbook-registry/docs/`: `docs/INFRASTRUCTURE.md` (3.1),
+> `docs/scheduled-actions-health-check.md` (1.7, 2.4),
+> `docs/the-authoring-app-operations.md` (1.1, 1.3, 1.4, 1.6) and the relay half of
+> `OAUTH-SETUP.md`. Entries below that name those files are the record of work done
+> on them here; the files themselves now live, rewritten, in the registry repo
+> (see `textbook-registry/docs/DOCS-AUDIT.md`, which also lists what this audit
+> found that documentation cannot fix). The open items that are this book's —
+> 3.2, 3.3, 1.5, 2.6 — are unchanged.
+
 ## How to use this file
 
 1. Read the **Decisions required** section first. One item (3.3) is still blocked on
@@ -233,7 +244,9 @@ See *Decisions required* above. **Status:** BLOCKED on decision.
 
 #### 3.4a — FIX-CODE — the "Use this template" button is still offered on the template repo
 
-- **Status:** TODO — found 4 Sep 2026 while writing 3.4; needs repo-admin access
+- **Status:** DONE (found done 22 Sep 2026 — `is_template` is `false` on
+  `textbookproject2026-alt/textbook-edition-template`; who switched it off, and
+  when, is not recorded)
 - **Repo:** `textbookproject2026-alt/textbook-edition-template` (GitHub repository
   setting, nothing in the tree)
 - **What's wrong:** 3.4 decided forking is canonical and both guides now warn
@@ -554,7 +567,10 @@ it installs against `package-lock.json`, so a partial `~/.npm` restore is safe.
     start; `suggest-edit-function/README.md` calls it "a speed bump, not a control"
     and defers real hardening (shared KV/Redis counter plus edge limits) to
     "Day 28". No record exists of whether Day 28 happened.
-  - **FIX-CODE** — `ALLOWED_ORIGIN` is hardcoded to `https://bptext2026.xyz` in
+  - **FIX-CODE — overtaken (migration step 2, `suggest-edit-function` `f97d018`):**
+    the function now resolves the origin from the registry and `ALLOWED_ORIGIN` no
+    longer exists; the cutover has since been done twice. Kept as written:
+    `ALLOWED_ORIGIN` is hardcoded to `https://bptext2026.xyz` in
     `api/suggest-edit.js` and must change at the production-domain cutover, as must
     the Plausible site registration and `publish.js`'s baked-in script. The cutover
     is now described in `docs/INFRASTRUCTURE.md` (*The domain cutover*), which
@@ -862,7 +878,7 @@ the code on 4 September 2026.
 | 3.2 | FIX-DOC | BLOCKED — needs mechanism confirmed |
 | 3.3 | DECIDE | BLOCKED — decision |
 | 3.4 | DECIDE → FIX-DOC | DONE — fork is canonical; both setup guides reconciled (spawned 3.4a) |
-| 3.4a | FIX-CODE | TODO — turn off the template-repository flag so "Use this template" is no longer offered |
+| 3.4a | FIX-CODE | DONE — the template-repository flag is off (found 22 Sep 2026) |
 | 3.5 | FIX-DOC | DONE — `docs/updating-department-editions.md`; spawned FIX-CODE (pin bump) DONE — pins at `8f4e323` |
 | 3.5a | FIX-CODE | PARTIAL — `restore-keys` dropped from `deploy-v5.yaml`; `ci.yaml`/`build-preview.yaml`, the `gitLoader` defect and the Cloudflare build cache still open |
 | 3.6 | FIX-DOC | DONE — `quartz-edition-extras/README.md` |

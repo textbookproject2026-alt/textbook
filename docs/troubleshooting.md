@@ -6,7 +6,9 @@ each one happens, and what fixes it.
 Each entry says who fixes it. **You** means you can finish it yourself in
 Obsidian or a browser. **The technical contact** means it is configuration —
 report it and stop; there is nothing you can do from your side, and nothing you
-can make worse by having looked.
+can make worse by having looked. Some of these turn out to be in a service that
+every book on the platform shares; then the technical contact passes it to the
+**platform owner**, and you don't need to know which it was.
 
 Nothing here is damage. The site can always be republished from your vault, and
 every version of every file is kept.
@@ -151,11 +153,14 @@ you which if you read the wording.
 appeared — that alone separates "the backend is down" from "the backend is fine
 and rate-limiting someone", which are completely different problems.
 
-**For the technical contact:** the form is a Vercel serverless function, and
-`vercel logs <deployment-url>` is the only place the validation rejection,
-honeypot hit or rate-limit trip behind that message is visible — the response
-withholds it deliberately. See `docs/the-authoring-app-operations.md`,
-*The suggest-edit function*, and `docs/INFRASTRUCTURE.md` §6.
+**For the technical contact:** the form posts to the platform's shared
+suggest-edit function, so this is usually the platform owner's. Before passing it
+on, check the two things that are this book's: that the site is on the address
+the platform has on record (a form on any other address is refused), and that
+the GitHub App `textbook-suggest-edit` is still installed on this repository.
+The function's logs, which are the only place the rejection behind the message
+is visible, are the platform owner's — see
+[`INFRASTRUCTURE.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/INFRASTRUCTURE.md) §2.
 
 ---
 
@@ -200,8 +205,10 @@ under `community/`.
   small? Zero annotations on a book nobody has annotated yet is accurate.
 
 **Fix:** report it to the technical contact and say which page and what looked
-wrong. `docs/scheduled-actions-health-check.md` is the full diagnostic guide —
-it is written for whoever is looking at the Actions tab, which is not you.
+wrong. The platform's
+[`SCHEDULED-JOBS.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/SCHEDULED-JOBS.md)
+(Part 2, this book's jobs) is the full diagnostic guide — it is written for
+whoever is looking at the Actions tab, which is not you.
 
 ---
 
@@ -210,8 +217,8 @@ it is written for whoever is looking at the Actions tab, which is not you.
 **The technical contact fixes this.**
 
 The editor at `https://textbook-admin.pages.dev` signs people in with their own
-GitHub account through a relay the technical contact runs. Two things break it,
-and they look different.
+GitHub account through a sign-in relay that every book on the platform shares.
+Three things break it, and they look different.
 
 **Check:**
 
@@ -225,8 +232,11 @@ and they look different.
   technical contact grants it; the contributor needs to have supplied their
   GitHub username.
 
-**Fix:** all three are the technical contact's. Say which of the three it looks
-like, and include the contributor's GitHub username if it's the third.
+**Fix:** all three go to the technical contact. Say which of the three it looks
+like, and include the contributor's GitHub username if it's the third. (The
+first is the platform owner's in the end — the relay and its list of allowed
+editors are shared; the other two are this book's. `docs/the-browser-editor.md`
+has the detail.)
 
 ---
 
@@ -277,12 +287,13 @@ your name.
 **Check:**
 
 - **Does the tab show a card headed "One-off setup" instead of a Sign in
-  button?** Then no sign-in identifier has been saved on this Mac, and there is
-  nothing to sign in with. Press **Open Settings**, and under **Signing in to see
-  what is waiting** paste the identifier the technical contact gives you into
-  **Sign-in identifier**, then press **Save identifier**. It should answer
-  _Saved. You can now sign in from "Waiting for you"._ The technical contact
-  supplies that identifier, and it is done once per Mac.
+  button?** The sign-in identifier normally arrives with the list of textbooks,
+  so this means the app has never managed to fetch that list on this Mac. Check
+  you are online and reopen the app first. If the card is still there, press
+  **Open Settings**, and under **Signing in to see what is waiting** paste the
+  identifier the technical contact gives you into **Sign-in identifier**, then
+  press **Save identifier**. It should answer
+  _Saved. You can now sign in from "Waiting for you"._
 - **Did the code run out?** The code box says _Waiting for you to approve… this
   code lasts about 15 minutes._ Past that you get _That code ran out before it
   was used. Please start again._ Press **Sign in** again and take the code
@@ -314,7 +325,9 @@ your name.
   than that nothing is there. Look above the lists for the banner: its lines
   begin **Suggestions:**, **Draft changes:** or **Weekly jobs:**, or, offline,
   _This Mac is not online, so this list may be incomplete. Nothing can be
-  accepted or declined until it is back._
+  accepted or declined until it is back._ (A **Weekly jobs:** line on a book
+  that doesn't run this book's four weekly jobs is a known fault in the app and
+  hides the green note too; the two lists above it are still right.)
 - **Is the thing you are waiting for even in this queue?** It holds two kinds of
   item and no others: reader suggestions, described on the screen as _Sent from
   the “Suggest an edit” button on the website._, and draft changes _Written by

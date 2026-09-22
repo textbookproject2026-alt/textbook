@@ -140,11 +140,12 @@ Step 2 is easy to forget and invisible when it is. Which brings us to:
 > **Still live — read before you trust a deploy.** `npx quartz plugin install`
 > cannot tell that a cached plugin directory is stale: for `subdir` plugins it
 > checks only that `package.json` exists, then reports the *lockfile* commit it did
-> not actually install. Because `deploy-v5.yaml` keeps a `restore-keys` fallback on
-> the plugin cache, a pin bump can be silently ignored by CI and the old plugin
-> shipped behind a green log. Until that is fixed
-> (`docs/DOCS-REMEDIATION.md` 3.5a), a deploy that must pick up a plugin bump
-> should delete the Actions plugin cache — or the plugin directories — first.
+> not actually install. The `restore-keys` fallback that made this likely was
+> removed from `deploy-v5.yaml` on 5 September, but `ci.yaml` and
+> `build-preview.yaml` still carry it, and whether an edition's **Cloudflare**
+> build cache can keep a stale plugin is unverified (`docs/DOCS-REMEDIATION.md`
+> 3.5a, PARTIAL). Until that is closed, a deploy that must pick up a plugin bump
+> should clear the build cache — or delete the plugin directories — first.
 
 ---
 
@@ -210,7 +211,7 @@ What was decided, and what it means for you:
   now warned against in both setup guides. Discovery via the forks API stands;
   `gen-derivatives.mjs` needs no change. An edition missing from the
   department-editions page is worth checking as a possible template-copy before you
-  chase it as a workflow fault (`docs/scheduled-actions-health-check.md`).
+  chase it as a workflow fault (`textbook-registry/docs/SCHEDULED-JOBS.md`, `derivatives`).
 - **The no-terminal promise was scoped, not dropped.** Setup and the yearly content
   copy stay terminal-free; channels 1 and 2 are stated plainly as needing one, and
   as reassignable to you.

@@ -82,3 +82,24 @@ link above hands them the complete tagged edition as files.
 One tagged version per academic year, created as part of the annual release
 (see `releasing-versions.md`). Between releases, the live site may receive
 fixes; the tags never move.
+
+## Versions and weekly snapshots are different things
+
+The tags page holds two kinds of tag, and they are not interchangeable.
+
+| | Versions | Weekly snapshots |
+|---|---|---|
+| Named | `v` and a number: `v0.1`, `v1.0` | `snapshot-` and a date: `snapshot-2026-09-27` |
+| Made | once a year, by hand, when the maintainer decides the book is ready | every Sunday at 03:00 UTC, automatically, if the book changed that week |
+| Means | "this is the edition we teach from" | "this is what the text happened to say that week" |
+| Use it to | pin a teaching year, cite the edition | recover or compare earlier text, cite a draft |
+
+Both are permanent, and every link pattern above works for both: swap `v0.1`
+for `snapshot-2026-09-27`. But only a `v` tag is a version. A snapshot is never
+reviewed, and one taken the week of a release is not the release. When pinning
+a teaching year, use the `v` tag even if a snapshot has the same date.
+
+There will be many more snapshots than versions, so the version you want may be
+a few pages down the tags list. Its permalink (`tree/v0.1`) is the quicker way
+to it. What snapshots are for, and how to get text back from one, is in
+[`weekly-snapshots.md`](weekly-snapshots.md).

@@ -1,0 +1,147 @@
+name: Weekly snapshot
+
+# Marks the state of main once a week with a dated tag, snapshot-YYYY-MM-DD, so
+# anyone can find, cite, download and restore "the book as it was that week"
+# without knowing git. docs/weekly-snapshots.md is the reader's side of this.
+#
+# WHY A TAG
+# ---------
+# Every commit is already a snapshot; what was missing is a name and a date a
+# person can find. A tag is exactly that and nothing more. It costs nothing to
+# store (the content is already in main's history), it never moves, and GitHub
+# gives every tag a browsable page and a zip download with no build step:
+#
+#   https://github.com/OWNER/REPO/tree/snapshot-YYYY-MM-DD
+#   https://github.com/OWNER/REPO/archive/refs/tags/snapshot-YYYY-MM-DD.zip
+#
+# Not a GitHub Release: releases notify watchers and belong to the yearly
+# versions. Not a zip committed somewhere: GitHub already builds that zip on
+# demand, from the tag, for as long as the tag exists.
+#
+# NOT A VERSION
+# -------------
+# Version tags (v0.1, ...) are the yearly releases, made by hand; see
+# docs/how-versioning-works.md. Snapshot tags are automatic and weekly. The
+# snapshot- prefix keeps them apart: no snapshot name can start with "v", and
+# nothing in either process matches the other's names.
+#
+# ONLY WHEN SOMETHING CHANGED
+# ---------------------------
+# A week in which main did not change produces no tag. "Changed" means any
+# difference from the last snapshot EXCEPT the three pages the Sunday jobs
+# regenerate from statistics (IGNORE below). Those change on their own nearly
+# every week; counting them would tag a book nobody had touched. They are still
+# IN every snapshot, they just don't cause one. Add a path to IGNORE if this
+# book gains another page that rewrites itself.
+#
+# WHEN
+# ----
+# 03:00 UTC Sunday, the same slot as backup-annotations.yml, so a week's content
+# snapshot and its annotation backup carry the same date and can be restored as
+# a pair. They cannot collide: that job writes the `backups` branch, this one
+# writes a tag. Both run before the 07:00, 11:00 and 15:00 page refreshes.
+#
+# RETENTION
+# ---------
+# Every snapshot is kept. A tag is a few hundred bytes, the change-only rule
+# caps them at one a week, and the point of a snapshot is that a link to it
+# keeps working. Pruning would break exactly the citations this exists for.
+#
+# PERMISSIONS
+# -----------
+# main's branch protection covers main only; tags are not branches, and this
+# repository has no tag ruleset, so the built-in token with contents: write can
+# create them. The tag is pushed straight from the job: no branch, no pull
+# request. A tag of today's date that already exists is left alone (tags never
+# move), so a second run on the same day does nothing.
+
+on:
+  schedule:
+    - cron: "0 3 * * 0" # 03:00 UTC every Sunday — deliberately the same slot as backup-annotations
+  workflow_dispatch:
+
+permissions:
+  contents: write # push the snapshot tag
+
+concurrency:
+  group: weekly-snapshot
+  cancel-in-progress: false
+
+env:
+  PREFIX: snapshot-
+  # Space-separated. Pages the weekly jobs regenerate on their own; see header.
+  IGNORE: community/contributors.md community/derivatives.md community/dashboard.md
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      # main explicitly, whatever the run was started from: main is the book.
+      # Full history and every tag, to find the last snapshot and diff against it.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Tag main if it changed since the last snapshot
+        run: |
+          set -euo pipefail
+
+          DATE="$(date -u +%Y-%m-%d)"
+          TAG="${PREFIX}${DATE}"
+          SHA="$(git rev-parse HEAD)"
+          SERVER="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+
+          if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
+            echo "::notice::${TAG} already exists, and tags never move. Nothing to do."
+            echo "${TAG} already exists; nothing to do." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # The names are dated, so the last one by name is the latest.
+          LAST="$(git tag -l "${PREFIX}*" --sort=-refname | sed -n 1p)"
+
+          SPEC=(.)
+          for p in $IGNORE; do SPEC+=(":(exclude)${p}"); done
+
+          if [ -z "$LAST" ]; then
+            SINCE="First snapshot."
+          else
+            if git diff --quiet "$LAST" HEAD -- "${SPEC[@]}"; then
+              echo "main has not changed since ${LAST} (weekly generated pages aside). No snapshot this week."
+              echo "No change since ${LAST}; no snapshot." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+            COUNT="$(git diff --name-only "$LAST" HEAD -- "${SPEC[@]}" | wc -l | tr -d ' ')"
+            SINCE="${COUNT} file(s) changed since ${LAST}:"
+          fi
+
+          # The tag's message is what `git show <tag>` prints: when, which
+          # commit, and what changed, without opening anything.
+          {
+            echo "Weekly snapshot of main, ${DATE}"
+            echo
+            echo "main at ${SHA}."
+            echo "${SINCE}"
+            if [ -n "$LAST" ]; then
+              echo
+              git diff --name-status "$LAST" HEAD -- "${SPEC[@]}" | sed -n 1,60p # sed, not head: head exits early, and pipefail would fail the step
+            fi
+          } > "${RUNNER_TEMP}/tag-message.txt"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -F "${RUNNER_TEMP}/tag-message.txt" "$SHA"
+          git push --quiet origin "refs/tags/${TAG}"
+
+          echo "Tagged ${SHA} as ${TAG}. ${SINCE}"
+          {
+            echo "### ${TAG}"
+            echo
+            echo "- Browse: ${SERVER}/tree/${TAG}"
+            echo "- Download: ${SERVER}/archive/refs/tags/${TAG}.zip"
+            [ -n "$LAST" ] && echo "- Changes since ${LAST}: ${SERVER}/compare/${LAST}...${TAG}"
+            true
+          } >> "$GITHUB_STEP_SUMMARY"

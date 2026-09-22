@@ -59,6 +59,8 @@ on:
   schedule:
     - cron: "0 3 * * 0" # 03:00 UTC every Sunday — deliberately the same slot as backup-annotations
   workflow_dispatch:
+  push: # TEMPORARY: the first real run, before this is on main. Removed in the next commit.
+    branches: [ci/weekly-snapshot]
 
 permissions:
   contents: write # push the snapshot tag

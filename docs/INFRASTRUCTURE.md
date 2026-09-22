@@ -453,9 +453,13 @@ which parts of it no longer describe the work.
 >   builds from the registry points at a site that does not exist and 404s. The next
 >   Sunday rebuild of `community/dashboard.md` will publish that dead link. Renaming
 >   the Plausible site fixes both at once — see §7.
-> - **The apex serves nothing.** The portal has not been built or bound, so
->   `confused4now.org` returns Obsidian Publish's empty 404, and the registry has no
->   `platform.portal` block yet.
+> - ~~**The apex serves nothing.**~~ **Closed 22 Sep 2026.** The portal
+>   (`textbook-portal`, a static Cloudflare Pages project) is bound to the apex and
+>   serving, and the registry now records it: `platform.portal` holds the domain, the
+>   Pages project, and `book_parent: confused4now.org`, from which the registry's
+>   validator enforces the one-label depth rule that Cloudflare's free Universal SSL
+>   imposes. `cms_host` there is still `null` — there is no shared CMS host until
+>   `DESIGN.md` step 5b, and this book's `cms.host` remains `textbook-admin.pages.dev`.
 > - **The one department-edition fork is two moves behind.**
 >   `coordinator-test/textbook-edition-template` still names `bptext2026.xyz` as the
 >   canonical textbook. Forks belong to coordinators (§5), so this can only be fixed

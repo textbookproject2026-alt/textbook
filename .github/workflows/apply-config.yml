@@ -1,40 +1,153 @@
 name: Apply config
 
-# Runs when the config (or a template) changes in a pull request, regenerates the
-# managed files, and commits them back into the PR so the change lands complete.
+# Regenerates the managed files (configure.mjs renders everything under templates/
+# into the repository) and gets the result onto main.
+#
+# TWO TRIGGERS, FOR TWO DIFFERENT GAPS
+# ------------------------------------
+# On a PULL REQUEST that touches the config, a template or the renderer, it
+# regenerates and commits back into that pull request, so the change lands
+# complete. That is what this workflow has always done.
+#
+# On a SCHEDULE, it regenerates and proposes the result as its own pull request.
+# This closes a gap the pull-request trigger cannot: the managed files are
+# rendered from textbook.config.json AND from this book's entry in the platform
+# registry, and a registry-only change — a new title, a new relay, a moved domain
+# — happens in a different repository entirely. Nothing here fires for it. Until
+# this run existed, a merged registry change reached README.md, index.md and
+# CONTRIBUTING.md only the next time somebody happened to touch a template, and
+# the book quietly described itself with stale facts in the meantime.
+#
+# textbook-template's copy of this workflow added the weekly run first; this is
+# the same pattern, plus the auto-merge guard below, which the template's copy
+# does not have.
+#
+# WHY A PULL REQUEST AND NOT A PUSH
+# ---------------------------------
+# main is branch-protected and requires a pull request; github-actions[bot]
+# cannot bypass that rule, so `git push origin main` from here would simply be
+# rejected. The managed files have to be ON main to be the book, so the job
+# pushes a machine-owned branch (chore/apply-config) and opens a pull request
+# against main — exactly as contributors.yml, dashboard.yml and derivatives.yml
+# do.
+#
+# The branch is disposable: every run rebuilds it from main and force-pushes.
+# If a pull request is already open for it, the force-push updates that pull
+# request in place rather than opening a second one. If the render is
+# byte-identical to what is already on main, the job stops before touching git
+# at all — a quiet week produces no branch, no pull request, and no noise.
+#
+# AUTO-MERGE
+# ----------
+# The pull request this job opens merges itself, on one condition: it changes
+# nothing but generated files. The final step re-reads the pull request from the
+# API and requires all three of: the author is github-actions[bot], it changes at
+# least one file, and EVERY file it changes is a managed file. Anything failing
+# any of the three is left open for a human.
+#
+# "Managed" is not a list maintained here, which would rot the first time a
+# template was added. It is derived from main's own templates/ tree: configure.mjs
+# renders templates/<path> to <path>, so main's template listing IS the set of
+# paths this job is allowed to touch. It is read from main and not from the
+# branch on purpose — a template added on the branch would otherwise legitimise
+# its own render. The branch name is likewise not part of the test: anyone with
+# write access can push a branch called chore/apply-config, so trusting the name
+# would trust the pusher.
+#
+# These files are machine-owned as well as machine-authored. configure.mjs
+# rewrites each one from its template on every run, so there is no human edit on
+# them to lose and no judgement in them to review — a wrong render is corrected
+# by the next run rather than by a revert. The place to make a human decision is
+# the template or the registry entry, both of which are reviewed where they live.
+#
+# None of that holds for a chapter, and the guard refuses one by construction:
+# chapters/ has no template, so no chapter path can ever be in the managed set.
+# Required review on main is what protects those, and it must stay in place.
+#
+# Arming auto-merge needs "Allow auto-merge" switched on in the repository
+# settings, and needs main's protection to let github-actions[bot] satisfy it.
+# Until both are true the step logs a warning and leaves the pull request open;
+# it never fails the run.
+
 on:
   pull_request:
     paths:
       - textbook.config.json
       - templates/**
       - configure.mjs
+  schedule:
+    - cron: "0 7 * * 1" # 07:00 UTC every Monday — clear of the Sunday chore runs, an hour after the 06:00 link check
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: write # commit into the pull request, or push the chore/apply-config branch
+  pull-requests: write # open or update the pull request the scheduled run proposes
+
+# A manual run and the scheduled run must never race for the same branch. Pull
+# requests get their own group so an unrelated one is never cancelled by them.
+concurrency:
+  group: apply-config-${{ github.event_name == 'pull_request' && github.head_ref || 'scheduled' }}
+  cancel-in-progress: false
+
+env:
+  PR_BRANCH: chore/apply-config
 
 jobs:
   render:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: ${{ github.head_ref }}   # check out the PR's own branch so we can commit to it
+          # On a pull request, check out its own branch so the render can be
+          # committed back to it. Otherwise the default ref, which is main.
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || '' }}
           path: textbook
-      # configure.mjs reads ../textbook-registry/registry.json, so check the registry out
-      # beside the vault, the same layout as a local checkout. A registry change alone
-      # doesn't trigger this workflow; the next config or template PR picks it up.
+
+      # configure.mjs reads ../textbook-registry/registry.json, so check the registry
+      # out beside the vault, the same layout as a local checkout. This is the input
+      # that changes without anything here changing — see the header.
       - uses: actions/checkout@v5
         with:
           repository: textbookproject2026-alt/textbook-registry
           path: textbook-registry
+
       - uses: actions/setup-node@v5
         with:
-          node-version: 22
-      - run: node configure.mjs
-        working-directory: textbook
-      - name: Commit regenerated files
+          node-version: "22"
+
+      # Read BEFORE the render and from the checked-out tree, which on a scheduled
+      # run is main. configure.mjs renders templates/<path> to <path>, so this is
+      # exactly the set of paths the job may write — and, below, the only set
+      # auto-merge will accept.
+      - name: Work out which files are managed
+        id: managed
         working-directory: textbook
         run: |
+          set -euo pipefail
+          MANAGED="$(git ls-tree -r --name-only HEAD templates/ | sed 's|^templates/||' | sort)"
+          if [ -z "$MANAGED" ]; then
+            echo "::error::templates/ is empty, so configure.mjs manages nothing and this workflow has no job to do."
+            exit 1
+          fi
+          echo "Managed files:"
+          echo "$MANAGED" | sed 's|^|  |'
+          {
+            echo "files<<EOF"
+            echo "$MANAGED"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - run: node configure.mjs
+        working-directory: textbook
+
+      # --- pull-request trigger: commit back into the pull request --------------
+
+      - name: Commit regenerated files (pull request)
+        if: github.event_name == 'pull_request'
+        working-directory: textbook
+        run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
@@ -44,3 +157,151 @@ jobs:
             git commit -m "Apply config to generated files"
             git push
           fi
+
+      # --- scheduled trigger: propose the render as its own pull request --------
+
+      - name: Has the render actually changed anything?
+        id: render
+        if: github.event_name != 'pull_request'
+        working-directory: textbook
+        env:
+          MANAGED: ${{ steps.managed.outputs.files }}
+        run: |
+          set -euo pipefail
+          # Staged, not `git diff`: a template added since the last render produces
+          # an UNTRACKED file, which an unstaged diff would not see. Only the
+          # managed paths are staged — configure.mjs writes nothing else, and
+          # naming them keeps it that way if it ever does.
+          printf '%s\n' "$MANAGED" | tr '\n' '\0' | xargs -0 -r git add --
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "The generated files already match the config and the registry — nothing to propose."
+            echo "Managed files already current; no pull request opened." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git --no-pager diff --staged --stat
+          fi
+
+      - name: Open or update the pull request
+        id: pr
+        if: github.event_name != 'pull_request' && steps.render.outputs.changed == 'true'
+        working-directory: textbook
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          OPEN_PR="$(gh pr list --head "$PR_BRANCH" --state open --json number --jq '.[0].number // empty')"
+
+          # The render differs from main, but it may already match the branch — a
+          # pull request opened last Monday and not merged yet. Re-pushing an
+          # identical render would only re-notify its reviewers every week.
+          # The managed files were staged by the step above, so this compares the
+          # index — the render — against whatever the branch already proposes.
+          if [ -n "$OPEN_PR" ] && git fetch --quiet origin "$PR_BRANCH" 2>/dev/null; then
+            if git diff --staged --quiet FETCH_HEAD; then
+              echo "PR #${OPEN_PR} already proposes this exact render — leaving it alone."
+              echo "Apply-config PR #${OPEN_PR} already up to date." >> "$GITHUB_STEP_SUMMARY"
+              echo "number=${OPEN_PR}" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
+
+          # Rebuilt from main every run, so --force is the intent and not a
+          # rescue: nothing but this job ever commits to this branch. -B keeps
+          # the index, so the staged render is what gets committed.
+          git checkout -q -B "$PR_BRANCH"
+          git commit -q -m "Apply config to generated files"
+          git push --quiet --force origin "HEAD:refs/heads/$PR_BRANCH"
+
+          if [ -n "$OPEN_PR" ]; then
+            echo "Updated existing PR #${OPEN_PR}."
+            echo "Updated apply-config PR #${OPEN_PR}." >> "$GITHUB_STEP_SUMMARY"
+            echo "number=${OPEN_PR}" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          REGISTRY_SHA="$(git -C ../textbook-registry rev-parse --short HEAD)"
+          cat > "${RUNNER_TEMP}/pr-body.md" <<BODY
+          Re-renders the managed files from \`textbook.config.json\` and this book's
+          entry in the platform registry, as \`.github/workflows/apply-config.yml\`
+          does every Monday.
+
+          Rendered by \`configure.mjs\` against \`textbook-registry\` at
+          \`${REGISTRY_SHA}\`. A registry change happens in another repository and
+          fires nothing here, so without this run these files would have stayed as
+          they were until somebody next touched a template.
+
+          Every file here is generated: \`templates/<path>\` becomes \`<path>\`, and
+          each one is rewritten from scratch on every run. The thing to review is
+          the template or the registry entry, not this diff. If this pull request
+          touches only generated files it merges itself; if it touches anything
+          else, that is the bug and it is waiting for you deliberately.
+          BODY
+
+          URL="$(gh pr create \
+            --base main \
+            --head "$PR_BRANCH" \
+            --title "chore: apply config to generated files" \
+            --body-file "${RUNNER_TEMP}/pr-body.md")"
+
+          echo "Opened ${URL}"
+          echo "Opened apply-config PR: ${URL}" >> "$GITHUB_STEP_SUMMARY"
+          echo "number=${URL##*/}" >> "$GITHUB_OUTPUT"
+
+      # Everything this step trusts about the pull request is re-read from the
+      # API. Nothing is inferred from the branch it came from, and the managed set
+      # comes from main's templates/ — see AUTO-MERGE in the header for why both
+      # of those distinctions are the whole safety argument.
+      - name: Arm auto-merge on the pull request
+        if: steps.pr.outputs.number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.number }}
+          MANAGED: ${{ steps.managed.outputs.files }}
+        run: |
+          set -euo pipefail
+
+          WHO="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.user.login + "/" + .user.type')"
+          if [ "$WHO" != "github-actions[bot]/Bot" ]; then
+            echo "::warning::PR #${PR} is authored by ${WHO}, not github-actions[bot]/Bot — leaving it for a human."
+            exit 0
+          fi
+
+          # --paginate so a large pull request cannot pass as a small one on the
+          # strength of its first page of results.
+          FILES="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/pulls/${PR}/files" --jq '.[].filename' | sort)"
+          if [ -z "$FILES" ]; then
+            echo "::warning::PR #${PR} changes no files — leaving it for a human."
+            exit 0
+          fi
+
+          # Every changed file must be a managed one. Not equality: a run that
+          # re-renders only README.md is a perfectly good pull request.
+          STRAY="$(comm -23 <(printf '%s\n' "$FILES") <(printf '%s\n' "$MANAGED" | sort))"
+          if [ -n "$STRAY" ]; then
+            echo "::warning::PR #${PR} changes files configure.mjs does not manage: $(echo "$STRAY" | tr '\n' ' ')— leaving it for a human."
+            exit 0
+          fi
+          echo "PR #${PR} changes only managed files:"
+          echo "$FILES" | sed 's|^|  |'
+
+          if gh pr merge "$PR" --auto --squash; then
+            echo "Auto-merge armed on PR #${PR}; it squashes itself once main is satisfied."
+            echo "Auto-merge armed on apply-config PR #${PR}." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # GitHub refuses to arm auto-merge on a pull request that is already
+          # mergeable — the one case where there is nothing left to wait for.
+          if [ "$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" --jq '.mergeable_state')" = "clean" ] \
+            && gh pr merge "$PR" --squash; then
+            echo "Nothing left to wait for; merged PR #${PR}."
+            echo "Merged apply-config PR #${PR}." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          echo "::warning::Could not arm auto-merge on PR #${PR}. Check that \"Allow auto-merge\" is on under Settings -> General, and that main's protection lets github-actions[bot] merge. The pull request is open and untouched."

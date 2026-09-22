@@ -70,7 +70,7 @@ worth fixing before a year's worth of students meet it.
 Sunday. Open all three and check they look like pages rather than something
 half-written, and that the contributor list includes the people who worked on the
 book this year. If one is visibly stale or broken, that is the technical
-contact's — the details are in `docs/scheduled-actions-health-check.md`.
+contact's — the details are in the platform's `textbook-registry/docs/SCHEDULED-JOBS.md`, Part 2.
 
 **7. Publish everything.** The last thing before you hand over is a publish, so
 that the live site and the text about to be tagged are the same thing. Read the

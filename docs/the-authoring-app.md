@@ -19,19 +19,19 @@ The guide has two halves, because the app has two:
 
 ## What it is, and where it comes from
 
-**Authoring Assistant** is an ordinary Mac application, written for this book and
-this book only. It is not something you can buy or download from an app store: the
-technical contact builds it and sends you a disk image, and that is the only way
-you ever get it or update it.
+**Authoring Assistant** is an ordinary Mac application, written for the textbooks
+on this platform. It works on one book at a time, and the book you have open is
+the only one it will touch (see *Which book* below). It isn't something you can
+buy or download from an app store: the technical contact sends you a disk image,
+and that's the only way you ever get it or update it.
 
 - It runs **entirely on your own Mac**. The chapter analysis needs no internet at
   all.
 - It is **signed and notarised by Apple**, so it opens like any other app — no
   "unidentified developer" warning, no right-click-to-open trick.
-- Its source lives in a repository called `authoring-assistant`, alongside the
-  book's own. See `docs/INFRASTRUCTURE.md` for where that sits among everything
-  else, and `docs/the-authoring-app-operations.md` for the technical contact's
-  half.
+- It's built and signed by the platform, not by this book. Where it comes from,
+  and how it's built, is in the platform's
+  [`AUTHORING-APP-OPERATIONS.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/AUTHORING-APP-OPERATIONS.md).
 
 ### Installing and opening it
 
@@ -192,6 +192,23 @@ Everything in this half needs the internet. If you are offline it says so plainl
 and **nothing can be accepted, declined or published** until you are back.
 Everything under Chapters keeps working as normal.
 
+### Which book
+
+Everything under **Waiting for you** belongs to **one book at a time**. The band
+just under the title always says which book that is.
+
+- **If you have this book's vault open**, the vault decides: the app works on
+  this book and no other, until you press **Close vault**. That's what makes it
+  impossible to put one book's suggestion into another book's chapter.
+- **With no vault open**, you choose from the books your GitHub account can make
+  changes to, and **Change book** switches between them.
+- **If the app refuses the vault**, with a message such as "This vault is a copy
+  of …", the folder doesn't match the book the platform has on record. Nothing is
+  written into it. Tell the technical contact the exact message.
+- **"List of textbooks as of …"** in the band means the app couldn't fetch the
+  current list and is using the last one it saw. It's usually harmless, and it
+  clears itself when you're back online.
+
 ### Signing in, once
 
 The first time, press **Sign in**. The app shows you a short code and opens a web
@@ -204,9 +221,11 @@ too — not a robot's. You can withdraw the app's access at any time from your
 GitHub account settings. Your sign-in is kept in this Mac's Keychain, not in a file
 and never in your vault.
 
-If it shows a **One-off setup** card instead of a Sign in button, the technical
-contact has not yet given you the sign-in identifier. There is nothing you can do
-until they have; it is a one-off, once per Mac.
+The sign-in identifier comes with the list of textbooks, so there's normally
+nothing to set up. If the app shows a **One-off setup** card instead of a Sign in
+button, it has never managed to fetch that list on this Mac. Check that you're
+online and reopen it. If the card is still there, the technical contact can put
+the identifier into Settings for you.
 
 **When sign-in goes wrong**, every message you might see — the expired code, the
 page that never opened, the unrecognised identifier, the refused Keychain prompt,
@@ -311,8 +330,13 @@ backing up reader comments, and rebuilding the contributors, department editions
 and project health pages — saying whether each last finished properly.
 
 There is nothing for you to do here. If one says it did not finish, tell the
-technical contact; `docs/scheduled-actions-health-check.md` is the guide they will
-use.
+technical contact. The guide they'll use is the platform's
+[`SCHEDULED-JOBS.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/SCHEDULED-JOBS.md).
+
+The four jobs are the ones this book runs. A book that doesn't run them (a newer
+one, set up from the platform's template) sees a **Weekly jobs:** warning here
+every time, which also hides the "Nothing is waiting" note. That's a known fault
+in the app, not a fault in that book.
 
 ### Elsewhere
 
@@ -328,8 +352,9 @@ edition.
 There is a **Settings** link in the top corner. There is nothing in it you have to
 change, and it holds exactly two things.
 
-**The sign-in identifier** for *Waiting for you*. The technical contact gives you
-this once, per Mac. It is not a password and not a secret.
+**The sign-in identifier** for *Waiting for you*. It normally arrives with the
+list of textbooks, and this box stays empty. It's only for the case above, where
+the technical contact types one in by hand. It isn't a password or a secret.
 
 **A DeepSeek key**, which is entirely optional. If you have an account with
 DeepSeek — an AI service — you can paste your key here, and a tick box then appears
@@ -379,6 +404,8 @@ vault, and every past version of every file is kept.
 
 ## For the technical contact
 
-Building, signing and releasing the app, creating the sign-in identifier, the
-DeepSeek egress path, and the suggest-edit backend are all in
-**[`docs/the-authoring-app-operations.md`](the-authoring-app-operations.md)**.
+Building, signing and releasing the app, its sign-in, how it learns about books,
+and the DeepSeek egress path are the platform owner's, in
+**[`textbook-registry/docs/AUTHORING-APP-OPERATIONS.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/AUTHORING-APP-OPERATIONS.md)**.
+The suggest-edit backend is in the platform's
+[`INFRASTRUCTURE.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/INFRASTRUCTURE.md) §2.

@@ -259,7 +259,7 @@ If you would rather your cohort talked among themselves, you can set up a **priv
 
    [SCREENSHOT: annotation sidebar open on the site with the group selector dropdown expanded]
 
-There is no way to pre-select the group for them. Doing that would need Hypothes.is's Publisher tier, which the project has decided not to buy, so a student who forgets the dropdown posts to "Public" — say so plainly when you brief them. If you do run a group, it is worth **emailing the maintainer its name and link** so the weekly annotation backup can cover it.
+There is no way to pre-select the group for them. Doing that would need Hypothes.is's Publisher tier, which the project has decided not to buy, so a student who forgets the dropdown posts to "Public" — say so plainly when you brief them. If you do run a group, it is worth **emailing the maintainer its name and link**: the weekly annotation backup covers a group only once it is added to the book's entry in the platform registry, which the maintainer asks the platform owner to do, and the account that makes the backup has to be invited into the group.
 
 **Briefing your students.** There is a short student-facing guide to the annotation sidebar — reading comments, leaving one, and the two things students reliably get wrong (that comments are public, and that previous cohorts' comments are still on the page). Point them at it rather than writing your own: [[how-to-comment|Commenting in the margins]] (`docs/how-to-comment.md`). It assumes the default public layer, so if you do run a private group, add the dropdown instruction from point 6 yourself.
 

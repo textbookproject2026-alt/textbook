@@ -55,8 +55,8 @@ that runs itself.
 | `index.md` | The front page as published. **Written automatically — do not edit it.** |
 | `community/` | Three pages the weekly jobs write: contributors, department editions, project health. Don't edit them by hand; they get overwritten. |
 | `publish.css`, `publish.js` | How the site looks and the extra things it does. Don't edit — but they matter at publish time, see below. |
-| `textbook.config.json` | The book's title, maintainer, web address and licence, in one small file. Changing a value here rewrites `index.md`, `README.md` and `CONTRIBUTING.md` on its own — `docs/changing-settings.md` has the four steps. |
-| `backups/`, `scripts/`, `.github/`, `admin/`, `configure.mjs`, `OAUTH-SETUP.md` | Machinery. Ignore entirely. |
+| `textbook.config.json` | The book's platform name (`slug`), plus this repository's copy of its title, maintainer, web address and licence. The real values are in the platform registry, and the two are changed together — `docs/changing-settings.md` says how. |
+| `backups/`, `scripts/`, `.github/`, `admin/`, `configure.mjs` | Machinery. Ignore entirely. |
 
 ![[File_index.png]]
 
@@ -283,12 +283,14 @@ maintainer's step, not yours.
 annotations and rewrite three pages under `community/`: the contributors list,
 the department editions list, and the project health dashboard. That is why
 `community/` files change on their own. Nobody starts them and nobody needs to
-check them weekly — `docs/scheduled-actions-health-check.md` is there for
-whoever does look.
+check them weekly — the platform's
+[`SCHEDULED-JOBS.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/SCHEDULED-JOBS.md)
+is there for whoever does look.
 
 **The front page and the README rewrite themselves** whenever the book's title,
-address, maintainer or licence changes, or whenever `templates/` is edited. That
-is the mechanism described under *Adding a new chapter*.
+address, maintainer or licence changes, whenever `templates/` is edited, and on
+Monday mornings if the platform registry has changed something they mention.
+That is the mechanism described under *Adding a new chapter*.
 
 **The authoring app writes to the vault when you tell it to.** The **Authoring
 Assistant** — the Mac app that links citations and concept pages, builds the

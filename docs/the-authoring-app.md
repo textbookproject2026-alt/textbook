@@ -197,11 +197,14 @@ Everything under Chapters keeps working as normal.
 Everything under **Waiting for you** belongs to **one book at a time**. The band
 just under the title always says which book that is.
 
-- **If you have this book's vault open**, the vault decides: the app works on
-  this book and no other, until you press **Close vault**. That's what makes it
-  impossible to put one book's suggestion into another book's chapter.
-- **With no vault open**, you choose from the books your GitHub account can make
-  changes to, and **Change book** switches between them.
+- **You choose the book, and your choice decides.** The app offers the books
+  your GitHub account can make changes to, and **Change book** switches between
+  them. You don't need a vault open: chapters can be changed in the book's
+  drafts area.
+- **A vault**, if you open one, can only be your copy of the chosen book.
+  Opening a copy of a different book is refused, and choosing a different book
+  closes the vault. That's what makes it impossible to put one book's
+  suggestion into another book's chapter.
 - **If the app refuses the vault**, with a message such as "This vault is a copy
   of …", the folder doesn't match the book the platform has on record. Nothing is
   written into it. Tell the technical contact the exact message.

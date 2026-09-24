@@ -1,0 +1,38 @@
+name: nudge
+
+# Tells the platform's builder that a branch of this book moved, so the reading
+# site and the drafts preview rebuild within a couple of minutes.
+#
+# It holds no secret. GitHub gives this job a short-lived token that proves which
+# repository and branch the push was to, and the platform's build-nudge Worker
+# checks that token against GitHub's public keys and the registry. The Worker
+# builds nothing itself: it asks the builder (quartz-book) to compare this book
+# with what it serves, and the builder reads everything else from the registry.
+#
+# If this workflow is deleted, or Actions is off, the book still rebuilds, only
+# up to 15 minutes later. A red run means the Worker refused or couldn't start
+# the build; the next 15-minute check covers it. See the platform's
+# docs/SCHEDULED-JOBS.md in textbook-registry.
+
+on:
+  push:
+    branches: ["**"]
+
+permissions:
+  id-token: write
+
+jobs:
+  nudge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Tell the builder this branch moved
+        env:
+          WORKER: https://build-nudge.brandonproject2026.workers.dev
+        run: |
+          token=$(curl -sS --fail-with-body \
+            -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=$WORKER" | jq -r .value)
+          echo "::add-mask::$token"
+          curl -sS --fail-with-body --retry 2 \
+            -X POST -H "Authorization: Bearer $token" "$WORKER"

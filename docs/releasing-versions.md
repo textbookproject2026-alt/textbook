@@ -70,7 +70,7 @@ worth fixing before a year's worth of students meet it.
 Sunday. Open all three and check they look like pages rather than something
 half-written, and that the contributor list includes the people who worked on the
 book this year. If one is visibly stale or broken, that is the technical
-contact's — the details are in `docs/scheduled-actions-health-check.md`.
+contact's — the details are in the platform's `textbook-registry/docs/SCHEDULED-JOBS.md`, Part 2.
 
 **7. Publish everything.** The last thing before you hand over is a publish, so
 that the live site and the text about to be tagged are the same thing. Read the
@@ -136,7 +136,7 @@ That link is permanent. It shows the text exactly as it stands today and
 will keep showing that, unchanged, whatever gets edited on the live site
 during the year — so it is safe to put in a syllabus.
 
-The live textbook is at https://bptext2026.xyz as always. It always shows
+The live textbook is at https://social-research-methods.confused4now.org as always. It always shows
 the newest version rather than a fixed edition, which is why the link
 above exists.
 
@@ -162,7 +162,7 @@ Subject: Your textbook for [module / year]
 
 The textbook for this module is online and free to read:
 
-https://bptext2026.xyz
+https://social-research-methods.confused4now.org
 
 Nothing to install, no account, no login. It works on a phone.
 
@@ -259,7 +259,7 @@ would come away with something false.
 When that happens:
 
 **1. Fix the live site first.** Obsidian, publish, done. Everyone reading the
-book at `bptext2026.xyz` is now reading the corrected text, and that is most
+book at `social-research-methods.confused4now.org` is now reading the corrected text, and that is most
 readers. Do this before anything else; the rest can take a day.
 
 **2. Tell the technical contact, and say it's serious.** This is the sentence

@@ -3,18 +3,26 @@
 //
 // Weekly lossless backup of this textbook's Hypothes.is annotations.
 //
-// Pulls three scopes and writes ONE file per run:
+// Pulls the scopes below and writes ONE file per run:
 //   backups/annotations-YYYY-MM-DD.json
 //
-//   1. public              — the public layer for https://bptext2026.xyz
-//   2. group:ZGY29zLM      — test-group
-//   3. group:L9KgjVPa      — Biology edition
+//   1. public              — the public layer for the book's site
+//   2. public-legacy:<host> — the public layer left on each former domain
+//   3. group:<id>          — each private annotation group
+//
+// Which site, which former domains and which groups all come from this book's
+// entry in the platform registry (site.domain, site.legacy_origins,
+// annotations.hypothesis_groups), fetched at the start of every run. See
+// scripts/lib/registry.mjs. If the registry cannot be fetched, or the book or
+// any of those fields cannot be resolved, the script exits 1 before it asks
+// Hypothes.is for anything: no file is written and no old backup is pruned.
 //
 // Raw annotation JSON is stored verbatim (no field selection, no reshaping) so
 // a future restore or migration has everything the API returned.
 //
 // Run:  HYPOTHESIS_API_TOKEN=... node scripts/backup-annotations.mjs
 // Flags: --out-dir <path>  --keep <n>  --site <url>  --force-per-uri  --dry-run
+// Env:   TEXTBOOK_REGISTRY=<url or path> to read a registry other than main's
 //
 // Node 20+ (global fetch, AbortSignal.timeout). No dependencies.
 //
@@ -24,7 +32,7 @@
 //
 //   * wildcard_uri works UNAUTHENTICATED for public annotations. Wildcards
 //     (* and _) are permitted only within the PATH; a wildcard anywhere in the
-//     domain is rejected 400. So `https://bptext2026.xyz/*` is legal and is
+//     domain is rejected 400. So `https://social-research-methods.confused4now.org/*` is legal and is
 //     our primary route to "all public annotations under this domain".
 //   * limit  max 200 (limit=1000 -> 400 "greater than maximum value 200").
 //   * offset max 9800 (offset=9999 -> 400 "greater than maximum value 9800").
@@ -43,23 +51,27 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadBook, field, isString, exitOnRegistryError, REGISTRY_URL } from './lib/registry.mjs';
 
 // --- Configuration ---------------------------------------------------------
-
-// Private groups to back up, in output order.
 //
-// SEAM: there will be no per-edition groups — the Publisher tier was not bought
-// and per-cohort isolation is out of scope, not pending. The two below are
-// leftovers from testing and keep being backed up. A group added by hand (a
-// coordinator may run one for their own cohort) gets appended here and nothing
-// else in this file needs to change.
-const ANNOTATION_GROUPS = [
-  { id: 'ZGY29zLM', label: 'test-group' },
-  { id: 'L9KgjVPa', label: 'Biology edition' },
-];
+// Per-book values come from the registry entry, resolved in main():
+//
+//   annotations.hypothesis_groups — private groups to back up, in output order.
+//     There are no per-edition groups: the Publisher tier was not bought and
+//     per-cohort isolation was decided against. A group a coordinator runs for
+//     their own cohort is added to the registry, and nothing here changes.
+//     An empty list is normal; a missing one is an error.
+//
+//   site.legacy_origins — origins the book used to be served from. Hypothes.is
+//     anchors every annotation to the URL it was made on and never moves it, so
+//     annotations made before a domain cutover stay under the old domain for
+//     good — a wildcard on the new domain does not see them. Each is backed up
+//     as its own scope, public-legacy:<host>, so they do not silently age out
+//     of the retained backups. Drop one from the registry only once its
+//     annotations have been migrated or deliberately abandoned.
 
 const API_BASE = 'https://api.hypothes.is/api';
-const DEFAULT_SITE = 'https://bptext2026.xyz';
 const PUBLIC_GROUP = '__world__'; // Hypothes.is' id for the public layer
 const PAGE_SIZE = 200; // API maximum, verified
 const KEEP_DEFAULT = 12; // ~3 months of weekly backups
@@ -87,7 +99,7 @@ function parseArgs(argv) {
   const opts = {
     outDir: path.join(REPO_ROOT, 'backups'),
     keep: KEEP_DEFAULT,
-    site: DEFAULT_SITE,
+    site: null, // the registry's site.domain, filled in by main()
     forcePerUri: false,
     dryRun: false,
   };
@@ -121,9 +133,13 @@ function printHelp() {
   --out-dir <path>   where annotations-YYYY-MM-DD.json is written
                      (default: <repo>/backups)
   --keep <n>         how many backup files to retain (default: ${KEEP_DEFAULT})
-  --site <url>       site origin to back up (default: ${DEFAULT_SITE})
+  --site <url>       site origin to back up (default: the book's site, from
+                     the registry)
   --force-per-uri    skip the wildcard_uri query and use the per-page fallback
   --dry-run          fetch and report, write nothing
+
+The book is resolved from textbook.config.json's "slug" in the registry at
+${REGISTRY_URL} (override with TEXTBOOK_REGISTRY).
 `);
 }
 
@@ -151,7 +167,7 @@ async function apiGet(token, endpoint, searchParams) {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
-          'User-Agent': 'bptext2026-annotation-backup/1',
+          'User-Agent': 'textbook-annotation-backup/1',
         },
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
@@ -408,6 +424,24 @@ async function pruneOldBackups(outDir, keep) {
 async function main() {
   const opts = parseArgs(process.argv.slice(2));
 
+  // The registry first: nothing is fetched from Hypothes.is, written or pruned
+  // until the book and every value taken from it are known.
+  let book, source, legacySites, groups;
+  try {
+    ({ book, source } = await loadBook(REPO_ROOT));
+    const domain = field(book, 'site.domain', isString, 'a hostname');
+    legacySites = field(book, 'site.legacy_origins', (v) => Array.isArray(v) && v.every(isString), 'a list of origins');
+    groups = field(
+      book, 'annotations.hypothesis_groups',
+      (v) => Array.isArray(v) && v.every((g) => isString(g?.id) && isString(g?.label)),
+      'a list of { id, label }',
+    );
+    opts.site ??= `https://${domain}`;
+  } catch (err) {
+    exitOnRegistryError(err);
+  }
+  log(`Book: ${book.slug} (registry: ${source})`);
+
   const token = process.env.HYPOTHESIS_API_TOKEN;
   if (!token || !token.trim()) {
     console.error(
@@ -441,7 +475,7 @@ async function main() {
 
   const profileGroupIds = new Set((profile.groups ?? []).map((g) => g.id));
   const globalWarnings = [];
-  for (const group of ANNOTATION_GROUPS) {
+  for (const group of groups) {
     if (!profileGroupIds.has(group.id)) {
       const msg =
         `The account ${profile.userid} is not a member of group ${group.id} ` +
@@ -461,7 +495,12 @@ async function main() {
 
   const jobs = [
     { key: 'public', label: `public layer for ${opts.site}`, run: () => collectPublic(token.trim(), opts) },
-    ...ANNOTATION_GROUPS.map((g) => ({
+    ...legacySites.filter((site) => site !== opts.site).map((site) => ({
+      key: `public-legacy:${new URL(site).host}`,
+      label: `public layer left on the former domain ${site}`,
+      run: () => collectPublic(token.trim(), { ...opts, site }),
+    })),
+    ...groups.map((g) => ({
       key: `group:${g.id}`,
       label: `group ${g.id} (${g.label})`,
       run: () => collectGroup(token.trim(), g),
@@ -508,6 +547,7 @@ async function main() {
       runDate,
       generatedBy: 'scripts/backup-annotations.mjs',
       api: API_BASE,
+      book: book.slug,
       site: opts.site,
       account: profile.userid,
       complete: !hadFailure,
@@ -528,9 +568,9 @@ async function main() {
 
   log('\nSummary:');
   for (const [key, m] of Object.entries(scopeMeta)) {
-    log(`  ${key.padEnd(20)} ${String(m.count).padStart(6)}  ${m.ok ? m.method : `FAILED: ${m.error}`}`);
+    log(`  ${key.padEnd(30)} ${String(m.count).padStart(6)}  ${m.ok ? m.method : `FAILED: ${m.error}`}`);
   }
-  log(`  ${'TOTAL'.padEnd(20)} ${String(payload.meta.totalAnnotations).padStart(6)}`);
+  log(`  ${'TOTAL'.padEnd(30)} ${String(payload.meta.totalAnnotations).padStart(6)}`);
 
   if (opts.dryRun) {
     log('\n--dry-run: nothing written.');

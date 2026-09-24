@@ -29,20 +29,22 @@ Deleting your *own* replies is always possible. Someone else's comment is theirs
 
 **1. Everything on the site at once.** This link lists every public comment on every page of the textbook, newest first:
 
-https://hypothes.is/search?q=url:https://bptext2026.xyz/*
+https://hypothes.is/search?q=url:https://social-research-methods.confused4now.org/*
 
 Bookmark it. This is the starting point of the weekly routine. The `*` at the end means "any page on this site" — don't drop it, or the search returns nothing.
 
 To see just one kind of comment, add a tag to the end of the same link:
 
-- https://hypothes.is/search?q=url:https://bptext2026.xyz/*+tag:copy-edit
-- https://hypothes.is/search?q=url:https://bptext2026.xyz/*+tag:discussion
+- https://hypothes.is/search?q=url:https://social-research-methods.confused4now.org/*+tag:copy-edit
+- https://hypothes.is/search?q=url:https://social-research-methods.confused4now.org/*+tag:discussion
+
+The book has had two earlier addresses, and comments stay attached to the address they were made on, so neither shows up in the links above. Everything written before 14 September 2026 is on `https://bptext2026.xyz` — swap that into the link to read it. Between 14 and 20 September the book was at `https://confused4now.org`; nobody annotated it in that week, so there is nothing to look for there.
 
 [SCREENSHOT: the hypothes.is search page showing the site-wide result list, with the "N Matching Annotations" count visible at the top]
 
 **2. One page at a time.** Every page of the textbook shows a small badge in the row under the title, after "Edit on GitHub · View revision history · Suggest an edit" — it reads **"3 annotations"**, or **"Annotate this page"** when there are none. Click it to open the sidebar on that page and read the comments in context. Use this when you're already reading a chapter, or when the site-wide search points you at a page and you want to see the highlight in place.
 
-Three things about the count, so it never misleads you. It counts the **public layer only** — the two leftover private test groups are not in it. It is read when the page loads, so after you reply the number does not tick up until you reload. And if it cannot reach Hypothes.is at all, the badge simply doesn't appear: a missing badge means the count failed, never that the count is zero.
+Three things about the count, so it never misleads you. It counts the **public layer only** — a private group, if a coordinator runs one, is not in it. It is read when the page loads, so after you reply the number does not tick up until you reload. And if it cannot reach Hypothes.is at all, the badge simply doesn't appear: a missing badge means the count failed, never that the count is zero.
 
 [SCREENSHOT: the row under a chapter title showing "Edit on GitHub · View revision history · Suggest an edit" and the annotation count badge]
 
@@ -85,7 +87,7 @@ Every page carries a **Suggest an edit** button in the row under the title. A re
 
 [SCREENSHOT: the "Suggest an edit" form open over a chapter page, showing the name, email, page, suggested change and why fields]
 
-**Where it goes, and what isn't yours.** Each submission is filed automatically as an issue on the project's GitHub repository, labelled `suggested-edit` and `needs-triage`. You do not need a GitHub account and you never open the issue yourself. Labelling it, replying to the reader, and closing it when it's dealt with are the maintainer's job — `needs-triage` is simply the maintainer's marker for "nobody has looked at this yet", and it comes off once someone has. The words are here only so they aren't a mystery if you see them.
+**Where it goes, and what isn't yours.** Each submission is filed automatically, by the platform's shared suggest-edit service, as an issue on this book's GitHub repository, labelled `suggested-edit` and `needs-triage` and signed `textbook-suggest-edit[bot]`. You do not need a GitHub account and you never open the issue yourself. Labelling it, replying to the reader, and closing it when it's dealt with are the maintainer's job — `needs-triage` is simply the maintainer's marker for "nobody has looked at this yet", and it comes off once someone has. The words are here only so they aren't a mystery if you see them.
 
 **What reaches you** is the substance: the page, what the reader says is wrong, and what they think it should say. One decision per suggestion, and there are only three:
 
@@ -101,7 +103,7 @@ Every page carries a **Suggest an edit** button in the row under the title. A re
 
 A handful of trusted contributors can edit chapters in a web page instead of Obsidian. Their guide is `docs/for-trusted-contributors.md`, and the one thing to know about it is the safety property: **nothing anyone does in that editor reaches the live site.** Every save goes into a holding area. There is no publish button in it, for them or for you.
 
-**Where you look.** The editor is at `https://textbook-cms.pages.dev`. You sign in with your own GitHub login — the technical contact sets that up once, and it is the only place in your routine where such an account is used; you never visit GitHub itself. Inside, entries sit in three columns: **Draft**, **In review**, **Ready**.
+**Where you look.** The editor is at `https://textbook-admin.pages.dev`. You sign in with your own GitHub login — the technical contact sets that up once, and it is the only place in your routine where such an account is used; you never visit GitHub itself. Inside, entries sit in three columns: **Draft**, **In review**, **Ready**.
 
 **In review** is your column. It means a contributor has finished and would like your eyes on it.
 
@@ -122,4 +124,4 @@ Two things worth knowing. Every edit is recorded under its author's own name, so
 
 Per-cohort comment isolation was considered and **not adopted**. It would have needed Hypothes.is's Publisher tier, and the project has decided not to buy it. That decision is settled rather than deferred, so the four moves above are the whole of moderation, permanently: no hide/unhide, no membership control, no per-edition groups arriving later. All reader discussion happens in the public layer, and that is the launch model.
 
-One private group exists from earlier testing — the **Biology edition** group — created under the technical contact's account, and the weekly annotation backup still covers it. **At handover, the textbook's maintainer is made moderator/owner of all annotation groups**; that transfer is a handover checklist step, not something to do now.
+**The book has no private groups.** Two were left over from testing (*test-group* and *Biology edition*); every weekly backup found them empty, and on 17 September 2026 they were taken off the platform's list for this book, so they are no longer backed up or counted. If a coordinator ever runs a group for their own cohort and wants it backed up, the platform owner adds it to this book's registry entry. **At handover, the Hypothes.is account that holds the backup's token passes to the textbook's maintainer** — see `docs/what-this-book-runs-on.md`.

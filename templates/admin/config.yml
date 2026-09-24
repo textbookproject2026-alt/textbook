@@ -1,4 +1,4 @@
-# Sveltia CMS configuration — Education Tool Project 2026 textbook
+# Sveltia CMS configuration — __TITLE__ textbook
 #
 # This file is TOOLING, not content. It lives on `main` so it is versioned
 # alongside the book, but it must never be part of the Obsidian Publish set.
@@ -10,7 +10,7 @@
 
 backend:
   name: github
-  repo: textbookproject2026-alt/textbook
+  repo: __CONTENT_REPO__
 
   # =====================================================================
   # LOAD-BEARING LINE. Read this before touching it.
@@ -29,7 +29,7 @@ backend:
   #
   # Keep this as `drafts`.
   # =====================================================================
-  branch: drafts
+  branch: __DRAFTS_BRANCH__
 
   # OAuth relay. Contributors sign in as THEMSELVES with their own GitHub
   # account; this Worker only exchanges the OAuth code for a token and
@@ -39,7 +39,7 @@ backend:
   # Rendered from the registry's platform.cms_auth_relay. The relay only lets
   # the editor sign in from hosts on its ALLOWED_DOMAINS list, which the
   # platform owner keeps (textbook-registry/docs/CMS-RELAY.md).
-  base_url: https://sveltia-cms-auth.brandonproject2026.workers.dev
+  base_url: __CMS_AUTH_RELAY__
 
 # Second safety net, independent of `branch` above.
 #

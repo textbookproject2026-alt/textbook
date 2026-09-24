@@ -5,6 +5,7 @@
 // Hypothes.is API and the GitHub API, and writes it back into the checkout.
 //
 // Run:  HYPOTHESIS_API_TOKEN=... node scripts/gen-dashboard.mjs
+// Env:   TEXTBOOK_REGISTRY=<url or path> to read a registry other than main's
 // Flags:
 //   --out <path>   write somewhere other than community/dashboard.md
 //   --stdout       print the page instead of writing it
@@ -48,7 +49,7 @@
 //         own pull request cannot move the date)
 //       * the newest annotation's `created` (not `updated` — see above)
 //       * the newest edition fork's `created_at` (a new fork changes the count)
-//       * the newest non-bot issue or pull request's `created_at`
+//       * the newest counted issue or pull request's `created_at`
 //     A number can still change without the date moving — an issue being
 //     closed, say. That direction is harmless: the page differs, a pull
 //     request opens, and it contains a real change.
@@ -64,13 +65,24 @@
 //         reason).
 //       * A group the token's account is not a member of also returns 200 and
 //         zero rows. That is checked against profile.groups and throws.
+//     The same goes for the registry this page is configured from (below): if
+//     it cannot be fetched, or this book or any value the page needs cannot be
+//     resolved from it, the script exits 1 before any API is queried.
 //
 //  5. Readership is a LINK, not a number. The Plausible Stats API needs a paid
 //     plan and a second expiring secret; the site's dashboard is already
-//     public, so the page points at it. If textbook.config.json has no
-//     `plausible_public_url` key the page says so in as many words rather than
-//     quietly dropping the section — an empty spot on a health dashboard is
+//     public, so the page points at it. The link is derived from the registry's
+//     analytics.plausible (https://plausible.io/<site> when dashboard_public is
+//     true), never stored. If the book has no Plausible site, or its dashboard
+//     is not public, the page says so in as many words rather than quietly
+//     dropping the section — an empty spot on a health dashboard is
 //     indistinguishable from a healthy one.
+//
+// Every per-book value — the repo, the site, the annotation groups, the
+// edition template and the fork owners to skip, the title, the analytics — is
+// read from this book's entry in the platform registry, fetched at the start
+// of each run (scripts/lib/registry.mjs). textbook.config.json supplies only
+// the slug.
 //
 // The annotation queries mirror scripts/backup-annotations.mjs, which is the
 // source of truth for how this API behaves (its header documents the limits
@@ -83,41 +95,24 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadBook, field, isString, isStringArray, exitOnRegistryError, RegistryError } from './lib/registry.mjs';
 
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // --- Configuration ---------------------------------------------------------
 
-// This repository — the book itself. GITHUB_REPOSITORY is set in Actions; the
-// constant is the fallback so the script runs the same way on a laptop.
-const BOOK_REPO = process.env.GITHUB_REPOSITORY || 'textbookproject2026-alt/textbook';
-
-// The site template. Forks of THIS are department editions, never forks of the
-// book — see the header of gen-derivatives.mjs, note 1. The two pages must
-// agree on the count, so the filtering below matches that script's.
-const TEMPLATE_REPO = 'textbookproject2026-alt/textbook-edition-template';
-const SKIP_FORK_OWNERS = new Set(['textbookproject2026-alt']);
+// Per-book values are read from the registry in readBook(), below.
 
 // The label the "Suggest an edit" route puts on an issue. This is the Tier-1
 // pipeline: everything a reader files without a GitHub account arrives here.
+// A platform convention (DESIGN §0c), so not a registry field.
 const SUGGESTED_EDIT_LABEL = 'suggested-edit';
-
-// Private annotation groups, mirroring ANNOTATION_GROUPS in
-// backup-annotations.mjs. That file is the source of truth — when a group is
-// added there for a new edition, add it here too or the dashboard will
-// under-report the margin.
-const ANNOTATION_GROUPS = [
-  { id: 'ZGY29zLM', label: 'test-group' },
-  { id: 'L9KgjVPa', label: 'Biology edition' },
-];
 
 const HYPOTHESIS_API = 'https://api.hypothes.is/api';
 const PUBLIC_GROUP = '__world__'; // Hypothes.is' id for the public layer
 const PAGE_SIZE = 200;            // API maximum, verified — see backup-annotations.mjs
 const REQUEST_TIMEOUT_MS = 30_000;
 const MAX_ATTEMPTS = 4;           // per request, for 429 / 5xx / network blips
-
-const PLAUSIBLE_PLACEHOLDER = '__PLAUSIBLE_PUBLIC_URL__';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December'];
@@ -163,8 +158,10 @@ function daysBetween(fromIso, toIso) {
   return Math.floor((Date.parse(toIso) - Date.parse(fromIso)) / 86_400_000);
 }
 
-/** Automation rather than a person — the same test gen-contributors.mjs uses. */
-const isBotName = (name = '') => /\[bot\]$/i.test(name.trim());
+/** Automation rather than a person — the same test gen-contributors.mjs uses:
+ *  a `[bot]` suffix, or one of the registry's platform.automation_logins. */
+const isBotName = (name = '', automationLogins) =>
+  /\[bot\]$/i.test(name.trim()) || automationLogins.has(name.trim().toLowerCase());
 
 // --- Hypothes.is -----------------------------------------------------------
 
@@ -262,7 +259,7 @@ const emptyTally = () => ({
   newestCreated: null, oldestCreated: null,
 });
 
-async function collectAnnotations(site) {
+async function collectAnnotations(site, annotationGroups) {
   const token = (process.env.HYPOTHESIS_API_TOKEN ?? '').trim();
   if (!token) {
     throw new Error(
@@ -288,12 +285,12 @@ async function collectAnnotations(site) {
   // Same trap one level down: a group the account has left returns 200 and no
   // rows. Refuse rather than publish a zero we cannot see behind.
   const memberOf = new Set((profile.groups ?? []).map((g) => g.id));
-  for (const group of ANNOTATION_GROUPS) {
+  for (const group of annotationGroups) {
     if (!memberOf.has(group.id)) {
       throw new Error(
         `${profile.userid} is not a member of group ${group.id} (${group.label}), so that group\n` +
         'returns zero annotations rather than an error. Rejoin the group, or remove it from\n' +
-        'ANNOTATION_GROUPS in this script and in scripts/backup-annotations.mjs.',
+        'annotations.hypothesis_groups in this book\'s registry entry.',
       );
     }
   }
@@ -317,7 +314,7 @@ async function collectAnnotations(site) {
     ? (publicTally.oldestCreated ?? overall.oldestCreated) : overall.oldestCreated;
 
   const groups = [];
-  for (const group of ANNOTATION_GROUPS) {
+  for (const group of annotationGroups) {
     const tally = emptyTally();
     tally.ids = overall.ids;
     tally.uris = overall.uris;
@@ -376,56 +373,74 @@ async function githubList(url) {
   return items;
 }
 
-async function collectGitHub() {
+/** True for an issue carrying the suggest-edit route's label. */
+const isSuggestion = (i) => (i.labels ?? []).some((l) => (typeof l === 'string' ? l : l?.name) === SUGGESTED_EDIT_LABEL);
+
+async function collectGitHub({ repo, templateRepo, skipForkOwners, automationLogins, suggestionsCountedFrom }) {
+  const isBot = (name) => isBotName(name, automationLogins);
+
   // Contributors, with their commit counts. Bots are dropped for the same
   // reason gen-contributors.mjs drops them: github-actions[bot] commits are
   // this page and its siblings landing on main, not work on the book.
   const contributors = (await githubList(
-    `https://api.github.com/repos/${BOOK_REPO}/contributors?per_page=100&anon=0`,
-  )).filter((c) => c.type !== 'Bot' && !isBotName(c.login ?? ''));
+    `https://api.github.com/repos/${repo}/contributors?per_page=100&anon=0`,
+  )).filter((c) => c.type !== 'Bot' && !isBot(c.login ?? ''));
 
   // The newest commit by a person, for the date stamp — see note 3. One page of
   // 100 is plenty; if a run of automation ever fills it, the stamp simply falls
   // back to the other three sources rather than reporting a bot's date.
   const recentCommits = (await githubGet(
-    `https://api.github.com/repos/${BOOK_REPO}/commits?per_page=100`,
+    `https://api.github.com/repos/${repo}/commits?per_page=100`,
   )).body;
   const newestHumanCommit = (Array.isArray(recentCommits) ? recentCommits : [])
-    .filter((c) => !isBotName(c.author?.login ?? '') && !isBotName(c.commit?.author?.name ?? ''))
+    .filter((c) => !isBot(c.author?.login ?? '') && !isBot(c.commit?.author?.name ?? ''))
     .map((c) => c.commit?.author?.date ?? c.commit?.committer?.date)
     .filter(Boolean)
     .reduce((acc, d) => laterOf(acc, d), null);
 
   // Department editions: forks of the TEMPLATE, filtered exactly as
-  // gen-derivatives.mjs filters them so the two pages cannot disagree.
-  const editions = (await githubList(
-    `https://api.github.com/repos/${TEMPLATE_REPO}/forks?per_page=100&sort=oldest`,
-  )).filter((f) => !f.archived && !f.disabled && !SKIP_FORK_OWNERS.has(f.owner.login.toLowerCase()));
+  // gen-derivatives.mjs filters them so the two pages cannot disagree. A book
+  // whose registry entry has `editions: null` has no template, so nothing to
+  // count; that is recorded as null, not as a zero, and the page says nothing.
+  const editions = templateRepo === null ? [] : (await githubList(
+    `https://api.github.com/repos/${templateRepo}/forks?per_page=100&sort=oldest`,
+  )).filter((f) => !f.archived && !f.disabled && !skipForkOwners.has(f.owner.login.toLowerCase()));
 
   // Open issues and pull requests. /issues returns both — a pull request is an
   // issue with a `pull_request` key — so one paged call answers both counts.
   // The machine's own housekeeping branches are excluded: chore/dashboard-update
   // is open while this very page waits to be merged, and counting it would make
   // the book look busier every Sunday morning than it is.
+  //
+  // Reader suggestions are the exception, and they are recognised by LABEL, not
+  // by author. The suggest-edit route files them under whatever credential it
+  // holds — a machine user once, now a GitHub App that shows as <app>[bot] — so
+  // an author test would drop them or keep them depending on which credential
+  // was live. The label is the route's own contract and survives both.
+  //
+  // Suggestions filed before the registry's suggest_edit.counted_from were tests
+  // of the route, filed under the same credentials real ones use, so a date is
+  // the only thing that tells them apart. They are left out of every count, and
+  // out of the date stamp; the page says how many there were.
+  const isCounted = (i) => !suggestionsCountedFrom || (i.created_at ?? '') >= suggestionsCountedFrom;
   const openItems = await githubList(
-    `https://api.github.com/repos/${BOOK_REPO}/issues?state=open&per_page=100`,
+    `https://api.github.com/repos/${repo}/issues?state=open&per_page=100`,
   );
-  const openHuman = openItems.filter((i) => !isBotName(i.user?.login ?? ''));
-  const openIssues = openHuman.filter((i) => !i.pull_request);
-  const openPulls = openHuman.filter((i) => i.pull_request);
+  const openCounted = openItems.filter((i) => (!i.pull_request && isSuggestion(i) ? isCounted(i) : !isBot(i.user?.login ?? '')));
+  const openIssues = openCounted.filter((i) => !i.pull_request);
+  const openPulls = openCounted.filter((i) => i.pull_request);
 
   // The Tier-1 pipeline: everything filed through the "Suggest an edit" link.
   // state=all so the page can say how many have been dealt with, not just how
-  // many are waiting. Bot-filed suggestions are kept — the suggest-edit route
-  // files under a machine account on a reader's behalf, and dropping those
-  // would hide the entire no-GitHub-account pathway.
-  const suggestions = (await githubList(
-    `https://api.github.com/repos/${BOOK_REPO}/issues?state=all&labels=${encodeURIComponent(SUGGESTED_EDIT_LABEL)}&per_page=100`,
+  // many are waiting. Selected by label alone, whoever filed them — see above.
+  const allSuggestions = (await githubList(
+    `https://api.github.com/repos/${repo}/issues?state=all&labels=${encodeURIComponent(SUGGESTED_EDIT_LABEL)}&per_page=100`,
   )).filter((i) => !i.pull_request);
+  const suggestions = allSuggestions.filter(isCounted);
   const suggestionsOpen = suggestions.filter((i) => i.state === 'open');
   const suggestionsClosed = suggestions.filter((i) => i.state === 'closed');
 
-  const newestCreated = [...openHuman, ...suggestions, ...editions]
+  const newestCreated = [...openCounted, ...suggestions, ...editions]
     .map((i) => i.created_at)
     .filter(Boolean)
     .reduce((acc, d) => laterOf(acc, d), null);
@@ -433,10 +448,12 @@ async function collectGitHub() {
   return {
     contributors: contributors.length,
     newestHumanCommit,
-    editions: editions.length,
+    editions: templateRepo === null ? null : editions.length,
     openIssues: openIssues.length,
     openPulls: openPulls.length,
     suggestions: {
+      countedFrom: suggestionsCountedFrom,
+      beforeCutoff: allSuggestions.length - suggestions.length,
       open: suggestionsOpen.length,
       closed: suggestionsClosed.length,
       unanswered: suggestionsOpen.filter((i) => (i.comments ?? 0) === 0).length,
@@ -451,11 +468,11 @@ async function collectGitHub() {
 
 // --- Rendering -------------------------------------------------------------
 
-function renderIntro(config) {
+function renderIntro(book) {
   return [
     '# Project health',
     '',
-    `This page is *${config.title}* in numbers: how many people are reading it, how much conversation is happening in its margins, and how much of it is being written or corrected. It exists so that none of that has to be guessed at, or asked for, or assembled by hand.`,
+    `This page is *${book.title}* in numbers: how many people are reading it, how much conversation is happening in its margins, and how much of it is being written or corrected. It exists so that none of that has to be guessed at, or asked for, or assembled by hand.`,
     '',
     'It rebuilds itself every Sunday from the systems that already hold the data — Hypothes.is for the annotations, GitHub for the repository — and proposes the new version as a pull request. A week in which nothing moved produces no pull request at all, so this page changing is itself a signal.',
     '',
@@ -464,15 +481,16 @@ function renderIntro(config) {
   ];
 }
 
-function renderReadership(config) {
-  const url = (config.plausible_public_url ?? '').trim();
+function renderReadership(book) {
   const out = ['## Readership', ''];
 
-  if (!url) {
+  if (!book.plausibleUrl) {
     out.push(
-      'The site\'s visitor numbers live in its own analytics dashboard, which is public — anyone can open it, with no login and no account. **That address has not been filled in yet.**',
+      book.plausibleSite
+        ? `The site's visitor numbers are recorded by Plausible, under ${book.plausibleSite}, but that dashboard is not public, so there is nothing here to link to. **Visitor numbers are not visible from this page.**`
+        : '**No analytics are configured for this book**, so there are no visitor numbers to link to.',
       '',
-      `Add a \`"plausible_public_url"\` key to \`textbook.config.json\` with the address of the public dashboard, and this section will link to it at the next rebuild. Until then the address is a placeholder — \`${PLAUSIBLE_PLACEHOLDER}\` — and there is nothing here to click.`,
+      'Readership is linked from here once the book\'s entry in the platform registry has a Plausible site with `dashboard_public` set to `true`; this section picks it up at the next rebuild.',
       '',
       'It is deliberate that the numbers themselves are not copied onto this page: reading them from Plausible directly would need a paid plan and a second password to keep alive, and the dashboard already says it better than a summary would.',
     );
@@ -480,15 +498,15 @@ function renderReadership(config) {
   }
 
   out.push(
-    `Visitor numbers are not repeated here — they live in the site's own analytics dashboard, which is public. Anyone can open it, with no login and no account: **[the readership dashboard for ${config.site_url.replace(/^https?:\/\//, '')}](${url})**.`,
+    `Visitor numbers are not repeated here — they live in the site's own analytics dashboard, which is public. Anyone can open it, with no login and no account: **[the readership dashboard for ${book.domain}](${book.plausibleUrl})**.`,
     '',
     'It shows how many people have visited the book, which pages they spent time on, and where they arrived from, over whatever period you select. It counts visits rather than identities — no cookies, nothing that follows a reader from one site to another — which is why it is a fair measure of interest and a poor one of anything else.',
   );
   return out;
 }
 
-function renderDiscussion(a, config) {
-  const site = config.site_url.replace(/^https?:\/\//, '');
+function renderDiscussion(a, book) {
+  const site = book.domain;
   const out = ['## Discussion in the margins', ''];
 
   out.push(
@@ -497,8 +515,17 @@ function renderDiscussion(a, config) {
   );
 
   if (a.total === 0) {
+    // No course groups is the normal state — per-cohort margins were decided
+    // against — so nothing is said about them. A group that IS in the registry
+    // was put there on purpose, so its emptiness is stated as a plain fact, with
+    // no guess at why.
+    const groupsNote = a.groups.length === 0
+      ? ''
+      : a.groups.length === 1
+        ? ` The course group registered for this book, ${a.groups[0].label}, is empty too.`
+        : ` The course groups registered for this book — ${joinList(a.groups.map((g) => g.label))} — are empty too.`;
     out.push(
-      `There are no annotations yet in the public layer at ${site}, which is where the book's discussion currently lives. That is the ordinary reading for a book that has not yet been set as coursework: a margin fills during a teaching term, not before one, and the first cohort pointed at the book is what will change this number. The ${plural(a.groups.length, 'private course group')} ${a.groups.length === 1 ? 'is' : 'are'} empty too, and expected to be — they are leftovers from testing, not the plan. Per-cohort margins would have needed the annotation provider's paid tier, which the project decided not to buy, so the public layer is where discussion stays.`,
+      `There are no annotations yet in the public layer at ${site}, which is where the book's discussion currently lives. That is the ordinary reading for a book that has not yet been set as coursework: a margin fills during a teaching term, not before one, and the first cohort pointed at the book is what will change this number.${groupsNote}`,
     );
     return out;
   }
@@ -515,12 +542,14 @@ function renderDiscussion(a, config) {
     ? `The one course group, ${a.groups[0].label}, is empty`
     : `The course groups — ${joinList(a.groups.map((g) => g.label))} — are empty`;
 
-  const groupClause = groupsWithAny.length > 0
+  const groupClause = a.groups.length === 0
+    ? '' // no course groups, so the public clause above is the whole story
+    : groupsWithAny.length > 0
     ? `${joinList(groupsWithAny.map((g) => `${plural(g.count, 'annotation')} in ${g.label}`))} ${groupsWithAny.length === 1 && groupsWithAny[0].count === 1 ? 'sits' : 'sit'} in the course groups, which are private to their cohorts and readable only by their members.`
-    : `${groupsNamed}, and that is the intended state rather than a fault. Giving each cohort a margin of its own would have needed the annotation provider's paid tier, and the decision has been taken not to buy it, so every conversation happens in the open — which is the launch model, not a stopgap.`;
+    : `${groupsNamed}.`;
 
   out.push(
-    `There ${a.total === 1 ? 'is' : 'are'} **${plural(a.total, 'annotation')}** in total. ${publicClause} ${groupClause}`,
+    `There ${a.total === 1 ? 'is' : 'are'} **${plural(a.total, 'annotation')}** in total. ${[publicClause, groupClause].filter(Boolean).join(' ')}`,
     '',
   );
 
@@ -556,7 +585,7 @@ function renderDiscussion(a, config) {
   return out;
 }
 
-function renderContribution(g, config) {
+function renderContribution(g, book) {
   const out = ['## Contribution', ''];
 
   out.push(
@@ -570,13 +599,17 @@ function renderContribution(g, config) {
       ? `**One person** has written the book so far. That is what an early book looks like — it is written before it is contributed to — and the [[contributors|contributors page]], which is the standing record of who has changed what, is where a second name would appear.`
       : `**${plural(g.contributors, 'person', 'people')}** have written the book between them. Who they are, what each has changed and when they last did it is on the [[contributors|contributors page]] — that page, not this one, is the record of authorship.`;
 
-  const editions = g.editions === 0
-    ? 'No department has published its own edition yet. The template and the walkthrough exist and are waiting for the first one; see [[derivatives|department editions]].'
-    : g.editions === 1
-      ? 'One department is running its own edition of the book — the same chapters with its own margin. It is listed on the [[derivatives|department editions page]].'
-      : `**${plural(g.editions, 'department')}** are running their own editions of the book — the same chapters with their own margins — and are listed on the [[derivatives|department editions page]].`;
+  // null: this book has no department editions at all, and no derivatives page to link.
+  const editions = g.editions === null
+    ? null
+    : g.editions === 0
+      ? 'No department has published its own edition yet. The template and the walkthrough exist and are waiting for the first one; see [[derivatives|department editions]].'
+      : g.editions === 1
+        ? 'One department is running its own edition of the book — the same chapters with its own margin. It is listed on the [[derivatives|department editions page]].'
+        : `**${plural(g.editions, 'department')}** are running their own editions of the book — the same chapters with their own margins — and are listed on the [[derivatives|department editions page]].`;
 
-  out.push(people, '', editions, '');
+  out.push(people, '');
+  if (editions) out.push(editions, '');
 
   const openWork = g.openIssues === 0 && g.openPulls === 0
     ? 'Nothing is currently open against the repository: no issues waiting, no proposed changes unreviewed. On a project this size that means the queue is clear rather than that nobody is looking.'
@@ -586,11 +619,11 @@ function renderContribution(g, config) {
       ].filter(Boolean))} ${g.openIssues + g.openPulls === 1 ? 'is' : 'are'} waiting on the repository. Pull requests opened by the project's own automation — the weekly rebuilds of this page and its siblings — are left out of that count; they are housekeeping, not contributions.`;
 
   out.push(openWork, '');
-  out.push(...renderSuggestions(g.suggestions, g.openIssues, config));
+  out.push(...renderSuggestions(g.suggestions, g.openIssues, book));
   return out;
 }
 
-function renderSuggestions(s, openIssues, config) {
+function renderSuggestions(s, openIssues, book) {
   const out = ['### Suggested edits', ''];
 
   out.push(
@@ -600,9 +633,15 @@ function renderSuggestions(s, openIssues, config) {
 
   const total = s.open + s.closed;
 
+  // Said whenever something was left out, so a reader comparing this page with
+  // the repository's issue list is not left to find the difference alone.
+  const cutoffNote = s.countedFrom && s.beforeCutoff > 0
+    ? ` The count starts on ${longDate(s.countedFrom)}: the ${plural(s.beforeCutoff, 'suggestion')} filed before then ${s.beforeCutoff === 1 ? 'was a test' : 'were tests'} of the route itself, made while it was being set up, and ${s.beforeCutoff === 1 ? 'is' : 'are'} not counted here.`
+    : '';
+
   if (total === 0) {
     out.push(
-      `No suggestions have come in yet. The route is live, but a reader only uses it once they have read enough to disagree with something — so this figure moving is a better sign of the book being *read* than any visitor count is.`,
+      `No suggestions have come in from readers yet.${cutoffNote} The route is live, but a reader only uses it once they have read enough to disagree with something — so this figure moving is a better sign of the book being *read* than any visitor count is.`,
     );
     return out;
   }
@@ -622,7 +661,7 @@ function renderSuggestions(s, openIssues, config) {
         : ` ${plural(s.unanswered, 'of them has', 'of them have')} had no reply yet.`;
 
   // "0 days before the figures were taken" is a true sentence and a silly one.
-  const age = s.oldestOpen && config.stampDate ? daysBetween(s.oldestOpen, config.stampDate) : null;
+  const age = s.oldestOpen && book.stampDate ? daysBetween(s.oldestOpen, book.stampDate) : null;
   const filedWhen = s.oldestOpen
     ? (s.open === 1
         ? ` It was filed on ${longDate(s.oldestOpen)}.`
@@ -635,23 +674,26 @@ function renderSuggestions(s, openIssues, config) {
     : ` ${plural(s.closed, 'suggestion has', 'suggestions have')} been closed since — accepted into the text, folded into another change, or answered and declined.`;
 
   out.push(
-    `${plural(total, 'suggestion has', 'suggestions have')} been filed. ${waiting}${unanswered}${handled}${oldest}`,
+    `${plural(total, 'suggestion has', 'suggestions have')} been filed. ${waiting}${unanswered}${handled}${oldest}${cutoffNote}`,
     '',
     'A suggestion left open is not lost, but it is unanswered, and an unanswered suggestion is the one thing on this page that costs the project something: it teaches a reader that the link does nothing.',
   );
   return out;
 }
 
-function renderPage({ annotations, github, config, stampDate }) {
+function renderPage({ annotations, github, book, stampDate }) {
   const out = [];
-  out.push(...renderIntro(config));
-  out.push(...renderReadership(config), '');
-  out.push(...renderDiscussion(annotations, config), '');
-  out.push(...renderContribution(github, { ...config, stampDate }), '');
+  out.push(...renderIntro(book));
+  out.push(...renderReadership(book), '');
+  out.push(...renderDiscussion(annotations, book), '');
+  out.push(...renderContribution(github, { ...book, stampDate }), '');
 
+  const covering = annotations.groups.length === 0
+    ? 'the public layer for the site'
+    : 'the public layer for the site and each course group';
   out.push('---', '');
   out.push(
-    'Where these figures come from: annotation counts from the Hypothes.is API, covering the public layer for the site and each course group; everything else from the GitHub API. Visitor numbers are not read programmatically and are linked instead. If any of those calls fails, the rebuild stops and this page is left exactly as it was — it will never quietly report a zero that means "the job broke".',
+    `Where these figures come from: annotation counts from the Hypothes.is API, covering ${covering}; everything else from the GitHub API. Visitor numbers are not read programmatically and are linked instead. If any of those calls fails, the rebuild stops and this page is left exactly as it was — it will never quietly report a zero that means "the job broke".`,
     '',
   );
   out.push(
@@ -666,20 +708,51 @@ function renderPage({ annotations, github, config, stampDate }) {
 
 // --- Main ------------------------------------------------------------------
 
-async function readConfig() {
-  const fallback = {
-    title: 'this textbook',
-    maintainer: 'the maintainer',
-    licence: 'CC-BY-SA-4.0',
-    site_url: 'https://bptext2026.xyz',
-    plausible_public_url: '',
-  };
+/**
+ * Everything this page needs about the book, from its registry entry. Any value
+ * missing or malformed exits 1 here, before a single API call (note 4).
+ */
+async function readBook() {
   try {
-    const raw = JSON.parse(await fs.readFile(path.join(REPO_ROOT, 'textbook.config.json'), 'utf8'));
-    return { ...fallback, ...raw };
-  } catch {
-    warn('textbook.config.json could not be read; using defaults.');
-    return fallback;
+    const { book, registry, source } = await loadBook(REPO_ROOT);
+    const plausible = field(book, 'analytics.plausible', (v) => v === null || (typeof v === 'object' && !Array.isArray(v)), 'an object or null');
+    const plausibleSite = plausible && field(book, 'analytics.plausible.site', isString, 'a hostname');
+    const plausiblePublic = plausible && field(book, 'analytics.plausible.dashboard_public', (v) => typeof v === 'boolean', 'true or false');
+    const domain = field(book, 'site.domain', isString, 'a hostname');
+    // null means the book has no department editions. Missing is still an error:
+    // the registry always states it, and a typo must not read as "no editions".
+    const editions = field(book, 'editions', (v) => v === null || (typeof v === 'object' && !Array.isArray(v)), 'an object or null');
+    // The one field here that may be absent, and absent means null: count every
+    // suggestion. Unlike a missing group list, that errs toward reporting too much,
+    // never toward a quiet zero, and it lets this script land before the registry
+    // adds the field. A value of the wrong shape is still an error.
+    const countedFrom = field(book, 'suggest_edit.counted_from', (v) => v == null || (isString(v) && /^\d{4}-\d{2}-\d{2}$/.test(v)), 'YYYY-MM-DD or null') ?? null;
+    const automationLogins = registry.platform?.automation_logins;
+    if (!isStringArray(automationLogins)) {
+      throw new RegistryError(`the registry has no valid platform.automation_logins (expected a list of logins, got ${JSON.stringify(automationLogins)}).`);
+    }
+    return {
+      slug: book.slug,
+      source,
+      title: field(book, 'title', isString, 'a string'),
+      domain,
+      site: `https://${domain}`,
+      repo: book.content.repo,
+      templateRepo: editions ? field(book, 'editions.template_repo', isString, 'owner/name') : null,
+      skipForkOwners: new Set(editions ? field(book, 'editions.skip_fork_owners', isStringArray, 'a list of logins').map((o) => o.toLowerCase()) : []),
+      annotationGroups: field(
+        book, 'annotations.hypothesis_groups',
+        (v) => Array.isArray(v) && v.every((g) => isString(g?.id) && isString(g?.label)),
+        'a list of { id, label }',
+      ),
+      automationLogins: new Set(automationLogins.map((l) => l.toLowerCase())),
+      suggestionsCountedFrom: countedFrom && `${countedFrom}T00:00:00Z`,
+      plausibleSite: plausibleSite || null,
+      // DESIGN §0b: derived from the site name, never stored.
+      plausibleUrl: plausiblePublic ? `https://plausible.io/${plausibleSite}` : null,
+    };
+  } catch (err) {
+    exitOnRegistryError(err);
   }
 }
 
@@ -690,17 +763,16 @@ async function main() {
     return 0;
   }
 
-  const config = await readConfig();
-  const site = (config.site_url || '').replace(/\/+$/, '');
-  if (!site) throw new Error('textbook.config.json has no site_url, so the public annotation layer cannot be queried.');
+  const book = await readBook();
+  console.log(`Book: ${book.slug} (registry: ${book.source})`);
 
-  console.log(`Reading Hypothes.is (${site} + ${plural(ANNOTATION_GROUPS.length, 'group')}) ...`);
-  const annotations = await collectAnnotations(site);
-  console.log(`  ${annotations.total} annotation(s): ${annotations.publicCount} public, ${annotations.groups.map((g) => `${g.count} in ${g.label}`).join(', ')}`);
+  console.log(`Reading Hypothes.is (${book.site} + ${plural(book.annotationGroups.length, 'group')}) ...`);
+  const annotations = await collectAnnotations(book.site, book.annotationGroups);
+  console.log(`  ${annotations.total} annotation(s): ${[`${annotations.publicCount} public`, ...annotations.groups.map((g) => `${g.count} in ${g.label}`)].join(', ')}`);
 
-  console.log(`Reading GitHub (${BOOK_REPO}, forks of ${TEMPLATE_REPO}) ...`);
-  const github = await collectGitHub();
-  console.log(`  ${github.contributors} contributor(s), ${github.editions} edition(s), ${github.openIssues} open issue(s), ${github.openPulls} open PR(s), ${github.suggestions.open + github.suggestions.closed} suggested edit(s)`);
+  console.log(`Reading GitHub (${book.repo}${book.templateRepo ? `, forks of ${book.templateRepo}` : ', no edition template'}) ...`);
+  const github = await collectGitHub(book);
+  console.log(`  ${github.contributors} contributor(s), ${github.editions ?? 'no'} edition(s), ${github.openIssues} open issue(s), ${github.openPulls} open PR(s), ${github.suggestions.open + github.suggestions.closed} suggested edit(s)`);
 
   // The stamp: newest of exactly the four timestamps that move when a number
   // on this page moves. See note 3 — getting this wrong produces a pull
@@ -711,7 +783,7 @@ async function main() {
     github.newestCreated,
   ].filter(Boolean).reduce((acc, d) => laterOf(acc, d), null);
 
-  const page = renderPage({ annotations, github, config, stampDate });
+  const page = renderPage({ annotations, github, book, stampDate });
 
   if (opts.stdout) {
     process.stdout.write(page);

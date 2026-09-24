@@ -37,10 +37,10 @@ anywhere in the CMS that publishes to the live site. You cannot break the book.
 
 The CMS is at:
 
-`https://textbook-cms.pages.dev`
+`https://textbook-admin.pages.dev`
 
 Bookmark it. Note that this is **not** the same address as the textbook itself —
-the book is at `https://bptext2026.xyz`. They look nothing alike on purpose. The
+the book is at `https://social-research-methods.confused4now.org`. They look nothing alike on purpose. The
 CMS is a tool; it is not part of the book, and it is not published with it.
 
 ---
@@ -54,7 +54,7 @@ they do, you will be able to sign in but not to save.
 
 Then:
 
-1. Go to `https://textbook-cms.pages.dev`.
+1. Go to `https://textbook-admin.pages.dev`.
 2. Click **Sign in with GitHub**.
 3. A GitHub window pops up asking whether to authorise "Textbook CMS". Click
    **Authorize**.
@@ -70,6 +70,16 @@ so the maintainer can see who wrote what and ask you about it. It also means you
 can never be blamed for someone else's edit.
 
 You should only have to authorise once per browser.
+
+**What you are agreeing to when you click Authorize.** The sign-in service the
+editor uses is shared by every textbook on this platform, and it asks GitHub for
+broad access: the key it hands the editor can read and change **every
+repository your GitHub account can reach**, private ones included, not just this
+book. The editor only ever uses it on this book, but you should know the key is
+that wide. If you keep private work on the same GitHub account and would rather
+not, make a separate free account just for editing the textbook, and give the
+technical contact that username instead. You can withdraw the key at any time
+from GitHub → Settings → Applications.
 
 **If the popup opens and closes and you are still signed out**, it is a
 configuration problem, not something you did wrong. Message the technical
@@ -229,7 +239,7 @@ technical contact.
 ## Why the CMS is not part of the website
 
 You may wonder why the CMS lives at its own address rather than somewhere on
-`https://bptext2026.xyz`.
+`https://social-research-methods.confused4now.org`.
 
 The book's website is built by Obsidian Publish, which takes the chapter files
 and turns them into readable pages. The CMS is not a chapter — it is a tool, and

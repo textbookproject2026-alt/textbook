@@ -6,7 +6,9 @@ each one happens, and what fixes it.
 Each entry says who fixes it. **You** means you can finish it yourself in
 Obsidian or a browser. **The technical contact** means it is configuration —
 report it and stop; there is nothing you can do from your side, and nothing you
-can make worse by having looked.
+can make worse by having looked. Some of these turn out to be in a service that
+every book on the platform shares; then the technical contact passes it to the
+**platform owner**, and you don't need to know which it was.
 
 Nothing here is damage. The site can always be republished from your vault, and
 every version of every file is kept.
@@ -151,6 +153,15 @@ you which if you read the wording.
 appeared — that alone separates "the backend is down" from "the backend is fine
 and rate-limiting someone", which are completely different problems.
 
+**For the technical contact:** the form posts to the platform's shared
+suggest-edit function, so this is usually the platform owner's. Before passing it
+on, check the two things that are this book's: that the site is on the address
+the platform has on record (a form on any other address is refused), and that
+the GitHub App `textbook-suggest-edit` is still installed on this repository.
+The function's logs, which are the only place the rejection behind the message
+is visible, are the platform owner's — see
+[`INFRASTRUCTURE.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/INFRASTRUCTURE.md) §2.
+
 ---
 
 ## Analytics show no data
@@ -164,7 +175,7 @@ and rate-limiting someone", which are completely different problems.
   blocker off — if numbers appear, nothing is wrong.
 - **Are you looking at the right site?** Each department edition has its own
   analytics line and its own dashboard. The canonical textbook's figures are for
-  `bptext2026.xyz` only.
+  `social-research-methods.confused4now.org` only.
 - **Is it genuinely quiet?** Out of term, on a book that hasn't been announced to
   a cohort, zero is the true number. Compare against a week you know had traffic
   rather than against nothing.
@@ -179,8 +190,9 @@ you were looking at.
 
 **The technical contact fixes this.**
 
-Four jobs run unattended every Sunday: the annotation backup, and the three pages
-under `community/`.
+Five jobs run unattended every Sunday: the weekly snapshot, the annotation
+backup, and the three pages under `community/`. A Sunday with no new snapshot is
+not a failure: none is made in a week when the book didn't change.
 
 **Check:**
 
@@ -194,8 +206,10 @@ under `community/`.
   small? Zero annotations on a book nobody has annotated yet is accurate.
 
 **Fix:** report it to the technical contact and say which page and what looked
-wrong. `docs/scheduled-actions-health-check.md` is the full diagnostic guide —
-it is written for whoever is looking at the Actions tab, which is not you.
+wrong. The platform's
+[`SCHEDULED-JOBS.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/SCHEDULED-JOBS.md)
+(Part 2, this book's jobs) is the full diagnostic guide — it is written for
+whoever is looking at the Actions tab, which is not you.
 
 ---
 
@@ -203,9 +217,9 @@ it is written for whoever is looking at the Actions tab, which is not you.
 
 **The technical contact fixes this.**
 
-The editor at `https://textbook-cms.pages.dev` signs people in with their own
-GitHub account through a relay the technical contact runs. Two things break it,
-and they look different.
+The editor at `https://textbook-admin.pages.dev` signs people in with their own
+GitHub account through a sign-in relay that every book on the platform shares.
+Three things break it, and they look different.
 
 **Check:**
 
@@ -219,8 +233,11 @@ and they look different.
   technical contact grants it; the contributor needs to have supplied their
   GitHub username.
 
-**Fix:** all three are the technical contact's. Say which of the three it looks
-like, and include the contributor's GitHub username if it's the third.
+**Fix:** all three go to the technical contact. Say which of the three it looks
+like, and include the contributor's GitHub username if it's the third. (The
+first is the platform owner's in the end — the relay and its list of allowed
+editors are shared; the other two are this book's. `docs/the-browser-editor.md`
+has the detail.)
 
 ---
 
@@ -247,7 +264,9 @@ answers.
   older than the fix, nothing has been picked up regardless of which kind it is.
 
 **Fix:** tell the coordinator which of the two it is. If it is the second, the
-technical contact gives them the exact update step. Their guide is emphatic that
+technical contact gives them the exact update step —
+`docs/updating-department-editions.md` is where that step is written down, along
+with how to tell the three kinds of update apart. Their guide is emphatic that
 nothing in that setup should be improvised from a generic tutorial, and this is
 precisely the case it means.
 
@@ -259,8 +278,9 @@ precisely the case it means.
 them.**
 
 The console is the **Waiting for you** tab in the Authoring Assistant, beside
-**Chapters**. Signing in is GitHub's device flow and there is no relay of the
-technical contact's involved: you press **Sign in**, the app shows a code and
+**Chapters** — `docs/the-authoring-app.md` is the guide to the whole app, and to
+what each queue in that tab is for. Signing in is GitHub's device flow and there
+is no relay of the technical contact's involved: you press **Sign in**, the app shows a code and
 opens a web page, you type the code there and approve, and the sign-in is kept
 in this Mac's Keychain. Once it has worked the tab reads **Signed in as** and
 your name.
@@ -268,12 +288,13 @@ your name.
 **Check:**
 
 - **Does the tab show a card headed "One-off setup" instead of a Sign in
-  button?** Then no sign-in identifier has been saved on this Mac, and there is
-  nothing to sign in with. Press **Open Settings**, and under **Signing in to see
-  what is waiting** paste the identifier the technical contact gives you into
-  **Sign-in identifier**, then press **Save identifier**. It should answer
-  _Saved. You can now sign in from "Waiting for you"._ The technical contact
-  supplies that identifier, and it is done once per Mac.
+  button?** The sign-in identifier normally arrives with the list of textbooks,
+  so this means the app has never managed to fetch that list on this Mac. Check
+  you are online and reopen the app first. If the card is still there, press
+  **Open Settings**, and under **Signing in to see what is waiting** paste the
+  identifier the technical contact gives you into **Sign-in identifier**, then
+  press **Save identifier**. It should answer
+  _Saved. You can now sign in from "Waiting for you"._
 - **Did the code run out?** The code box says _Waiting for you to approve… this
   code lasts about 15 minutes._ Past that you get _That code ran out before it
   was used. Please start again._ Press **Sign in** again and take the code
@@ -284,13 +305,13 @@ your name.
 - **Did an error box appear?** Errors come up in a box headed **Something needs
   your attention**, with one button, **All right**. Three of the messages are
   configuration and belong to the technical contact: _This copy has not been set
-  up for signing in yet. Ask Alec to add the sign-in identifier in Settings._,
-  _Signing in could not be started. Check the sign-in identifier in Settings, and
-  that Device Flow is switched on for it._, and _The sign-in identifier in
-  Settings is not recognised. Ask Alec to check it._ Two are yours: _Sign-in was
-  refused on the web page. Nothing was changed._ means Cancel was pressed on the
-  web page, and
-  _This Mac is not online, so signing in cannot start._ means what it says.
+  up for signing in yet. Ask the technical contact to add the sign-in identifier
+  in Settings._, _Signing in could not be started. Check the sign-in identifier
+  in Settings, and that Device Flow is switched on for it._, and _The sign-in
+  identifier in Settings is not recognised. Ask the technical contact to check
+  it._ Two are yours: _Sign-in was refused on the web page. Nothing was changed._
+  means Cancel was pressed on the web page, and _This Mac is not online, so
+  signing in cannot start._ means what it says.
 - **Did it sign in and then ask again?** _Signing in worked, but the token could
   not be stored in this Mac's Keychain…_ means a Keychain prompt was refused, or
   the Keychain is locked; sign in again and allow the prompt when it appears.
@@ -305,7 +326,9 @@ your name.
   than that nothing is there. Look above the lists for the banner: its lines
   begin **Suggestions:**, **Draft changes:** or **Weekly jobs:**, or, offline,
   _This Mac is not online, so this list may be incomplete. Nothing can be
-  accepted or declined until it is back._
+  accepted or declined until it is back._ (A **Weekly jobs:** line on a book
+  that doesn't run this book's four weekly jobs is a known fault in the app and
+  hides the green note too; the two lists above it are still right.)
 - **Is the thing you are waiting for even in this queue?** It holds two kinds of
   item and no others: reader suggestions, described on the screen as _Sent from
   the “Suggest an edit” button on the website._, and draft changes _Written by
@@ -318,7 +341,7 @@ the same list, because it is the whole repository's open suggestions and draft
 changes rather than anything belonging to your account. The wrong account shows
 up as the wrong name after **Signed in as**, and it bites later, at the moment
 you accept or decline: _Your sign-in does not have permission to do that. Signing
-in again may fix it; if not, ask Alec._
+in again may fix it; if not, ask the technical contact._
 
 **Fix:** yours are the expired code, the blocked page, the refused Keychain
 prompt and being offline — press **Sign in** again and finish it in one go.

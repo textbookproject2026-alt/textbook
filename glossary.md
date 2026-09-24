@@ -35,4 +35,3 @@ Fourth, social reality is reflexive: social research affects what is being studi
 ## transitive dimension
 
 Critical realism also distinguishes the intransitive dimension (what exists independently of us) from the transitive dimension (our changing, fallible knowledge of it) — the move that lets it avoid collapsing into either positivism or relativism. (First used in Critical Realism.md.)
-

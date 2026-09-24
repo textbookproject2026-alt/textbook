@@ -48,13 +48,16 @@ that runs itself.
 | `chapters/` | The book. One file per chapter: `chapter-03.md`, and later `chapter-04.md`, `chapter-05.md`. |
 | `chapters/Definitions/` | The concept pages — one short, standalone page per idea, named for the idea itself (`Critical Realism.md`, `Emergence.md`). These are what a reader sees pop up when they hover a linked term inside a chapter. |
 | `assets/` | Every image in the book, in one subfolder per chapter: `assets/chapter-05/`. |
-| `glossary.md` | The list of terms with the chapter each was first used in. |
+| `glossary.md` | The list of terms with the chapter each was first used in. **Written by the authoring app**, not by hand: terms you approve there are spliced in alphabetically, and your own wording is never rewritten. See `docs/the-authoring-app.md` before reorganising it. |
 | `docs/` | These handover guides, including this one. |
-| `templates/` | The source of the front page. See *Adding a new chapter*. |
+| `images/` | The screenshots used *by these guides* — not pictures for the book. Those go in `assets/`. |
+| `templates/` | The source of the front page, and of the two files GitHub shows to visitors (`README.md`, `CONTRIBUTING.md`). See *Adding a new chapter*. |
 | `index.md` | The front page as published. **Written automatically — do not edit it.** |
 | `community/` | Three pages the weekly jobs write: contributors, department editions, project health. Don't edit them by hand; they get overwritten. |
 | `publish.css`, `publish.js` | How the site looks and the extra things it does. Don't edit — but they matter at publish time, see below. |
-| `backups/`, `scripts/`, `.github/`, `admin/` | Machinery. Ignore entirely. |
+| `textbook.config.json` | The book's platform name (`slug`), plus this repository's copy of its title, maintainer, web address and licence. The real values are in the platform registry, and the two are changed together — `docs/changing-settings.md` says how. |
+| `backups/`, `scripts/`, `.github/`, `admin/`, `configure.mjs` | Machinery. Ignore entirely. |
+
 ![[File_index.png]]
 
 **Chapter file names are load-bearing.** The word `chapter`, a dash, two digits,
@@ -91,7 +94,8 @@ the chapter's own folder under `assets/` and give it a real name —
 **Nothing you type is ever the only copy.** Obsidian keeps timed snapshots of
 every file (**Settings → File recovery**), and every version of every chapter is
 stored off your machine automatically. Deleting three paragraphs and wanting them
-back tomorrow is a recoverable situation, not a lost one.
+back tomorrow is a recoverable situation, not a lost one. For last week's text, or
+last month's, see [`weekly-snapshots.md`](weekly-snapshots.md).
 
 ---
 
@@ -216,7 +220,7 @@ ticked in the Publish list.
 
 ## Checking the live site
 
-Open **https://bptext2026.xyz** and give it two minutes:
+Open **https://social-research-methods.confused4now.org** and give it two minutes:
 
 - The front page lists the new chapter, and the link opens it.
 - The headings are there and nested the way the outline panel showed them.
@@ -276,16 +280,29 @@ area — no button in that editor reaches the live site. You read their text and
 decide whether it belongs in the book; moving it out of the holding area is the
 maintainer's step, not yours.
 
-**Four automated jobs run every Sunday, unattended.** They back up the reader
-annotations and rewrite three pages under `community/`: the contributors list,
+**Five automated jobs run every Sunday, unattended.** They save a dated
+snapshot of the book (see [`weekly-snapshots.md`](weekly-snapshots.md)), back up
+the reader annotations, and rewrite three pages under `community/`: the contributors list,
 the department editions list, and the project health dashboard. That is why
 `community/` files change on their own. Nobody starts them and nobody needs to
-check them weekly — `docs/scheduled-actions-health-check.md` is there for
-whoever does look.
+check them weekly — the platform's
+[`SCHEDULED-JOBS.md`](https://github.com/textbookproject2026-alt/textbook-registry/blob/main/docs/SCHEDULED-JOBS.md)
+is there for whoever does look.
 
 **The front page and the README rewrite themselves** whenever the book's title,
-address, maintainer or licence changes, or whenever `templates/` is edited. That
-is the mechanism described under *Adding a new chapter*.
+address, maintainer or licence changes, whenever `templates/` is edited, and on
+Monday mornings if the platform registry has changed something they mention.
+That is the mechanism described under *Adding a new chapter*.
 
-If a file changed and it wasn't you, it was one of these five, and the right
+**The authoring app writes to the vault when you tell it to.** The **Authoring
+Assistant** — the Mac app that links citations and concept pages, builds the
+glossary, and brings chapters in from Word — rewrites the chapter you are working
+on and appends to `glossary.md`, always after showing you the whole change and
+asking you to tick a box. It is also where reader suggestions and contributors'
+draft changes arrive, under **Waiting for you**, so the first three items above
+reach you through it rather than through a website.
+`docs/the-authoring-app.md` is its guide; `docs/word-to-markdown.md` covers the
+Word half.
+
+If a file changed and it wasn't you, it was one of these six, and the right
 response is to carry on writing.

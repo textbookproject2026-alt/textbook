@@ -21,7 +21,8 @@ commands; this page is for you.
 
 A department edition is a fork — and after the 3.4 decision (4 Sep 2026) that is
 the *only* supported shape: forking is what both setup guides now instruct, because
-`scripts/gen-derivatives.mjs` discovers editions through GitHub's forks API and a
+the derivatives page's script (`gen-derivatives.mjs`, in the platform's
+`quartz-book`) discovers editions through GitHub's forks API and a
 "Use this template" copy is invisible to it. **Nothing propagates automatically** —
 that is the design, not a defect, because a coordinator teaching from a frozen site
 all year is the behaviour the whole system is built around

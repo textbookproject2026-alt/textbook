@@ -250,12 +250,13 @@ fails loudly instead of quietly writing empty files.
 before anything risky, like a bulk edit of chapter text that might orphan
 highlights.
 
-**Running it locally:**
+**Running it locally:** the script is the platform's, in the `quartz-book`
+repository (`automation/scripts/`), and runs in this book's folder:
 
 ```bash
 export HYPOTHESIS_API_TOKEN=<your token>
-node scripts/backup-annotations.mjs --dry-run   # fetch and report, write nothing
-node scripts/backup-annotations.mjs             # writes into ./backups
+node ../quartz-book/automation/scripts/backup-annotations.mjs --dry-run   # fetch and report, write nothing
+node ../quartz-book/automation/scripts/backup-annotations.mjs             # writes into ./backups
 ```
 
 **If the weekly run fails,** the Actions log names the scope and the reason. The

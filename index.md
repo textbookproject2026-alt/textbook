@@ -15,7 +15,6 @@ The textbook is published chapter by chapter as each one is finalised, so what y
   Setting up the idea of the book.
 - **[[chapters/chapter-03|Chapter 3 — Reality and the Problem of Unobservables]]**
   Stratified reality and the three domains, monism, and why the things social research most needs to explain are the ones it cannot directly observe.
-- **[[chapters/chapter-99|chapter-99]]**
 
 > [!info] In preparation
 > The remaining chapters — the philosophical groundwork of Part I and the four ontological debates of Part II — will appear here as they are published. New chapters are announced on this page.

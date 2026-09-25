@@ -14,7 +14,7 @@ An edition that has not changed in a while is not necessarily abandoned — a co
 
 ## Running your own
 
-Any department can publish an edition, and doing so needs no permission and no terminal — the whole setup runs through GitHub and Cloudflare in an afternoon. The walkthrough is [[for-course-coordinators|Setting up a department edition]].
+Any department can publish an edition, and doing so needs no permission and no terminal — the whole setup runs through GitHub and Cloudflare in an afternoon. The walkthrough is [Setting up a department edition](https://github.com/textbookproject2026-alt/textbook-edition-template/blob/main/docs/department-edition-setup.md).
 
 Editions are separate sites, not mirrors: what a course changes in its own copy stays there. Corrections that belong in the book itself travel the other way, as a suggested edit or an issue against the canonical repository, and from there into every edition that takes the next update. Everyone who has made one is credited on the [[contributors|contributors page]].
 

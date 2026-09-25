@@ -2,7 +2,7 @@
 
 *Education Tool Project 2026* is maintained in the open. The chapters are plain text files in a public repository, every change to them is a commit signed by whoever made it, and this page is put together from that history — so anyone whose work has landed in the book turns up here without having to ask.
 
-So far that history has one name in it. textbookproject2026-alt has made 88 commits between 17 June 2026 and 20 September 2026, which is every word of the book as it currently stands. The book is early, and the list is short for the same reason — there is room on it.
+So far that history has one name in it. textbookproject2026-alt has made 95 commits between 17 June 2026 and 24 September 2026, which is every word of the book as it currently stands. The book is early, and the list is short for the same reason — there is room on it.
 
 Maintenance and review stay with Brandon: outside contributions arrive as pull requests and are read before they are merged. Being on this list means your work is in the book, not that you are responsible for the rest of it.
 
@@ -10,7 +10,7 @@ Maintenance and review stay with Brandon: outside contributions arrive as pull r
 
 | Contributor | Changes | First | Most recent | Pages worked on most |
 | --- | ---: | --- | --- | --- |
-| textbookproject2026-alt | 88 | 17 Jun 2026 | 20 Sep 2026 | [[chapter-03\|Chapter 3]], [[chapter-01\|Chapter 1]], [[Critical Realism]] |
+| textbookproject2026-alt | 95 | 17 Jun 2026 | 24 Sep 2026 | [[chapters/chapter-03\|Chapter 3]], [[chapters/chapter-01\|Chapter 1]], [[chapters/Definitions/Critical Realism\|Critical Realism]] |
 
 "Changes" counts commits, which is a rough measure and an honest one: a commit can be a rewritten section or a corrected apostrophe, and both are worth having. The pages column looks only at chapters/ — the book itself — so work on the build, the workflows or the documentation is real but invisible here.
 
@@ -22,7 +22,7 @@ You do not need to be a maintainer, or know anything about Git, to end up in the
 
 **Edit the source on GitHub.** Every page also carries an *Edit on GitHub* link, which opens that page's Markdown file in the browser. With a free GitHub account you can change the text and propose it as a pull request; a maintainer reviews it before anything moves. Small fixes are as welcome as large ones.
 
-**Use the browser editor.** Contributors given editing access work in a web editor that writes to the drafts branch, no Obsidian and no terminal involved. If you are teaching from the book and expect to make changes regularly, that is the route to ask for — see [[for-trusted-contributors|Editing chapters in the browser]], and [[for-course-coordinators|setting up a department edition]] if your course wants its own copy.
+**Use the browser editor.** Contributors given editing access work in a web editor that writes to the drafts branch, no Obsidian and no terminal involved. If you are teaching from the book and expect to make changes regularly, that is the route to ask for — see [Editing chapters in the browser](https://github.com/textbookproject2026-alt/textbook/blob/main/docs/for-trusted-contributors.md), and [setting up a department edition](https://github.com/textbookproject2026-alt/textbook-edition-template/blob/main/docs/department-edition-setup.md) if your course wants its own copy.
 
 Margin comments count as contributions too, and are often the most useful thing a reader leaves behind — but they live in the annotation layer rather than in the repository, so they do not appear in the table above.
 
@@ -32,4 +32,4 @@ Routine housekeeping — annotation backups, link checks, and the rebuild of thi
 
 *Contributions to Education Tool Project 2026 are made available under CC-BY-SA-4.0, the licence the book itself carries: share and adapt freely, with attribution, under the same terms.*
 
-*This page is rebuilt from the repository's commit history. Last updated 20 September 2026.*
+*This page is rebuilt from the repository's commit history. Last updated 24 September 2026.*

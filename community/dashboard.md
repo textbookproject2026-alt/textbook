@@ -26,7 +26,7 @@ The book is a public Git repository, so every change to it — a rewritten secti
 
 One department is running its own edition of the book — the same chapters with its own margin. It is listed on the [[derivatives|department editions page]].
 
-**1 open pull request** is waiting on the repository. Pull requests opened by the project's own automation — the weekly rebuilds of this page and its siblings — are left out of that count; they are housekeeping, not contributions.
+**3 open pull requests** are waiting on the repository. Pull requests opened by the project's own automation — the weekly rebuilds of this page and its siblings — are left out of that count; they are housekeeping, not contributions.
 
 ### Suggested edits
 
@@ -38,4 +38,4 @@ No suggestions have come in from readers yet. The route is live, but a reader on
 
 Where these figures come from: annotation counts from the Hypothes.is API, covering the public layer for the site; everything else from the GitHub API. Visitor numbers are not read programmatically and are linked instead. If any of those calls fails, the rebuild stops and this page is left exactly as it was — it will never quietly report a zero that means "the job broke".
 
-*This page is rebuilt weekly, and is dated by the most recent thing it counts rather than by the day it ran: 20 September 2026.*
+*This page is rebuilt weekly, and is dated by the most recent thing it counts rather than by the day it ran: 25 September 2026.*

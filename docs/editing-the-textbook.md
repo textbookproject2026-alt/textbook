@@ -56,7 +56,7 @@ that runs itself.
 | `community/` | Three pages the weekly jobs write: contributors, department editions, project health. Don't edit them by hand; they get overwritten. |
 | `publish.css`, `publish.js` | How the site looks and the extra things it does. Don't edit — but they matter at publish time, see below. |
 | `textbook.config.json` | The book's platform name (`slug`), plus this repository's copy of its title, maintainer, web address and licence. The real values are in the platform registry, and the two are changed together — `docs/changing-settings.md` says how. |
-| `backups/`, `scripts/`, `.github/`, `admin/`, `configure.mjs` | Machinery. Ignore entirely. |
+| `backups/`, `.github/`, `admin/`, `configure.mjs` | Machinery. Ignore entirely. |
 
 ![[File_index.png]]
 

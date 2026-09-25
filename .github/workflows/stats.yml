@@ -1,9 +1,0 @@
-name: stats
-on:
-  workflow_dispatch:
-jobs:
-  stats:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Placeholder
-        run: echo "TODO - contributor/annotation stats (Week 5)"

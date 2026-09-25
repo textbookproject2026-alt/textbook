@@ -1,13 +1,13 @@
 name: lint
+
+# markdownlint with the platform's rules. The job is quartz-book's book-lint.yml
+# (BOOK-ONE-TO-QUARTZ §8 step 14).
 on:
   push:
     branches: [main]
   pull_request:
+permissions:
+  contents: read
 jobs:
   markdownlint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: DavidAnson/markdownlint-cli2-action@v20
-        with:
-          globs: "**/*.md"
+    uses: textbookproject2026-alt/quartz-book/.github/workflows/book-lint.yml@stable

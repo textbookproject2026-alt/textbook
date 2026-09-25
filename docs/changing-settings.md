@@ -51,8 +51,8 @@ owner's docs, not done from here.
 
 ## Important
 
-Don't edit `README.md`, `CONTRIBUTING.md`, `index.md`, `publish.js`,
-`admin/config.yml` or `.lycheeignore` directly. They're written automatically,
+Don't edit `README.md`, `CONTRIBUTING.md`, `index.md`, `publish.js` or
+`admin/config.yml` directly. They're written automatically,
 and any direct change is overwritten. To change their wording (not just the
 title), edit the matching file in the `templates` folder instead, in the same
 way.

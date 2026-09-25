@@ -1,9 +1,9 @@
 {
   "meta": {
     "schemaVersion": 1,
-    "generatedAt": "2026-09-25T12:33:59.334Z",
+    "generatedAt": "2026-09-25T12:36:14.411Z",
     "runDate": "2026-09-25",
-    "generatedBy": "scripts/backup-annotations.mjs",
+    "generatedBy": "quartz-book automation/scripts/backup-annotations.mjs",
     "api": "https://api.hypothes.is/api",
     "book": "social-research-methods",
     "site": "https://social-research-methods.confused4now.org",
@@ -65,8 +65,8 @@
     "warnings": [],
     "github": {
       "repository": "textbookproject2026-alt/textbook",
-      "runId": "36135639740",
-      "runNumber": "7",
+      "runId": "36135850990",
+      "runNumber": "8",
       "workflow": "Backup annotations"
     }
   },

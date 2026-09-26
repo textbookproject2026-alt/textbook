@@ -43,7 +43,7 @@ New to it? **[[how-to-comment|How to comment in the margins]]** is a five-minute
 Found a typo, a broken reference, or a paragraph that doesn't explain what it should? Every page carries an **Edit on GitHub** link that opens the page's source text, where you can propose a change with a free GitHub account. A maintainer reviews every suggestion before anything changes in the book — small fixes are as welcome as large ones.
 
 ### Make it your department's own
-
+ 
 Any department can publish its own edition of this textbook: the same chapters, on the department's own web address, with its own front page and its own choice of chapters. Reader discussion is not separated per edition — every edition shares the same public annotation layer as this one. Editions remain connected to this canonical version and receive its updates. The full setup guide is here: [[for-course-coordinators|Setting up a department edition]], and the editions already running are listed on the [[derivatives|department editions page]]. If that would suit your course, contact Brandon.
 
 ---

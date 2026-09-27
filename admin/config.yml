@@ -86,11 +86,20 @@ collections:
     format: raw
     extension: md
 
-    # With only a body field there is no title field to derive a filename
-    # from, and Sveltia's fallback is a random UUID fragment. `{{fields._slug}}`
-    # replaces that with a visible slug box in the editor, so a new chapter
-    # can be named to match the existing convention: chapter-04, chapter-05.
-    slug: '{{fields._slug}}'
+    # The one chapter-naming rule (27 Sep 2026): a chapter is chapter-NN.md in
+    # every book. With only a body field there is no title to derive a filename
+    # from, so the editor shows a slug box, and this template puts `chapter-`
+    # in front of what is typed there: type the two-digit number, 04, and the
+    # file is chapters/chapter-04.md. Sveltia 0.193.1 slugifies the typed part
+    # (lowercase, spaces to hyphens) and has no pattern or zero-padding for it,
+    # so the description below is what asks for two digits. The rule applies
+    # only when an entry is created: existing chapters keep their names, and
+    # concept pages (the next collection) keep theirs, because the name is the
+    # wikilink target.
+    slug: 'chapter-{{fields._slug}}'
+    description: >-
+      New chapter: in the slug box, type only its two-digit number (04 for
+      Chapter 4). It is saved as chapter-04.md, the name every book uses.
 
     # Sort/browse by filename — there is no frontmatter date or title to use.
     sortable_fields: ['slug']

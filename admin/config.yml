@@ -1,12 +1,18 @@
 # Sveltia CMS configuration — Education Tool Project 2026 textbook
 #
 # This file is TOOLING, not content. It lives on `main` so it is versioned
-# alongside the book, but it must never be part of the Obsidian Publish set.
-# See docs/for-trusted-contributors.md ("Why admin/ is not on the website").
+# alongside the book, but the reading site never publishes it: the builder
+# publishes only index.md, chapters/, assets/, glossary.md and community/.
 #
-# This book's side of the editor (the Pages host, contributor access):
-# docs/the-browser-editor.md. The shared sign-in relay and its OAuth App are
-# the platform's: textbook-registry/docs/CMS-RELAY.md.
+# Kept by hand (BOOK-ONE-TO-QUARTZ D7). configure.mjs and templates/ went at
+# §8 step 18, so nothing renders this file any more. textbook-registry's parity
+# checks cms.config.* compare `repo`, `branch` and `base_url` below with the
+# registry, and fail if they drift.
+#
+# The editor's guide (the Pages host, contributor access):
+# https://github.com/textbookproject2026-alt/textbook-template/blob/main/docs/the-browser-editor.md
+# The shared sign-in relay and its OAuth App are the platform's:
+# textbook-registry/docs/CMS-RELAY.md.
 
 backend:
   name: github
@@ -36,7 +42,7 @@ backend:
   # hands it back to the browser. No bot account, no Netlify Identity
   # (which Netlify no longer offers to new sites).
   #
-  # Rendered from the registry's platform.cms_auth_relay. The relay only lets
+  # The registry's platform.cms_auth_relay (parity checks it). The relay only lets
   # the editor sign in from hosts on its ALLOWED_DOMAINS list, which the
   # platform owner keeps (textbook-registry/docs/CMS-RELAY.md).
   base_url: https://sveltia-cms-auth.brandonproject2026.workers.dev
@@ -51,7 +57,7 @@ backend:
 publish_mode: editorial_workflow
 
 # Images and figures. `media_folder` is the path in the repo; `public_folder`
-# is how the path is written into the markdown that Obsidian Publish renders.
+# is how the path is written into the markdown the reading site renders.
 media_folder: assets
 public_folder: /assets
 
